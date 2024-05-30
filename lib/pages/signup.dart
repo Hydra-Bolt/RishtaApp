@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -65,19 +66,26 @@ class _SignUpState extends State<SignUp> {
           padding: const EdgeInsets.all(14.0),
           child: Column(
             children: [
-              _myFormField("Email", emailController, true),
+              CustomTextFormField(
+                  label: "Email", controller: emailController, enabled: true),
               SizedBox(
                 height: 15,
               ),
-              _myFormField("Password", passwordController, true),
+              CustomTextFormField(
+                  label: "Password",
+                  controller: passwordController,
+                  enabled: true),
               SizedBox(
                 height: 15,
               ),
               Row(
                 children: [
                   Expanded(
-                      child: _myFormField(
-                          "Verification Code", otpController, requestedCode)),
+                    child: CustomTextFormField(
+                        label: "Verification Code",
+                        controller: otpController,
+                        enabled: requestedCode),
+                  ),
                   SizedBox(
                     width: 5,
                   ),
@@ -216,25 +224,9 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  TextFormField _myFormField(
+  CustomTextFormField _myFormField(
       String label, TextEditingController controller, bool enabled) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: Colors.grey),
-        // floatingLabelBehavior: FloatingLabelBehavior.values,
-        filled: true,
-        fillColor: Colors.white12,
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: mainColor),
-        ),
-      ),
-      controller: controller,
-      style: TextStyle(color: Colors.grey),
-      cursorColor: mainColor,
-      // cursorHeight: 30,
-      cursorWidth: 1,
-      enabled: enabled,
-    );
+    return CustomTextFormField(
+        label: label, controller: controller, enabled: enabled);
   }
 }

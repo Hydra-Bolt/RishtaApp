@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,6 +16,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  Color mainColor = Color(0xFFFA2A55);
   // final _passwordController = TextEditingController();
 
   late final StreamSubscription<AuthState> _authSubsription;
@@ -42,56 +44,111 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login Page"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(label: Text("Email")),
+    return Stack(
+      children: [
+        Image.asset("assets/images/app_background.png",
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.cover),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: const Text(
+              "Login Page",
+              style: TextStyle(color: Colors.grey),
             ),
-            TextFormField(
-              controller: _passwordController,
-              decoration: const InputDecoration(label: Text("Password")),
-              obscureText: true,
+            backgroundColor: Colors.transparent,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 0.04 * MediaQuery.of(context).size.height,
+                ),
+                CustomTextFormField(
+                    label: "Email",
+                    controller: _emailController,
+                    enabled: true),
+                SizedBox(
+                  height: 10,
+                ),
+                CustomTextFormField(
+                    label: "Password",
+                    controller: _passwordController,
+                    enabled: true),
+                SizedBox(
+                  height: 0.41 * MediaQuery.of(context).size.height,
+                ),
+                GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 45),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20)),
+                        color: Colors.white12),
+                    child: Text(
+                      "Login",
+                      style: TextStyle(color: mainColor),
+                    ),
+                  ),
+                  onTap: () async {
+                    await _login(context);
+                  },
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "or",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    GestureDetector(
+                      child: Text(
+                        "Sign up",
+                        style: TextStyle(color: mainColor),
+                      ),
+                      onTap: () => {
+                        Navigator.of(context).pushReplacementNamed("/signup")
+                      },
+                    ),
+                  ],
+                )
+              ],
             ),
-            ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final email = _emailController.text.trim();
-                    final password = _passwordController.text.trim();
-                    await supabase.auth
-                        .signInWithPassword(email: email, password: password);
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Log in successful")));
-                    }
-                    Navigator.of(context).pushReplacementNamed("/");
-                  } on AuthException catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(e.message),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                    ));
-                  } on Exception catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: const Text("Error"),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                    ));
-                  }
-                },
-                child: const Text("Login")),
-            GestureDetector(
-              child: Text("or Sign up"),
-              onTap: () =>
-                  {Navigator.of(context).pushReplacementNamed("/signup")},
-            )
-          ],
+          ),
         ),
-      ),
+      ],
     );
+  }
+
+  Future<void> _login(BuildContext context) async {
+    try {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+      await supabase.auth.signInWithPassword(email: email, password: password);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Log in successful")));
+      }
+      Navigator.of(context).pushReplacementNamed("/");
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ));
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text("Error"),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ));
+    }
   }
 }
