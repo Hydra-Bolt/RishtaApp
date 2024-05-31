@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/main.dart';

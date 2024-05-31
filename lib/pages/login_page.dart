@@ -17,7 +17,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  Color mainColor = Color(0xFFFA2A55);
+  Color mainColor = const Color(0xFFFA2A55);
   // final _passwordController = TextEditingController();
 
   late final StreamSubscription<AuthState> _authSubsription;
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             CustomTextFormField(
                 label: "Email", controller: _emailController, enabled: true),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             CustomTextFormField(
@@ -76,7 +76,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             GestureDetector(
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 45),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 45),
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.white),
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
@@ -91,17 +92,17 @@ class _LoginPageState extends State<LoginPage> {
                 await _login(context);
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "or",
-                  style: TextStyle(color: Colors.grey),
+                  style: const TextStyle(color: Colors.grey),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 4,
                 ),
                 GestureDetector(
@@ -136,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
         content: Text(e.message),
         backgroundColor: Theme.of(context).colorScheme.error,
       ));
-    } on Exception catch (e) {
+    } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text("Error"),
         backgroundColor: Theme.of(context).colorScheme.error,

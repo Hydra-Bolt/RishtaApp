@@ -21,7 +21,7 @@ class _SignUpState extends State<SignUp> {
   final otpController = TextEditingController();
   bool codeEnabled = false;
   bool requestedCode = false;
-  Color mainColor = Color(0xFFFA2A55);
+  Color mainColor = const Color(0xFFFA2A55);
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _SignUpState extends State<SignUp> {
           children: [
             CustomTextFormField(
                 label: "Email", controller: emailController, enabled: true),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             CustomTextFormField(
@@ -72,7 +72,7 @@ class _SignUpState extends State<SignUp> {
               enabled: true,
               isObscure: true,
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Row(
@@ -83,7 +83,7 @@ class _SignUpState extends State<SignUp> {
                       controller: otpController,
                       enabled: requestedCode),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 GestureDetector(
@@ -92,7 +92,7 @@ class _SignUpState extends State<SignUp> {
                           try {
                             final email = emailController.text.trim();
                             final password = passwordController.text.trim();
-                            final authResponse = await supabase.auth
+                            await supabase.auth
                                 .signUp(email: email, password: password);
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -112,7 +112,7 @@ class _SignUpState extends State<SignUp> {
                                     Theme.of(context).colorScheme.error,
                               ),
                             );
-                          } on Exception catch (e) {
+                          } on Exception {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: const Text("Error"),
@@ -124,22 +124,25 @@ class _SignUpState extends State<SignUp> {
                         }
                       : () => ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
+                              content: const Text(
                                   "Enter email address and password first!"),
                               backgroundColor: mainColor,
                             ),
                           ),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 20),
                     decoration: BoxDecoration(
                       color: codeEnabled ? Colors.white12 : Colors.white10,
                       border: Border.all(color: Colors.white, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                      borderRadius: const BorderRadius.all(Radius.circular(3)),
                     ),
                     child: Text(
                       "Send Code",
                       style: TextStyle(
-                          color: codeEnabled ? mainColor : Color(0xFFc7052c)),
+                          color: codeEnabled
+                              ? mainColor
+                              : const Color(0xFFc7052c)),
                     ),
                   ),
                 )
@@ -150,10 +153,11 @@ class _SignUpState extends State<SignUp> {
             ),
             GestureDetector(
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 45),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 45),
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: Colors.white12),
                 child: Text(
                   "SignUp",
@@ -164,17 +168,17 @@ class _SignUpState extends State<SignUp> {
                 await _verifyOTP(context);
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "Or",
                   style: TextStyle(color: Colors.grey),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 3,
                 ),
                 GestureDetector(

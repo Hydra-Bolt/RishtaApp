@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/utils/colors.dart';
 
