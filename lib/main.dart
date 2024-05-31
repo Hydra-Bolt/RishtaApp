@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:supabase_auth/pages/account_page.dart';
 import 'package:supabase_auth/pages/home.dart';
 import 'package:supabase_auth/pages/login_page.dart';
+import 'package:supabase_auth/pages/preference_form.dart';
 import 'package:supabase_auth/pages/signup.dart';
 import 'package:supabase_auth/pages/splash_page.dart';
+import 'package:supabase_auth/pages/user_info_form.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -32,6 +34,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUp(),
         '/account': (context) => const AccountPage(),
+        '/userform': (context) => const UserForm(),
+        '/preference': (context) => const PreferenceForm(),
       },
     );
   }

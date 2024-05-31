@@ -46,7 +46,10 @@ class _HomePageState extends State<HomePage> {
         children: [
           GestureDetector(
             child: Text('SignOut'),
-            onTap: () => {supabase.auth.signOut()},
+            onTap: () async {
+              await supabase.auth.signOut();
+              Navigator.of(context).pushReplacementNamed('/');
+            },
           ),
           userData == null
               ? Center(child: CircularProgressIndicator())

@@ -90,7 +90,8 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.white12),
                     child: Text(
                       "Login",
-                      style: TextStyle(color: mainColor),
+                      style: TextStyle(
+                          color: mainColor, fontWeight: FontWeight.bold),
                     ),
                   ),
                   onTap: () async {
@@ -112,8 +113,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     GestureDetector(
                       child: Text(
-                        "Sign up",
-                        style: TextStyle(color: mainColor),
+                        "Sign up?",
+                        style: TextStyle(
+                            color: mainColor, fontWeight: FontWeight.bold),
                       ),
                       onTap: () => {
                         Navigator.of(context).pushReplacementNamed("/signup")
