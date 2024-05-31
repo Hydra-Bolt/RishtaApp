@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/components/my_form_field.dart';
+import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -44,90 +45,79 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Image.asset("assets/images/app_background.png",
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: const Text(
-              "Login Page",
-              style: TextStyle(color: Colors.grey),
+    return MyScaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Login Page",
+          style: TextStyle(color: Colors.grey),
+        ),
+        backgroundColor: Colors.transparent,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 0.04 * MediaQuery.of(context).size.height,
             ),
-            backgroundColor: Colors.transparent,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
+            CustomTextFormField(
+                label: "Email", controller: _emailController, enabled: true),
+            SizedBox(
+              height: 10,
+            ),
+            CustomTextFormField(
+              label: "Password",
+              controller: _passwordController,
+              enabled: true,
+              isObscure: true,
+            ),
+            SizedBox(
+              height: 0.41 * MediaQuery.of(context).size.height,
+            ),
+            GestureDetector(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 45),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    color: Colors.white12),
+                child: Text(
+                  "Login",
+                  style:
+                      TextStyle(color: mainColor, fontWeight: FontWeight.bold),
+                ),
+              ),
+              onTap: () async {
+                await _login(context);
+              },
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 0.04 * MediaQuery.of(context).size.height,
+                Text(
+                  "or",
+                  style: TextStyle(color: Colors.grey),
                 ),
-                CustomTextFormField(
-                    label: "Email",
-                    controller: _emailController,
-                    enabled: true),
                 SizedBox(
-                  height: 10,
-                ),
-                CustomTextFormField(
-                    label: "Password",
-                    controller: _passwordController,
-                    enabled: true),
-                SizedBox(
-                  height: 0.41 * MediaQuery.of(context).size.height,
+                  width: 4,
                 ),
                 GestureDetector(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 45),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20)),
-                        color: Colors.white12),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          color: mainColor, fontWeight: FontWeight.bold),
-                    ),
+                  child: Text(
+                    "Sign up?",
+                    style: TextStyle(
+                        color: mainColor, fontWeight: FontWeight.bold),
                   ),
-                  onTap: () async {
-                    await _login(context);
-                  },
+                  onTap: () =>
+                      {Navigator.of(context).pushReplacementNamed("/signup")},
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "or",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    GestureDetector(
-                      child: Text(
-                        "Sign up?",
-                        style: TextStyle(
-                            color: mainColor, fontWeight: FontWeight.bold),
-                      ),
-                      onTap: () => {
-                        Navigator.of(context).pushReplacementNamed("/signup")
-                      },
-                    ),
-                  ],
-                )
               ],
-            ),
-          ),
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
 

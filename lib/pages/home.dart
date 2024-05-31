@@ -1,12 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/main.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
@@ -30,44 +31,55 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userData = response;
       });
+      if (!mounted) return;
+      if (userData!['pid'] == null) {
+        Navigator.of(context).pushReplacementNamed('/preference');
+      } else if (userData!['lid'] == null) {
+        Navigator.of(context).pushReplacementNamed('/lifestyle');
+      }
     } catch (error) {
       // Handle the error appropriately here
-      print('Error fetching user data: $error');
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/userform');
+        print('Error fetching user data: $error');
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MyScaffold(
       appBar: AppBar(
         title: const Text("Home Page"),
       ),
       body: Column(
         children: [
           GestureDetector(
-            child: Text('SignOut'),
+            child: const Text('SignOut'),
             onTap: () async {
               await supabase.auth.signOut();
               Navigator.of(context).pushReplacementNamed('/');
             },
           ),
           userData == null
-              ? Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView(
-                    children: [
-                      Text('Name: ${userData!['name']}'),
-                      Text('Weight: ${userData!['weight']}'),
-                      Text('Height: ${userData!['height']}'),
-                      Text('Age: ${userData!['age']}'),
-                      Text('Date of Birth: ${userData!['dob']}'),
-                      Text('Gender: ${userData!['gender']}'),
-                      Text('Country: ${userData!['country']}'),
-                      Text('City: ${userData!['city']}'),
-                      Text('Spouse: ${userData!['spouse']}'),
-                      Text('Kids: ${userData!['kids']}'),
-                    ],
+              ? const Center(child: CircularProgressIndicator())
+              : Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListView(
+                      children: [
+                        Text('Name: ${userData!['name']}'),
+                        Text('Weight: ${userData!['weight']}'),
+                        Text('Height: ${userData!['height']}'),
+                        Text('Age: ${userData!['age']}'),
+                        Text('Date of Birth: ${userData!['dob']}'),
+                        Text('Gender: ${userData!['gender']}'),
+                        Text('Country: ${userData!['country']}'),
+                        Text('City: ${userData!['city']}'),
+                        Text('Spouse: ${userData!['spouse']}'),
+                        Text('Kids: ${userData!['kids']}'),
+                      ],
+                    ),
                   ),
                 ),
         ],
