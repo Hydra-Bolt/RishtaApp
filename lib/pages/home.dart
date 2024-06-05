@@ -31,10 +31,10 @@ class _HomePageState extends State<HomePage> {
         userData = response;
       });
       if (!mounted) return;
-      if (userData!['pid'] == null) {
-        Navigator.of(context).pushReplacementNamed('/preference');
-      } else if (userData!['lid'] == null) {
+      if (userData!['lid'] == null) {
         Navigator.of(context).pushReplacementNamed('/lifestyle');
+      } else if (userData!['pid'] == null) {
+        Navigator.of(context).pushReplacementNamed('/preference');
       }
     } catch (error) {
       // Handle the error appropriately here

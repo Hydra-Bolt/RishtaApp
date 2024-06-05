@@ -18,14 +18,8 @@ class _MyScaffoldState extends State<MyScaffold> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Image.asset(
-          "assets/images/app_background.png",
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
         Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           appBar: AppBar(
             title: widget.appBar.title,
             backgroundColor: Colors.transparent,

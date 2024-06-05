@@ -26,7 +26,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return TextFormField(
       decoration: InputDecoration(
         labelText: widget.label,
-        labelStyle: TextStyle(color: mainColor, fontSize: 12.0),
+        labelStyle: TextStyle(color: Colors.black, fontSize: 12.0),
         filled: true,
         fillColor: Colors.white,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
