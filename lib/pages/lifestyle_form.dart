@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/utils/colors.dart';
@@ -18,6 +19,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
   final TextEditingController _educationController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final PageController _pageController = PageController(initialPage: 1);
+  final List<String> _selectedInterests = [];
   // State for dropdown values
   String? _selectedJobSector;
   String? _selectedPersonalityType;
@@ -33,7 +35,27 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     'Retail',
     'Other',
   ];
-
+  final List<String> interests = [
+    "Sports",
+    "Music",
+    "Fitness",
+    "Crafts",
+    "Dancing",
+    "Movies",
+    "Games",
+    "Reading",
+    "Traveling",
+    "Cooking",
+    "Gardening",
+    "Technology",
+    "Science",
+    "Photography",
+    "Writing",
+    "Art",
+    "Coding",
+    "Programming",
+    "Design",
+  ];
   final List<String> personalityTypes = [
     'ISTJ',
     'ISFJ',
@@ -110,6 +132,16 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     });
   }
 
+  void _toggleInterest(String interest) {
+    setState(() {
+      if (_selectedInterests.contains(interest)) {
+        _selectedInterests.remove(interest);
+      } else {
+        _selectedInterests.add(interest);
+      }
+    });
+  }
+
   void _hobbiesSubmit() {
     if (selectedHobbies.length < 1) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -135,11 +167,51 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       ),
       body: PageView(
         controller: _pageController,
-        children: [
-          _personalLifeStyle(),
-          _hobbies(),
-        ],
+        children: [_personalLifeStyle(), _hobbies(), _interests()],
       ),
+    );
+  }
+
+  Widget _interests() {
+    return Column(
+      children: [
+        Text(
+          "Interests",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Expanded(
+          child: GridView.count(
+            crossAxisCount: 3,
+            children: interests.map((interest) {
+              return Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.network(
+                      'https://fastly.picsum.photos/id/1005/200/300.jpg?hmac=ZygrmRTuNYz9HivXcWqFGXDRVJxIHzaS-8MA0I3NKBw', // Replace with your image URL
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Center(
+                    child: ChoiceChip(
+                      backgroundColor: Colors.white.withOpacity(0.7),
+                      selectedColor: AppColors.mainColor.withOpacity(0.7),
+                      label: Text(interest),
+                      selected: _selectedInterests.contains(interest),
+                      onSelected: (selected) {
+                        _toggleInterest(interest);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 

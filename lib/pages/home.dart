@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                         Text('Age: ${userData!['age']}'),
                         Text('Date of Birth: ${userData!['dob']}'),
                         Text('Gender: ${userData!['gender']}'),
-                        Text('Country: ${userData!['country']}'),
+                        // Text('Country: ${userData!['country']}'),
                         Text('City: ${userData!['city']}'),
                         Text('Spouse: ${userData!['spouse']}'),
                         Text('Kids: ${userData!['kids']}'),
