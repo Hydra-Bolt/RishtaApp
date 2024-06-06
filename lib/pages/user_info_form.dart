@@ -16,6 +16,8 @@ class _UserFormState extends State<UserForm> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
+  final TextEditingController spousesController = TextEditingController();
+  final TextEditingController childrenController = TextEditingController();
 
   String? selectedCity;
   String? selectedDay;
@@ -63,15 +65,17 @@ class _UserFormState extends State<UserForm> {
   Widget build(BuildContext context) {
     return MyScaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Add your basic details below",
           style: TextStyle(color: AppColors.grey),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            SizedBox(height: 16.0),
             Row(
               children: [
                 Expanded(
@@ -81,8 +85,7 @@ class _UserFormState extends State<UserForm> {
                     enabled: true,
                   ),
                 ),
-                const SizedBox(
-                    width: 16.0), // Add some space between the two text fields
+                SizedBox(width: 16.0),
                 Expanded(
                   child: CustomTextFormField(
                     label: "Last Name",
@@ -92,7 +95,7 @@ class _UserFormState extends State<UserForm> {
                 ),
               ],
             ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 24.0),
             Row(
               children: [
                 Expanded(
@@ -107,7 +110,7 @@ class _UserFormState extends State<UserForm> {
                     },
                   ),
                 ),
-                const SizedBox(width: 16.0),
+                SizedBox(width: 16.0),
                 Expanded(
                   child: CustomDropdownFormField(
                     label: "Month",
@@ -120,7 +123,7 @@ class _UserFormState extends State<UserForm> {
                     },
                   ),
                 ),
-                const SizedBox(width: 16.0),
+                SizedBox(width: 16.0),
                 Expanded(
                   child: CustomDropdownFormField(
                     label: "Year",
@@ -135,18 +138,7 @@ class _UserFormState extends State<UserForm> {
                 ),
               ],
             ),
-            const SizedBox(height: 16.0),
-            CustomDropdownFormField(
-              label: "City",
-              value: selectedCity,
-              items: citiesInPakistan,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedCity = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 24.0),
             CustomDropdownFormField(
               label: "Gender",
               value: selectedGender,
@@ -157,7 +149,7 @@ class _UserFormState extends State<UserForm> {
                 });
               },
             ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 24.0),
             Row(
               children: [
                 Expanded(
@@ -167,8 +159,7 @@ class _UserFormState extends State<UserForm> {
                     enabled: true,
                   ),
                 ),
-                const SizedBox(
-                    width: 16.0), // Add some space between the two text fields
+                SizedBox(width: 16.0),
                 Expanded(
                   child: CustomTextFormField(
                     label: "Height (cm)",
@@ -177,6 +168,55 @@ class _UserFormState extends State<UserForm> {
                   ),
                 ),
               ],
+            ),
+            SizedBox(height: 24.0),
+            CustomDropdownFormField(
+              label: "City",
+              value: selectedCity,
+              items: citiesInPakistan,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedCity = newValue;
+                });
+              },
+            ),
+            SizedBox(height: 24.0),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextFormField(
+                    label: "Spouses",
+                    controller: spousesController,
+                    enabled: true,
+                  ),
+                ),
+                SizedBox(width: 16.0),
+                Expanded(
+                  child: CustomTextFormField(
+                    label: "Children",
+                    controller: childrenController,
+                    enabled: true,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 24.0),
+            ElevatedButton(
+              onPressed: () {
+                // Add your submit logic here
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors
+                    .mainColor, // Assuming AppColors.primary is defined
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: Text(
+                'Submit',
+                style: TextStyle(fontSize: 16.0, color: Colors.white),
+              ),
             ),
           ],
         ),
