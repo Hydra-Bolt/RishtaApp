@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:supabase/supabase.dart';
 import 'package:supabase_auth/components/my_drop_down.dart';
 import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
+import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utils/colors.dart';
 
 class UserForm extends StatefulWidget {
@@ -61,13 +63,68 @@ class _UserFormState extends State<UserForm> {
 
   final List<String> genders = ['Male', 'Female', 'Other'];
 
+  Future<void> _submit() async {
+    final String firstName = firstNameController.text.trim();
+    final String lastName = lastNameController.text.trim();
+    final int? weight = int.tryParse(weightController.text);
+    final int? height = int.tryParse(heightController.text);
+    final int? spouses = int.tryParse(spousesController.text);
+    final int? children = int.tryParse(childrenController.text);
+
+    if (firstName.isEmpty ||
+        lastName.isEmpty ||
+        weight == null ||
+        height == null ||
+        selectedDay == null ||
+        selectedMonth == null ||
+        selectedYear == null ||
+        selectedGender == null ||
+        selectedCity == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all the fields')),
+      );
+      return;
+    }
+
+    final String dob = '$selectedYear-$selectedMonth-$selectedDay';
+
+    try {
+      final response = await supabase.from('users').insert({
+        'uid': supabase.auth.currentUser!.id,
+        'name': firstName + lastName,
+        'weight': weight,
+        'height': height,
+        'dob': dob,
+        'gender': selectedGender,
+        'city': selectedCity,
+        'spouse': spouses ?? 0,
+        'kids': children ?? 0,
+      });
+
+      if (response.error == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User data saved successfully!')));
+        Navigator.of(context).pushReplacementNamed('/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${response.error!.message}')));
+      }
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    } on PostgrestException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Add your basic details below",
-          style: TextStyle(color: AppColors.grey),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(
@@ -75,7 +132,7 @@ class _UserFormState extends State<UserForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               children: [
                 Expanded(
@@ -85,7 +142,7 @@ class _UserFormState extends State<UserForm> {
                     enabled: true,
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: CustomTextFormField(
                     label: "Last Name",
@@ -95,7 +152,7 @@ class _UserFormState extends State<UserForm> {
                 ),
               ],
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             Row(
               children: [
                 Expanded(
@@ -110,7 +167,7 @@ class _UserFormState extends State<UserForm> {
                     },
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: CustomDropdownFormField(
                     label: "Month",
@@ -123,7 +180,7 @@ class _UserFormState extends State<UserForm> {
                     },
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: CustomDropdownFormField(
                     label: "Year",
@@ -138,7 +195,7 @@ class _UserFormState extends State<UserForm> {
                 ),
               ],
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             CustomDropdownFormField(
               label: "Gender",
               value: selectedGender,
@@ -149,7 +206,7 @@ class _UserFormState extends State<UserForm> {
                 });
               },
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             Row(
               children: [
                 Expanded(
@@ -159,7 +216,7 @@ class _UserFormState extends State<UserForm> {
                     enabled: true,
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: CustomTextFormField(
                     label: "Height (cm)",
@@ -169,7 +226,7 @@ class _UserFormState extends State<UserForm> {
                 ),
               ],
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             CustomDropdownFormField(
               label: "City",
               value: selectedCity,
@@ -180,7 +237,7 @@ class _UserFormState extends State<UserForm> {
                 });
               },
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             Row(
               children: [
                 Expanded(
@@ -190,7 +247,7 @@ class _UserFormState extends State<UserForm> {
                     enabled: true,
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: CustomTextFormField(
                     label: "Children",
@@ -200,20 +257,18 @@ class _UserFormState extends State<UserForm> {
                 ),
               ],
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             ElevatedButton(
-              onPressed: () {
-                // Add your submit logic here
-              },
+              onPressed: _submit,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors
                     .mainColor, // Assuming AppColors.primary is defined
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Submit',
                 style: TextStyle(fontSize: 16.0, color: Colors.white),
               ),
