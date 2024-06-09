@@ -26,6 +26,7 @@ class _UserFormState extends State<UserForm> {
   String? selectedMonth;
   String? selectedYear;
   String? selectedGender;
+  int? calculatedAge;
 
   final List<String> citiesInPakistan = [
     'Karachi',
@@ -65,7 +66,7 @@ class _UserFormState extends State<UserForm> {
 
   Future<void> _submit() async {
     final String firstName = firstNameController.text.trim();
-    final String lastName = lastNameController.text.trim();
+    final String lastName = firstNameController.text.trim();
     final int? weight = int.tryParse(weightController.text);
     final int? height = int.tryParse(heightController.text);
     final int? spouses = int.tryParse(spousesController.text);
@@ -95,6 +96,7 @@ class _UserFormState extends State<UserForm> {
         'weight': weight,
         'height': height,
         'dob': dob,
+        'age': calculatedAge,
         'gender': selectedGender,
         'city': selectedCity,
         'spouse': spouses ?? 0,
@@ -115,6 +117,27 @@ class _UserFormState extends State<UserForm> {
     } on PostgrestException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  void calculateAge() {
+    if (selectedDay != null && selectedMonth != null && selectedYear != null) {
+      final int day = int.parse(selectedDay!);
+      final int month = int.parse(selectedMonth!);
+      final int year = int.parse(selectedYear!);
+
+      final DateTime dob = DateTime(year, month, day);
+      final DateTime today = DateTime.now();
+
+      int age = today.year - dob.year;
+      if (today.month < dob.month ||
+          (today.month == dob.month && today.day < dob.day)) {
+        age--;
+      }
+
+      setState(() {
+        calculatedAge = age;
+      });
     }
   }
 
@@ -163,6 +186,7 @@ class _UserFormState extends State<UserForm> {
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedDay = newValue;
+                        calculateAge();
                       });
                     },
                   ),
@@ -176,6 +200,7 @@ class _UserFormState extends State<UserForm> {
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedMonth = newValue;
+                        calculateAge();
                       });
                     },
                   ),
@@ -189,12 +214,20 @@ class _UserFormState extends State<UserForm> {
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedYear = newValue;
+                        calculateAge();
                       });
                     },
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 24.0),
+            if (calculatedAge != null)
+              Text(
+                'Age: $calculatedAge years',
+                style: const TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
             const SizedBox(height: 24.0),
             CustomDropdownFormField(
               label: "Gender",
@@ -262,7 +295,7 @@ class _UserFormState extends State<UserForm> {
               onPressed: _submit,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors
-                    .mainColor, // Assuming AppColors.primary is defined
+                    .mainColor, // Assuming AppColors.mainColor is defined
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),

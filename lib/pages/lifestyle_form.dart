@@ -1,8 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:supabase_auth/components/my_drop_down.dart';
 import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
+import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,15 +20,15 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
   final TextEditingController _religionController = TextEditingController();
   final TextEditingController _castController = TextEditingController();
   final TextEditingController _educationController = TextEditingController();
-  final TextEditingController _firstNameController = TextEditingController();
-  final PageController _pageController = PageController(initialPage: 1);
+  final PageController _pageController = PageController(initialPage: 0);
   final List<String> _selectedInterests = [];
+
   // State for dropdown values
   String? _selectedJobSector;
   String? _selectedPersonalityType;
-  bool _smoking = false;
+  String _smoking = 'Never';
   double annualIncome = 10000;
-
+  bool isLastPage = false;
   final List<String> jobSectors = [
     'Technology',
     'Healthcare',
@@ -40,22 +43,20 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     "Music",
     "Fitness",
     "Crafts",
-    "Dancing",
     "Movies",
     "Games",
     "Reading",
     "Traveling",
     "Cooking",
-    "Gardening",
     "Technology",
     "Science",
     "Photography",
     "Writing",
     "Art",
-    "Coding",
     "Programming",
     "Design",
   ];
+
   final List<String> personalityTypes = [
     'ISTJ',
     'ISFJ',
@@ -86,25 +87,15 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     "Gardening"
   ];
 
-  final Set<String> selectedHobbies = Set<String>();
+  final Set<String> _selectedHobbies = Set<String>();
 
   @override
   void dispose() {
     // Dispose the controllers when the widget is disposed
-    // _hobbiesController.dispose();
-    // _interestsController.dispose();
     _religionController.dispose();
     _castController.dispose();
     _educationController.dispose();
-    _firstNameController.dispose();
     super.dispose();
-  }
-
-  void _submitPersonal() {
-    print("Form submitted");
-
-    // Implement form submission logic
-    // For example, you can save the data to the database here
   }
 
   void _launchURL() async {
@@ -118,14 +109,15 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
 
   void _toggleHobby(String hobby) {
     setState(() {
-      if (selectedHobbies.contains(hobby)) {
-        selectedHobbies.remove(hobby);
+      if (_selectedHobbies.contains(hobby)) {
+        _selectedHobbies.remove(hobby);
       } else {
-        if (selectedHobbies.length < 5) {
-          selectedHobbies.add(hobby);
+        if (_selectedHobbies.length < 5) {
+          _selectedHobbies.add(hobby);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('You can select up to 5 hobbies only.')),
+            const SnackBar(
+                content: Text('You can select up to 5 hobbies only.')),
           );
         }
       }
@@ -142,18 +134,81 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     });
   }
 
-  void _hobbiesSubmit() {
-    if (selectedHobbies.length < 1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select at least 1 hobby.')),
-      );
-    } else {
-      // Handle the submission of selected hobbies
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Selected Hobbies: ${selectedHobbies.join(", ")}')),
-      );
+  void _submitPersonal() {
+    // Handle the submission of personal details
+    if (_religionController.text.isEmpty ||
+        _castController.text.isEmpty ||
+        _educationController.text.isEmpty ||
+        _selectedJobSector == null ||
+        _selectedPersonalityType == null) {
+      throw Exception('Please fill in all the required fields.');
     }
+  }
+
+  void _submitHobbies() {
+    if (_selectedHobbies.length < 1) {
+      throw Exception('Please select at least one hobby.');
+    }
+  }
+
+  void _submitInterests() {
+    if (_selectedInterests.length < 1) {
+      throw Exception('Please select at least one interest.');
+    }
+  }
+
+  void _submit() async {
+    // Handle the submission of personal details
+    try {
+      _submitPersonal();
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+      _pageController.jumpToPage(0);
+      return;
+    }
+
+    // Handle the submission of selected hobbies
+    try {
+      _submitHobbies();
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+      _pageController.jumpToPage(1);
+      return;
+    }
+
+    // Handle the submission of selected interests
+    try {
+      _submitInterests();
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+      _pageController.jumpToPage(2);
+      return;
+    }
+    final List<Map<String, dynamic>> response =
+        await supabase.from("lifestyle").insert({
+      "job_sector": _selectedJobSector,
+      "personality_type": _selectedPersonalityType,
+      "annual_income": (annualIncome).toInt(),
+      "hobbies": _selectedHobbies.toString(),
+      "interests": _selectedInterests.toString(),
+      "smoking": _smoking,
+      "education": _educationController.text,
+      "cast": _castController.text,
+      "religion": _religionController.text
+    }).select();
+
+    final id = (response[0]['lid']);
+    await supabase
+        .from("users")
+        .update({"lid": id}).eq("uid", supabase.auth.currentUser!.id);
+    // Navigate to the next page
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Done!")));
+
+    Navigator.of(context).pushReplacementNamed('/preference');
   }
 
   @override
@@ -161,13 +216,71 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     return MyScaffold(
       appBar: AppBar(
         title: const Text(
-          "Lifestyle Details",
+          "Tell us a little about yourself",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
       ),
-      body: PageView(
-        controller: _pageController,
-        children: [_personalLifeStyle(), _hobbies(), _interests()],
+      body: Stack(
+        children: [
+          PageView(
+            onPageChanged: (value) => {
+              setState(() {
+                isLastPage = value == 2;
+              })
+            },
+            controller: _pageController,
+            children: [_personalLifeStyle(), _hobbies(), _interests()],
+          ),
+          Align(
+            alignment: const Alignment(0, 1.12),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                color: AppColors.mainColor.withOpacity(0.8),
+              ),
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.1,
+                right: MediaQuery.of(context).size.width * 0.1,
+                top: 19,
+                bottom: MediaQuery.of(context).size.height * 0.1,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        _pageController.previousPage(
+                            duration: Duration(milliseconds: 400),
+                            curve: Curves.easeInOut);
+                      },
+                      child: Icon(Icons.arrow_back_rounded)),
+                  SmoothPageIndicator(
+                    controller: _pageController,
+                    count: 3,
+                    effect: const WormEffect(
+                      activeDotColor: AppColors.mainColor,
+                      dotWidth: 10,
+                      dotHeight: 10,
+                    ),
+                  ),
+                  isLastPage
+                      ? GestureDetector(
+                          onTap: () {
+                            _submit();
+                          },
+                          child: Icon(Icons.check))
+                      : GestureDetector(
+                          onTap: () {
+                            _pageController.nextPage(
+                                duration: Duration(milliseconds: 400),
+                                curve: Curves.easeInOut);
+                          },
+                          child: Icon(Icons.arrow_forward_rounded)),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -175,72 +288,36 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
   Widget _interests() {
     return Column(
       children: [
-        Text(
-          "Interests",
+        const Text(
+          "Any Interests?",
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Expanded(
-          child: GridView.count(
-            crossAxisCount: 3,
-            children: interests.map((interest) {
-              return Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.network(
-                      'https://fastly.picsum.photos/id/1005/200/300.jpg?hmac=ZygrmRTuNYz9HivXcWqFGXDRVJxIHzaS-8MA0I3NKBw', // Replace with your image URL
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Center(
-                    child: ChoiceChip(
-                      backgroundColor: Colors.white.withOpacity(0.7),
-                      selectedColor: AppColors.mainColor.withOpacity(0.7),
-                      label: Text(interest),
-                      selected: _selectedInterests.contains(interest),
-                      onSelected: (selected) {
-                        _toggleInterest(interest);
-                      },
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Padding _hobbies() {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        children: <Widget>[
-          Text(
-            "Hobbies make you more interesting.",
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
-          ),
-          Expanded(
+          child: Container(
+            color: Colors.transparent,
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.1),
             child: GridView.count(
               crossAxisCount: 2,
-              mainAxisSpacing: 8.0,
-              children: hobbies.map((hobby) {
-                bool isSelected = selectedHobbies.contains(hobby);
+              mainAxisSpacing: 4.0,
+              childAspectRatio: 1.7,
+              children: interests.map((interest) {
+                bool isSelected = _selectedInterests.contains(interest);
                 return Card(
                   elevation: isSelected ? 15.0 : 2.0,
-                  // margin: EdgeInsets.all(8.0),
                   child: InkWell(
-                    onTap: () => _toggleHobby(hobby),
+                    onTap: () => _toggleInterest(interest),
                     splashColor: AppColors.mainColor.withOpacity(0.5),
                     child: Ink(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(
-                              'assets/images/${hobby.toLowerCase()}.jpg'),
+                          image: const AssetImage(
+                              // 'assets/images/${interest.toLowerCase()}.jpg'),
+                              'assets/images/app_background.png'),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             Colors.black.withOpacity(0.4),
@@ -257,15 +334,96 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
+                                  interest,
+                                  style: const TextStyle(
+                                    fontSize: 13.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 8.0),
+                                Icon(
+                                  isSelected
+                                      ? Icons.remove_circle
+                                      : Icons.add_circle,
+                                  color: isSelected ? Colors.red : Colors.green,
+                                  size: 22.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+        // SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+      ],
+    );
+  }
+
+  Padding _hobbies() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: <Widget>[
+          const Text(
+            "What are your Hobbies?",
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+          ),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 8.0,
+              childAspectRatio: 1.6,
+              children: hobbies.map((hobby) {
+                bool isSelected = _selectedHobbies.contains(hobby);
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+
+                  elevation: isSelected ? 15.0 : 2.0,
+                  // margin: EdgeInsets.all(8.0),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(15.0),
+                    onTap: () => _toggleHobby(hobby),
+                    splashColor: AppColors.mainColor.withOpacity(0.5),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                              'assets/images/hobbies/${hobby.toLowerCase()}.jpg'),
+                          fit: BoxFit.cover,
+                          colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.4),
+                            BlendMode.darken,
+                          ),
+                        ),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
                                   hobby,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                SizedBox(height: 8.0),
+                                const SizedBox(height: 8.0),
                                 Icon(
                                   isSelected
                                       ? Icons.remove_circle
@@ -284,36 +442,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
               }).toList(),
             ),
           ),
-          SizedBox(height: 16.0),
-          Center(
-            child: GestureDetector(
-              onTap: _hobbiesSubmit,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  color: AppColors.mainColor,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "Interests",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const SizedBox(
-                        width: 10), // Add some space between text and icon
-                    const Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          const SizedBox(height: 16.0),
         ],
       ),
     );
@@ -321,62 +450,40 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
 
   SingleChildScrollView _personalLifeStyle() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Job Sector',
-                labelStyle: TextStyle(color: Colors.black),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-              ),
+            CustomDropdownFormField(
+              label: "Job Sector",
               value: _selectedJobSector,
-              items: jobSectors.map((sector) {
-                return DropdownMenuItem<String>(
-                  value: sector,
-                  child: Text(sector),
-                );
-              }).toList(),
+              items: jobSectors,
               onChanged: (value) {
                 setState(() {
                   _selectedJobSector = value;
                 });
               },
             ),
-            // const SizedBox(height: 10),
-            // CustomTextFormField(
-            //   label: "Hobbies",
-            //   controller: _hobbiesController,
-            //   enabled: true,
-            // ),
-            // const SizedBox(height: 10),
-            // CustomTextFormField(
-            //   label: "Interests",
-            //   controller: _interestsController,
-            //   enabled: true,
-            // ),
             const SizedBox(height: 10),
-            const SizedBox(height: 10),
-            CustomTextFormField(
-              label: "Religion",
-              controller: _religionController,
-              enabled: true,
-            ),
-            const SizedBox(height: 10),
-            CustomTextFormField(
-              label: "Cast",
-              controller: _castController,
-              enabled: true,
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextFormField(
+                    label: "Religion",
+                    controller: _religionController,
+                    enabled: true,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: CustomTextFormField(
+                    label: "Cast",
+                    controller: _castController,
+                    enabled: true,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             CustomTextFormField(
@@ -401,52 +508,44 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                 });
               },
             ),
-            SwitchListTile(
-              title: const Text(
-                "Smoking",
-                style: TextStyle(color: Colors.black),
-              ),
-              value: _smoking,
-              onChanged: (bool value) {
-                setState(() {
-                  _smoking = value;
-                });
-              },
-              activeColor: AppColors.mainColor,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Do you smoke?",
+                  style: TextStyle(color: Colors.black, fontSize: 18),
+                ),
+                SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildRadioButton('Never'),
+                      _buildRadioButton('Rarely'),
+                      _buildRadioButton('Sometimes'),
+                      _buildRadioButton('Often'),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Personality Type',
-                labelStyle: TextStyle(fontSize: 14, color: Colors.black),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-              ),
-              value: _selectedPersonalityType,
-              items: personalityTypes.map((type) {
-                return DropdownMenuItem<String>(
-                  value: type,
-                  child: Text(type),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedPersonalityType = value;
-                });
-              },
-            ),
+            CustomDropdownFormField(
+                label: 'Personality Type',
+                value: _selectedPersonalityType,
+                items: personalityTypes,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPersonalityType = value;
+                  });
+                }),
             const SizedBox(height: 10),
             RichText(
               text: TextSpan(
                 text: "Don't know your personality type? ",
-                style: const TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black, fontSize: 12),
                 children: [
                   TextSpan(
                     text: "Click here",
@@ -463,38 +562,39 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
               ),
             ),
             const SizedBox(height: 20),
-
-            Center(
-              child: GestureDetector(
-                onTap: _submitPersonal,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    color: AppColors.mainColor,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        "Hobbies",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                      const SizedBox(
-                          width: 10), // Add some space between text and icon
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRadioButton(String value) {
+    return Transform.scale(
+      alignment: Alignment.centerLeft,
+      scale: 1,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Radio<String>(
+            value: value,
+            groupValue: _smoking,
+            onChanged: (String? newValue) {
+              setState(() {
+                _smoking = newValue!;
+              });
+            },
+            activeColor: AppColors.mainColor, // Use the custom color
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 10.0,
+              color: _smoking == value ? AppColors.mainColor : Colors.black,
+              fontWeight:
+                  _smoking == value ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
       ),
     );
   }
