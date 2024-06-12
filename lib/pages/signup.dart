@@ -1,8 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:supabase_auth/components/my_button.dart';
 import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/main.dart';
@@ -151,22 +150,11 @@ class _SignUpState extends State<SignUp> {
             SizedBox(
               height: 0.33 * MediaQuery.of(context).size.height,
             ),
-            GestureDetector(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 45),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    color: Colors.white12),
-                child: Text(
-                  "SignUp",
-                  style: TextStyle(color: mainColor),
-                ),
-              ),
+            MyCustomButton(
               onTap: () async {
                 await _verifyOTP(context);
               },
+              text: "Sign Up",
             ),
             const SizedBox(
               height: 8,

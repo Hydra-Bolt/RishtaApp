@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:supabase_auth/components/my_button.dart';
 import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/main.dart';
@@ -74,23 +75,11 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               height: 0.41 * MediaQuery.of(context).size.height,
             ),
-            GestureDetector(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 45),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    color: Colors.white12),
-                child: Text(
-                  "Login",
-                  style:
-                      TextStyle(color: mainColor, fontWeight: FontWeight.bold),
-                ),
-              ),
+            MyCustomButton(
               onTap: () async {
                 await _login(context);
               },
+              text: "Login",
             ),
             const SizedBox(
               height: 10,

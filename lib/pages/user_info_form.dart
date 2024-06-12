@@ -66,7 +66,7 @@ class _UserFormState extends State<UserForm> {
 
   Future<void> _submit() async {
     final String firstName = firstNameController.text.trim();
-    final String lastName = firstNameController.text.trim();
+    final String lastName = lastNameController.text.trim();
     final int? weight = int.tryParse(weightController.text);
     final int? height = int.tryParse(heightController.text);
     final int? spouses = int.tryParse(spousesController.text);
@@ -88,29 +88,25 @@ class _UserFormState extends State<UserForm> {
     }
 
     final String dob = '$selectedYear-$selectedMonth-$selectedDay';
-
+    Object values = {
+      'uid': supabase.auth.currentUser!.id,
+      'name': firstName + lastName,
+      'weight': weight,
+      'height': height,
+      'dob': dob,
+      'age': calculatedAge,
+      'gender': selectedGender,
+      'city': selectedCity,
+      'spouse': spouses ?? 0,
+      'kids': children ?? 0,
+    };
+    print(values);
     try {
-      final response = await supabase.from('users').insert({
-        'uid': supabase.auth.currentUser!.id,
-        'name': firstName + lastName,
-        'weight': weight,
-        'height': height,
-        'dob': dob,
-        'age': calculatedAge,
-        'gender': selectedGender,
-        'city': selectedCity,
-        'spouse': spouses ?? 0,
-        'kids': children ?? 0,
-      });
+      await supabase.from('users').insert(values);
 
-      if (response.error == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User data saved successfully!')));
-        Navigator.of(context).pushReplacementNamed('/home');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${response.error!.message}')));
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User data saved successfully!')));
+      Navigator.of(context).pushReplacementNamed('/home');
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message)));
@@ -222,13 +218,13 @@ class _UserFormState extends State<UserForm> {
               ],
             ),
             const SizedBox(height: 24.0),
-            if (calculatedAge != null)
-              Text(
-                'Age: $calculatedAge years',
-                style: const TextStyle(
-                    fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-            const SizedBox(height: 24.0),
+            // if (calculatedAge != null)
+            //   Text(
+            //     'Age: $calculatedAge years',
+            //     style: const TextStyle(
+            //         fontSize: 16.0, fontWeight: FontWeight.bold),
+            //   ),
+            // const SizedBox(height: 24.0),
             CustomDropdownFormField(
               label: "Gender",
               value: selectedGender,
