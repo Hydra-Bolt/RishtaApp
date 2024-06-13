@@ -17,14 +17,14 @@ class LifeStyleForm extends StatefulWidget {
 
 class _LifeStyleFormState extends State<LifeStyleForm> {
   // Controllers for other form fields
-  final TextEditingController _religionController = TextEditingController();
   final TextEditingController _castController = TextEditingController();
-  final TextEditingController _educationController = TextEditingController();
   final PageController _pageController = PageController(initialPage: 0);
   final List<String> _selectedInterests = [];
 
   // State for dropdown values
   String? _selectedJobSector;
+  String? _selectedReligion;
+  String? _selectedEduLevel;
   String? _selectedPersonalityType;
   String _smoking = 'Never';
   double annualIncome = 10000;
@@ -87,14 +87,27 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     "Gardening"
   ];
 
+  List<String> religions = [
+    'Christianity',
+    'Islam',
+    'Sikhism',
+    'Atheism',
+    'Agnosticism',
+  ];
+
+  List<String> eduLevels = [
+    'Intermediate',
+    'Some Bachelor\'s Degree',
+    'Some Master\'s Degree',
+    'Some Doctorate',
+  ];
+
   final Set<String> _selectedHobbies = Set<String>();
 
   @override
   void dispose() {
     // Dispose the controllers when the widget is disposed
-    _religionController.dispose();
     _castController.dispose();
-    _educationController.dispose();
     super.dispose();
   }
 
@@ -136,9 +149,9 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
 
   void _submitPersonal() {
     // Handle the submission of personal details
-    if (_religionController.text.isEmpty ||
+    if (_selectedEduLevel == null ||
         _castController.text.isEmpty ||
-        _educationController.text.isEmpty ||
+        _selectedReligion == null ||
         _selectedJobSector == null ||
         _selectedPersonalityType == null) {
       throw Exception('Please fill in all the required fields.');
@@ -195,9 +208,9 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       "hobbies": _selectedHobbies.toString(),
       "interests": _selectedInterests.toString(),
       "smoking": _smoking,
-      "education": _educationController.text,
+      "education": _selectedEduLevel,
       "cast": _castController.text,
-      "religion": _religionController.text
+      "religion": _selectedReligion
     }).select();
 
     final id = (response[0]['lid']);
@@ -469,12 +482,15 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             Row(
               children: [
                 Expanded(
-                  child: CustomTextFormField(
-                    label: "Religion",
-                    controller: _religionController,
-                    enabled: true,
-                  ),
-                ),
+                    child: CustomDropdownFormField(
+                        label: "Religion",
+                        value: _selectedReligion,
+                        items: religions,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedReligion = value;
+                          });
+                        })),
                 const SizedBox(width: 10),
                 Expanded(
                   child: CustomTextFormField(
@@ -486,11 +502,15 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
               ],
             ),
             const SizedBox(height: 10),
-            CustomTextFormField(
-              label: "Education",
-              controller: _educationController,
-              enabled: true,
-            ),
+            CustomDropdownFormField(
+                label: "Highest Qualification",
+                value: _selectedEduLevel,
+                items: eduLevels,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedEduLevel = value;
+                  });
+                }),
             const SizedBox(height: 20),
             Text(
               'Annual Income: ${annualIncome.toStringAsFixed(0)}Rs+', // Display the slider value as text

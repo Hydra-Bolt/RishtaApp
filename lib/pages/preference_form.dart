@@ -95,9 +95,10 @@ class _PreferenceFormState extends State<PreferenceForm> {
 
     print(response);
     final id = (response[0]['pid']);
-    await supabase
+    final res = await supabase
         .from("users")
         .update({"pid": id}).eq("uid", supabase.auth.currentUser!.id);
+
     // // Example: Send the data to an API endpoint
     // final url = Uri.parse('https://your-api-endpoint.com/preferences');
     // final response = await http.post(
@@ -106,15 +107,17 @@ class _PreferenceFormState extends State<PreferenceForm> {
     //   body: jsonEncode(formData),
     // );
 
-    // if (response.statusCode == 200) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Preferences submitted successfully!')),
-    //   );
-    // } else {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Failed to submit preferences')),
-    //   );
-    // }
+    // // Handle the response
+    if (res == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Preferences submitted successfully!')),
+      );
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to submit preferences')),
+      );
+    }
   }
 
   @override
