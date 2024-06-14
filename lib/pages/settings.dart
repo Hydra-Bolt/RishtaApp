@@ -17,6 +17,7 @@ class SettingsPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {
               supabase.auth.signOut();
+              Navigator.of(context).pushReplacementNamed('/');
             },
             child: const Text('Sign Out'),
           )),
