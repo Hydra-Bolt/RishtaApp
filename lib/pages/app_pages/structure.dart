@@ -1,11 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/main.dart';
-import 'package:supabase_auth/pages/connections.dart';
-import 'package:supabase_auth/pages/main_page.dart';
-import 'package:supabase_auth/pages/messages.dart';
-import 'package:supabase_auth/pages/profile.dart';
-import 'package:supabase_auth/pages/settings.dart';
+import 'package:supabase_auth/pages/app_pages/connections.dart';
+import 'package:supabase_auth/pages/app_pages/main_page.dart';
+import 'package:supabase_auth/pages/app_pages/messages.dart';
+import 'package:supabase_auth/pages/app_pages/profile.dart';
+import 'package:supabase_auth/pages/app_pages/settings.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
 class MainPage extends StatefulWidget {
