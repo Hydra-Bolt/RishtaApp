@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/pages/login_pages/account_page.dart';
+import 'package:supabase_auth/pages/login_pages/images_upload.dart';
 import 'package:supabase_auth/pages/login_pages/lifestyle_form.dart';
 import 'package:supabase_auth/pages/login_pages/login_page.dart';
 import 'package:supabase_auth/pages/login_pages/preference_form.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashPage(),
         '/home': (context) => const MainPage(),
+        '/images': (context) => const ImagesUpload(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUp(),
         '/account': (context) => const AccountPage(),
