@@ -13,26 +13,26 @@ class MainHomePage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainHomePage> {
-  late final Dimensions dimensions;
-  late final double appBarHeight;
-  late final double leadingWidth;
-  late final double leadingMargin;
-  late final double logoWidth;
-  late final double logoHeight;
-  late final double container1Height;
-  late final double container1Width;
-  late final double container1TopMargin;
-  late final double container2Height;
-  late final double container2Width;
-  late final double container2BottomMargin;
-  late final double borderRadius;
-  late final double containerBorderWidth;
+  late Dimensions dimensions;
+  late double appBarHeight;
+  late double leadingWidth;
+  late double leadingMargin;
+  late double logoWidth;
+  late double logoHeight;
+  late double container1Height;
+  late double container1Width;
+  late double container1TopMargin;
+  late double container2Height;
+  late double container2Width;
+  late double container2BottomMargin;
+  late double borderRadius;
+  late double containerBorderWidth;
 
-  late final Color primaryBackgroundColor;
-  late final Color mainThemeColor;
-  late final Color mainPageContainer1Background;
-  late final Color mainPageContainer2Background;
-  late final Color shadowColor;
+  late Color primaryBackgroundColor;
+  late Color mainThemeColor;
+  late Color mainPageContainer1Background;
+  late Color mainPageContainer2Background;
+  late Color shadowColor;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,6 @@ class _MainPageState extends State<MainHomePage> {
     mainPageContainer1Background = MainColors.mainPageContainer1Background;
     mainPageContainer2Background = MainColors.mainPageContainer2Background;
     shadowColor = MainColors.shadowColor;
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
