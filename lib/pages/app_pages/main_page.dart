@@ -24,6 +24,7 @@ class _MainPageState extends State<MainHomePage> {
   late double container1TopMargin;
   late double container2Height;
   late double container2Width;
+  late double container1BotttomMargin;
   late double container2BottomMargin;
   late double borderRadius;
   late double containerBorderWidth;
@@ -37,17 +38,18 @@ class _MainPageState extends State<MainHomePage> {
   @override
   Widget build(BuildContext context) {
     dimensions = Dimensions(context);
-    appBarHeight = dimensions.height(15.78);
+    appBarHeight = dimensions.height(8.78);
     leadingWidth = dimensions.screenWidth();
     leadingMargin = dimensions.height(4.184);
-    logoWidth = dimensions.width(39.82);
-    logoHeight = dimensions.height(14.64);
-    container1Height = dimensions.height(15.69);
+    logoWidth = dimensions.width(25.82);
+    logoHeight = dimensions.height(24.64);
+    container1Height = dimensions.height(19.69);
     container1Width = dimensions.width(84.07);
-    container1TopMargin = dimensions.height(45);
-    container2Height = dimensions.height(49.16);
+    container1TopMargin = dimensions.height(47);
+    container2Height = dimensions.height(66.16);
     container2Width = dimensions.width(84.07);
-    container2BottomMargin = dimensions.height(31.38);
+    container2BottomMargin = dimensions.height(36.38);
+    container1BotttomMargin = dimensions.height(9.38);
     borderRadius = dimensions.width(3.54);
     containerBorderWidth = 1.5;
 
@@ -73,7 +75,8 @@ class _MainPageState extends State<MainHomePage> {
           ),
         ),
       ),
-      body: Center(
+      body: Container(
+        alignment: Alignment.topCenter,
         child: Stack(
           children: [
             // Bottom Container
@@ -81,6 +84,7 @@ class _MainPageState extends State<MainHomePage> {
               height: container1Height,
               width: container1Width,
               topMargin: container1TopMargin,
+              bottomMargin: container1BotttomMargin,
               backgroundColor: mainPageContainer1Background,
               borderRadius: borderRadius,
               borderColor: mainThemeColor,
@@ -99,7 +103,7 @@ class _MainPageState extends State<MainHomePage> {
             ),
             // Buttons
             Positioned(
-              bottom: 120,
+              bottom: dimensions.height(9.5),
               width: container1Width,
               child: ButtonBar(
                 alignment: MainAxisAlignment.center,
