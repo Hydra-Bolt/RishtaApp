@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
 class CustomButtons {
-  static Widget closeButton() {
+  static Widget closeButton(void Function()? onPressed) {
     return SizedBox(
       width: 110,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.black,
           backgroundColor: Colors.white,
@@ -20,11 +20,11 @@ class CustomButtons {
     );
   }
 
-  static Widget checkButton() {
+  static Widget checkButton(void Function()? onPressed) {
     return SizedBox(
       width: 110,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: MainColors.mainThemeColor,

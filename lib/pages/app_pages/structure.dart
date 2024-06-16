@@ -1,6 +1,5 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/pages/app_pages/connections.dart';
 import 'package:supabase_auth/pages/app_pages/main_page.dart';
 import 'package:supabase_auth/pages/app_pages/messages.dart';
@@ -17,40 +16,14 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int pageStateIndex = 2;
+  late final List rishtas;
   Map<String, dynamic>? userData;
   late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
     _pageController = PageController(initialPage: pageStateIndex);
-  }
-
-  Future<void> _fetchUserData() async {
-    try {
-      final response = await supabase
-          .from('users')
-          .select()
-          .eq('uid', supabase.auth.currentUser!.id)
-          .single();
-
-      setState(() {
-        userData = response;
-      });
-      if (!mounted) return;
-      if (userData!['lid'] == null) {
-        Navigator.of(context).pushReplacementNamed('/lifestyle');
-      } else if (userData!['pid'] == null) {
-        Navigator.of(context).pushReplacementNamed('/preference');
-      }
-    } catch (error) {
-      // Handle the error appropriately here
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/userform');
-        print('Error fetching user data: $error');
-      }
-    }
   }
 
   @override

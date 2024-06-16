@@ -20,23 +20,24 @@ class CustomDropdownFormField extends StatelessWidget {
       value: value,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.black, fontSize: 12.0),
+        labelStyle: const TextStyle(color: Colors.black, fontSize: 12.0),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 9.0),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 9.0),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(6.0)),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(6.0)),
           borderSide: BorderSide(color: Color(0xFFFA2A55), width: 1.0),
         ),
-        errorBorder: OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(6.0)),
           borderSide: BorderSide(color: Colors.red, width: 1.0),
         ),
-        focusedErrorBorder: OutlineInputBorder(
+        focusedErrorBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(6.0)),
           borderSide: BorderSide(color: Colors.red, width: 1.0),
         ),
