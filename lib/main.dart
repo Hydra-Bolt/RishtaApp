@@ -3,6 +3,7 @@ import 'package:supabase_auth/pages/login_pages/account_page.dart';
 import 'package:supabase_auth/pages/login_pages/lifestyle_form.dart';
 import 'package:supabase_auth/pages/login_pages/login_page.dart';
 import 'package:supabase_auth/pages/login_pages/preference_form.dart';
+import 'package:supabase_auth/pages/login_pages/recover.dart';
 import 'package:supabase_auth/pages/login_pages/signup.dart';
 import 'package:supabase_auth/pages/login_pages/splash_page.dart';
 import 'package:supabase_auth/pages/app_pages/structure.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashPage(),
         '/home': (context) => const MainPage(),
         '/login': (context) => const LoginPage(),
+        '/recover': (context) => const RecoverAccount(),
         '/signup': (context) => const SignUp(),
         '/account': (context) => const AccountPage(),
         '/userform': (context) => const UserForm(),
