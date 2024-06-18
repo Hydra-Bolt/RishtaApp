@@ -11,8 +11,10 @@ class BottomContainer extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final double bottomMargin;
+  final rishta;
   const BottomContainer({
     super.key,
+    required this.rishta,
     required this.height,
     required this.width,
     required this.topMargin,
