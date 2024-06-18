@@ -11,7 +11,7 @@ class BottomContainer extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final double bottomMargin;
-  final rishta;
+  final dynamic rishta;
   const BottomContainer({
     super.key,
     required this.rishta,
@@ -44,7 +44,9 @@ class BottomContainer extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const CustomRichText(),
+                CustomRichText(
+                  rishta: rishta,
+                ),
                 CustomButtons.heartButton(),
               ],
             ),

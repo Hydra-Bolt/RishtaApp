@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/bottom_container.dart';
@@ -40,7 +42,8 @@ class _MainPageState extends State<MainHomePage> {
   List rishtas = [];
   dynamic rishta;
   Map<String, dynamic>? userData;
-  bool isLoading = true; // Add this line
+  bool isLoading = true;
+  Iterator<dynamic>? rishtaItr; // Add this line
 
   /// Initializes the state of the [_MainPageState] class.
   ///
@@ -124,9 +127,9 @@ class _MainPageState extends State<MainHomePage> {
 
       setState(() {
         rishtas = rishtasFound;
-        var rishtaItr = rishtas.iterator;
-        rishtaItr.moveNext();
-        rishta = rishtaItr.current;
+        rishtaItr = rishtas.iterator;
+        rishtaItr!.moveNext();
+        rishta = rishtaItr!.current;
         isLoading = false; // Add this line
         print(rishta);
       });
@@ -234,9 +237,25 @@ class _MainPageState extends State<MainHomePage> {
                         child: ButtonBar(
                           alignment: MainAxisAlignment.center,
                           children: [
-                            CustomButtons.closeButton(() {}),
+                            CustomButtons.closeButton(() {
+                              // _rejected()
+
+                              if (rishtaItr!.moveNext()) {
+                                setState(() {
+                                  rishta = rishtaItr!.current;
+                                });
+                              }
+                            }),
                             const SizedBox(width: 20),
-                            CustomButtons.checkButton(() {}),
+                            CustomButtons.checkButton(() {
+                              // _accepted()
+
+                              if (rishtaItr!.moveNext()) {
+                                setState(() {
+                                  rishta = rishtaItr!.current;
+                                });
+                              }
+                            }),
                           ],
                         ),
                       ),

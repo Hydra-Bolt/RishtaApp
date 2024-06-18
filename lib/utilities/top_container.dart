@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
+import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
 
 class TopContainer extends StatefulWidget {
@@ -32,6 +33,26 @@ class TopContainer extends StatefulWidget {
 }
 
 class _TopContainerState extends State<TopContainer> {
+  bool isLoading = true;
+  List? photos;
+
+  @override
+  void initState() {
+    super.initState();
+    _getPhotos();
+  }
+
+  void _getPhotos() async {
+    var rishtaUid = widget.rishta['uid'];
+
+    var res = await supabase.from("userphoto").select('*').eq('uid', rishtaUid);
+    setState(() {
+      isLoading = false;
+      photos = res;
+      print(photos);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -52,28 +73,37 @@ class _TopContainerState extends State<TopContainer> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        child: Stack(
-          children: [
-            AnotherCarousel(
-              images: const [
-                AssetImage('assets/images/muneeb1.png'),
-                AssetImage('assets/images/muneeb2.png'),
-                AssetImage('assets/images/muneeb3.png')
-              ],
-              dotSize: 3,
-              indicatorBgPadding: 4,
-              autoplayDuration: const Duration(seconds: 5),
+      child: isLoading
+          ? const CircularProgressIndicator()
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              child: Stack(
+                children: [
+                  AnotherCarousel(
+                    images: photos!.isEmpty
+                        ? [
+                            widget.rishta['gender'] == 'Male'
+                                ? AssetImage('assets/images/male.jpg')
+                                : AssetImage('assets/images/female.jpg'),
+                            AssetImage('assets/images/not_found.png'),
+                          ]
+                        : [
+                            AssetImage('assets/images/muneeb1.png'),
+                            AssetImage('assets/images/muneeb2.png'),
+                            AssetImage('assets/images/muneeb3.png')
+                          ],
+                    dotSize: 3,
+                    indicatorBgPadding: 4,
+                    autoplayDuration: const Duration(seconds: 5),
+                  ),
+                  Positioned(
+                    top: 8.0,
+                    right: 8.0,
+                    child: CustomButtons.popupMenuButton(),
+                  ),
+                ],
+              ),
             ),
-            Positioned(
-              top: 8.0,
-              right: 8.0,
-              child: CustomButtons.popupMenuButton(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
