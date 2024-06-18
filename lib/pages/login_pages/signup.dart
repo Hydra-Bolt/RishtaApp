@@ -18,6 +18,7 @@ class _SignUpState extends State<SignUp> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final otpController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   bool codeEnabled = false;
   bool requestedCode = false;
   Color mainColor = const Color(0xFFFA2A55);
@@ -63,11 +64,20 @@ class _SignUpState extends State<SignUp> {
             CustomTextFormField(
                 label: "Email", controller: emailController, enabled: true),
             const SizedBox(
-              height: 15,
+              height: 8,
             ),
             CustomTextFormField(
               label: "Password",
               controller: passwordController,
+              enabled: true,
+              isObscure: true,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            CustomTextFormField(
+              label: "Confirm Passoword",
+              controller: confirmPasswordController,
               enabled: true,
               isObscure: true,
             ),
@@ -88,38 +98,7 @@ class _SignUpState extends State<SignUp> {
                 GestureDetector(
                   onTap: codeEnabled
                       ? () async {
-                          try {
-                            final email = emailController.text.trim();
-                            final password = passwordController.text.trim();
-                            await supabase.auth
-                                .signUp(email: email, password: password);
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("OTP sent, check your inbox"),
-                                ),
-                              );
-                              setState(() {
-                                requestedCode = true;
-                              });
-                            }
-                          } on AuthException catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(e.message),
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.error,
-                              ),
-                            );
-                          } on Exception {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text("Error"),
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.error,
-                              ),
-                            );
-                          }
+                          await _sendVerificationCode(context);
                         }
                       : () => ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -147,9 +126,7 @@ class _SignUpState extends State<SignUp> {
                 )
               ],
             ),
-            SizedBox(
-              height: 0.33 * MediaQuery.of(context).size.height,
-            ),
+            Spacer(),
             MyCustomButton(
               onTap: () async {
                 await _verifyOTP(context);
@@ -180,11 +157,55 @@ class _SignUpState extends State<SignUp> {
                   },
                 ),
               ],
-            )
+            ),
+            const SizedBox(
+              height: 8,
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _sendVerificationCode(BuildContext context) async {
+    try {
+      final email = emailController.text.trim();
+      final password = passwordController.text.trim();
+      final confirm = confirmPasswordController.text.trim();
+      if (password != confirm) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Passwords do not match"),
+          ),
+        );
+        return;
+      }
+      await supabase.auth.signUp(email: email, password: password);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("OTP sent, check your inbox"),
+          ),
+        );
+        setState(() {
+          requestedCode = true;
+        });
+      }
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } on Exception {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Error"),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
   }
 
   Future<void> _verifyOTP(BuildContext context) async {
