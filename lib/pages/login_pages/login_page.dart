@@ -6,7 +6,6 @@ import 'package:supabase_auth/components/my_button.dart';
 import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/main.dart';
-import 'package:supabase_auth/utilities/dimensions.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -74,62 +73,37 @@ class _LoginPageState extends State<LoginPage> {
               isObscure: true,
             ),
             SizedBox(
+              height: 0.41 * MediaQuery.of(context).size.height,
+            ),
+            MyCustomButton(
+              onTap: () async {
+                await _login(context);
+              },
+              text: "Login",
+            ),
+            const SizedBox(
               height: 10,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const Text(
+                  "or",
+                  style: const TextStyle(color: Colors.grey),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
                 GestureDetector(
-                  onTap: () =>
-                      Navigator.of(context).pushReplacementNamed("/recover"),
                   child: Text(
-                    "Forgot Password?",
+                    "Sign up?",
                     style: TextStyle(
-                      color: mainColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        color: mainColor, fontWeight: FontWeight.bold),
                   ),
+                  onTap: () =>
+                      {Navigator.of(context).pushReplacementNamed("/signup")},
                 ),
               ],
-            ),
-            const Spacer(),
-            Padding(
-              padding: EdgeInsets.only(bottom: Dimensions(context).height(5)),
-              child: Column(
-                children: [
-                  MyCustomButton(
-                    onTap: () async {
-                      await _login(context);
-                    },
-                    text: "Login",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "or",
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      GestureDetector(
-                        child: Text(
-                          "Sign up?",
-                          style: TextStyle(
-                              color: mainColor, fontWeight: FontWeight.bold),
-                        ),
-                        onTap: () => {
-                          Navigator.of(context).pushReplacementNamed("/signup")
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
             )
           ],
         ),
