@@ -55,7 +55,7 @@ class _AccountPageState extends State<AccountPage> {
         });
         if (response.error == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('User data saved successfully!')));
+              const SnackBar(content: Text('User data saved successfully!')));
           Navigator.of(context).pushReplacementNamed('/main');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -74,7 +74,7 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Account Page')),
+      appBar: AppBar(title: const Text('Account Page')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -83,63 +83,63 @@ class _AccountPageState extends State<AccountPage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Name'),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter a name' : null,
               ),
               TextFormField(
                 controller: _weightController,
-                decoration: InputDecoration(labelText: 'Weight'),
+                decoration: const InputDecoration(labelText: 'Weight'),
                 keyboardType: TextInputType.number,
               ),
               TextFormField(
                 controller: _heightController,
-                decoration: InputDecoration(labelText: 'Height'),
+                decoration: const InputDecoration(labelText: 'Height'),
                 keyboardType: TextInputType.number,
               ),
               TextFormField(
                 controller: _ageController,
-                decoration: InputDecoration(labelText: 'Age'),
+                decoration: const InputDecoration(labelText: 'Age'),
                 keyboardType: TextInputType.number,
               ),
               TextFormField(
                 controller: _dobController,
-                decoration:
-                    InputDecoration(labelText: 'Date of Birth (YYYY-MM-DD)'),
+                decoration: const InputDecoration(
+                    labelText: 'Date of Birth (YYYY-MM-DD)'),
               ),
               TextFormField(
                 controller: _genderController,
-                decoration: InputDecoration(labelText: 'Gender'),
+                decoration: const InputDecoration(labelText: 'Gender'),
               ),
               TextFormField(
                 controller: _countryController,
-                decoration: InputDecoration(labelText: 'Country'),
+                decoration: const InputDecoration(labelText: 'Country'),
               ),
               TextFormField(
                 controller: _cityController,
-                decoration: InputDecoration(labelText: 'City'),
+                decoration: const InputDecoration(labelText: 'City'),
               ),
               TextFormField(
                 controller: _spouseController,
-                decoration: InputDecoration(labelText: 'Spouse'),
+                decoration: const InputDecoration(labelText: 'Spouse'),
                 keyboardType: TextInputType.number,
               ),
               TextFormField(
                 controller: _kidsController,
-                decoration: InputDecoration(labelText: 'Kids'),
+                decoration: const InputDecoration(labelText: 'Kids'),
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text('Submit'),
+                child: const Text('Submit'),
               ),
               ElevatedButton(
                 onPressed: () {
                   Supabase.instance.client.auth.signOut();
                   Navigator.of(context).pushReplacementNamed('/');
                 },
-                child: Text('Sign Out'),
+                child: const Text('Sign Out'),
               ),
             ],
           ),
