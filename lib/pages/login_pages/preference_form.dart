@@ -93,7 +93,6 @@ class _PreferenceFormState extends State<PreferenceForm> {
     final List<Map<String, dynamic>> response =
         await supabase.from("preference").insert(formData).select();
 
-    print(response);
     final id = (response[0]['pid']);
     final res = await supabase
         .from("users")

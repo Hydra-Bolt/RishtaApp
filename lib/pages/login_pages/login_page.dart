@@ -29,7 +29,6 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _authSubsription = supabase.auth.onAuthStateChange.listen((event) {
       final session = event.session;
-      print(session);
       if (session != null) {
         Navigator.of(context).pushReplacementNamed('/home');
       }

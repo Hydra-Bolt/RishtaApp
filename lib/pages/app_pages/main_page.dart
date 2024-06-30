@@ -107,7 +107,6 @@ class _MainPageState extends State<MainHomePage>
           .map((religion) =>
               religion.replaceAll('"', '')) // Remove double quotes
           .toList();
-      print(religions);
       var baseQuery = supabase.from('users').select('''
           *,
           lifestyle(*)
@@ -132,7 +131,6 @@ class _MainPageState extends State<MainHomePage>
         rishtaItr!.moveNext();
         rishta = rishtaItr!.current;
         isLoading = false; // Add this line
-        print(rishta);
       });
     } catch (error) {
       // Handle the error appropriately here
@@ -153,6 +151,7 @@ class _MainPageState extends State<MainHomePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     dimensions = Dimensions(context);
     appBarHeight = dimensions.height(8.78);
     leadingWidth = dimensions.screenWidth();
