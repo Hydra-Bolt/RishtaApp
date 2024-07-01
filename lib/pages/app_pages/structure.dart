@@ -43,9 +43,9 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.transparent,
         extendBody: true,
         bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor: MainColors.primaryBackground,
+          backgroundColor: Colors.transparent,
           color: MainColors.navigationBackground,
-          buttonBackgroundColor: MainColors.primaryBackground,
+          buttonBackgroundColor: Colors.transparent,
           animationDuration: const Duration(milliseconds: 300),
           height: 45,
           items: [

@@ -16,8 +16,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
   @override
   void initState() {
     super.initState();
-    acceptedMatches = getAccepted();
-    pendingMatches = getPending();
+    setMatches();
   }
 
   Future<List> getAccepted() async {
@@ -97,13 +96,58 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                     color: Colors.white, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                'Rishta inivte sent on ${match['request_date']}',
-                style: const TextStyle(color: Colors.white70),
+                match['request_date'] == null
+                    ? 'Sent on Unknown Date'
+                    : 'Sent on ${DateTime.parse(match['request_date']).toString().split(' ').first}',
+                style: TextStyle(color: Colors.white70),
               ),
-              trailing: Icon(
-                Icons.check_circle,
-                color:
-                    match['status'] == 'Accepted' ? Colors.green : Colors.grey,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  match['status'] != 'Accepted'
+                      ? GestureDetector(
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor: Colors.grey[700],
+                              titleTextStyle: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                              contentTextStyle: const TextStyle(fontSize: 16),
+                              title: const Text('Cancel request?'),
+                              content: const Text(
+                                  'Are you sure you want to cancel the request?'),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context)
+                                      .pop(), // Dismisses the dialog
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                        color: MainColors.mainThemeColor),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => cancelMatchRequest(
+                                      match['request_by'], match['request_to']),
+                                  child: const Text(
+                                    'Confirm',
+                                    style: TextStyle(
+                                        color: MainColors.mainThemeColor),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.cancel_schedule_send_sharp,
+                            color: Colors.red,
+                          ),
+                        )
+                      : Icon(Icons.check_circle, color: Colors.green)
+                ],
               ),
             ),
           );
@@ -143,5 +187,25 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
         ),
       ),
     );
+  }
+
+  cancelMatchRequest(requestBy, requestTo) async {
+    print(requestBy);
+    print(requestTo);
+    final res = await supabase
+        .from('matches')
+        .delete()
+        .eq('request_by', requestBy)
+        .eq("request_to", requestTo);
+    print(res);
+    setMatches();
+    Navigator.of(context).pop();
+  }
+
+  void setMatches() {
+    setState(() {
+      acceptedMatches = getAccepted();
+      pendingMatches = getPending();
+    });
   }
 }
