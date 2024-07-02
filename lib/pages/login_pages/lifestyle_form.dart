@@ -95,12 +95,12 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     'Agnosticism',
   ];
 
-  List<String> eduLevels = [
-    'Intermediate',
-    'Some Bachelor\'s Degree',
-    'Some Master\'s Degree',
-    'Some Doctorate',
-  ];
+  Map<String, String> eduLevelsMap = {
+    'Intermediate': 'Intermediate',
+    'Some Bachelor\'s Degree': 'Bachelor',
+    'Some Master\'s Degree': 'Master',
+    'Some Doctorate': 'Doctorate',
+  };
 
   final Set<String> _selectedHobbies = Set<String>();
 
@@ -505,10 +505,10 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             CustomDropdownFormField(
                 label: "Highest Qualification",
                 value: _selectedEduLevel,
-                items: eduLevels,
+                items: eduLevelsMap.keys.toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedEduLevel = value;
+                    _selectedEduLevel = eduLevelsMap[value] ?? value;
                   });
                 }),
             const SizedBox(height: 20),

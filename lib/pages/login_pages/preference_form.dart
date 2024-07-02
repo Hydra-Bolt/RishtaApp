@@ -28,12 +28,14 @@ class _PreferenceFormState extends State<PreferenceForm> {
     'Atheism',
     'Agnosticism',
   ];
-  List<String> eduLevels = [
-    'At least Intermediate',
-    'At least Bachelor\'s Degree',
-    'At least Master\'s Degree',
-    'At least Doctorate Degree',
-  ];
+
+  Map<String, String> eduLevelsMap = {
+    'At least Intermediate': 'Intermediate',
+    'At least Bachelor\'s Degree': 'Bachelor',
+    'At least Master\'s Degree': 'Master',
+    'At least Doctorate Degree': 'Doctorate',
+  };
+
   List<String> martialStatuses = [
     'Divorced',
     'Married',
@@ -161,10 +163,10 @@ class _PreferenceFormState extends State<PreferenceForm> {
             CustomDropdownFormField(
               label: "Education Level",
               value: _selectedEduLevel,
-              items: eduLevels,
+              items: eduLevelsMap.keys.toList(),
               onChanged: (value) {
                 setState(() {
-                  _selectedEduLevel = value;
+                  _selectedEduLevel = eduLevelsMap[value] ?? value;
                 });
               },
             ),
