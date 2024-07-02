@@ -49,7 +49,6 @@ class _TopContainerState extends State<TopContainer> {
     setState(() {
       isLoading = false;
       photos = res;
-      print(photos);
     });
   }
 

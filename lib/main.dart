@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_auth/pages/login_pages/account_page.dart';
+
 import 'package:supabase_auth/pages/login_pages/lifestyle_form.dart';
 import 'package:supabase_auth/pages/login_pages/login_page.dart';
 import 'package:supabase_auth/pages/login_pages/preference_form.dart';
@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/recover': (context) => const RecoverAccount(),
         '/signup': (context) => const SignUp(),
-        '/account': (context) => const AccountPage(),
         '/userform': (context) => const UserForm(),
         '/preference': (context) => const PreferenceForm(),
         '/lifestyle': (context) => const LifeStyleForm()

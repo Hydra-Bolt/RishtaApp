@@ -100,7 +100,7 @@ class _UserFormState extends State<UserForm> {
       'spouse': spouses ?? 0,
       'kids': children ?? 0,
     };
-    print(values);
+
     try {
       await supabase.from('users').insert(values);
 

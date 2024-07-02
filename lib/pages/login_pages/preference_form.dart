@@ -93,7 +93,6 @@ class _PreferenceFormState extends State<PreferenceForm> {
     final List<Map<String, dynamic>> response =
         await supabase.from("preference").insert(formData).select();
 
-    print(response);
     final id = (response[0]['pid']);
     final res = await supabase
         .from("users")
@@ -110,12 +109,12 @@ class _PreferenceFormState extends State<PreferenceForm> {
     // // Handle the response
     if (res == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Preferences submitted successfully!')),
+        const SnackBar(content: Text('Preferences submitted successfully!')),
       );
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to submit preferences')),
+        const SnackBar(content: const Text('Failed to submit preferences')),
       );
     }
   }

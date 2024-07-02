@@ -13,7 +13,7 @@ class SettingsPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: Align(
-          alignment: Alignment(0, 0.65),
+          alignment: const Alignment(0, 0.65),
           child: ElevatedButton(
             onPressed: () {
               supabase.auth.signOut();

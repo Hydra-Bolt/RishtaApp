@@ -16,7 +16,8 @@ class MainHomePage extends StatefulWidget {
   State<MainHomePage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainHomePage> {
+class _MainPageState extends State<MainHomePage>
+    with AutomaticKeepAliveClientMixin<MainHomePage> {
   late Dimensions dimensions;
   late double appBarHeight;
   late double leadingWidth;
@@ -51,6 +52,8 @@ class _MainPageState extends State<MainHomePage> {
   /// It fetches the user's data from the database and fetches the rishta
   /// data from the server.
   @override
+  bool get wantKeepAlive => true;
+  @override
   void initState() {
     super.initState();
 
@@ -59,8 +62,6 @@ class _MainPageState extends State<MainHomePage> {
 
     // Fetches the rishta data from the server.
     _fetchRishta();
-
-    // TODO: Add comments and docstrings to the code above.
   }
 
   Future<void> _fetchUserData() async {
@@ -106,7 +107,6 @@ class _MainPageState extends State<MainHomePage> {
           .map((religion) =>
               religion.replaceAll('"', '')) // Remove double quotes
           .toList();
-      print(religions);
       var baseQuery = supabase.from('users').select('''
           *,
           lifestyle(*)
@@ -131,7 +131,6 @@ class _MainPageState extends State<MainHomePage> {
         rishtaItr!.moveNext();
         rishta = rishtaItr!.current;
         isLoading = false; // Add this line
-        print(rishta);
       });
     } catch (error) {
       // Handle the error appropriately here
@@ -142,8 +141,17 @@ class _MainPageState extends State<MainHomePage> {
     }
   }
 
+  void handleMatch(String status) async {
+    await supabase.from("matches").insert({
+      'request_by': supabase.auth.currentUser!.id,
+      'request_to': rishta['uid'],
+      'status': status
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     dimensions = Dimensions(context);
     appBarHeight = dimensions.height(8.78);
     leadingWidth = dimensions.screenWidth();
@@ -187,17 +195,17 @@ class _MainPageState extends State<MainHomePage> {
         child: isLoading
             ? Transform.scale(
                 scale: 1.3,
-                child: Center(
+                child: const Center(
                     child: CircularProgressIndicator(
                   color: AppColors.mainColor,
                 )),
               ) // Add this line
             : rishta == null
                 ? Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     alignment: Alignment.topCenter,
-                    child: Text(
-                      'Oh no! It seems we don’t have any rishtas for you at the moment. But don’t worry, something special might be just around the corner!',
+                    child: const Text(
+                      'Oh no! It seems we don`t have any rishtas for you at the moment. But don`t worry, something special might be just around the corner!',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -241,15 +249,17 @@ class _MainPageState extends State<MainHomePage> {
                               // _rejected()
 
                               if (rishtaItr!.moveNext()) {
+                                handleMatch("No request made");
                                 setState(() {
                                   rishta = rishtaItr!.current;
                                 });
                               }
                             }),
                             const SizedBox(width: 20),
-                            CustomButtons.checkButton(() {
+                            CustomButtons.checkButton(() async {
                               // _accepted()
 
+                              handleMatch("Waiting for response");
                               if (rishtaItr!.moveNext()) {
                                 setState(() {
                                   rishta = rishtaItr!.current;

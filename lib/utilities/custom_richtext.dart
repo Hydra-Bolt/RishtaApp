@@ -9,7 +9,6 @@ class CustomRichText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(rishta);
     return Padding(
       padding: const EdgeInsets.only(bottom: 40.0),
       child: RichText(
