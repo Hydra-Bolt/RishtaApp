@@ -107,8 +107,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                           children: [
                             _profileDetail('City', user['city']),
                             _profileDetail('Age', user['age'].toString()),
-                            _profileDetail(
-                                'Height', user['height'].toString() + " cm"),
+                            _profileDetail('Height', "${user['height']} cm"),
                           ],
                         ),
                       ),
@@ -132,10 +131,11 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                     children: [
                       TextButton(
                         style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                            MainColors.mainThemeColor,
-                          ),
-                        ),
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              MainColors.mainThemeColor,
+                            ),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                                Colors.white10)),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -143,10 +143,11 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                       ),
                       TextButton(
                         style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                            MainColors.mainThemeColor,
-                          ),
-                        ),
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              MainColors.mainThemeColor,
+                            ),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                                Colors.white10)),
                         onPressed: () {
                           // Will handle this later on
                         },
@@ -179,7 +180,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
             value,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 15,
             ),
           ),
         ],
