@@ -34,7 +34,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
       });
       await supabase.auth.resetPasswordForEmail(_emailController.text);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Account Recovery code sent!'),
           backgroundColor: Colors.green,
         ),
@@ -62,7 +62,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
       await supabase.auth
           .verifyOTP(token: enteredCode, type: OtpType.recovery, email: email);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Verification successful!'),
           backgroundColor: Colors.green,
         ),
@@ -86,7 +86,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
     String confirmPassword = _confirmPasswordController.text.trim();
     if (newPassword != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Passwords do not match'),
           backgroundColor: Colors.red,
         ),
@@ -97,7 +97,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
     try {
       await supabase.auth.updateUser(UserAttributes(password: newPassword));
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Password reset successful!'),
           backgroundColor: Colors.green,
         ),
@@ -156,7 +156,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
           controller: _confirmPasswordController,
           enabled: true,
         ),
-        Spacer(),
+        const Spacer(),
         MyCustomButton(onTap: () => resetPassword(), text: "Reset Password"),
         const SizedBox(height: 35),
       ],
@@ -212,7 +212,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(6, (index) => _buildCodeDigitField(index)),
         ),
-        Spacer(),
+        const Spacer(),
         MyCustomButton(onTap: () => verifyCode(), text: "Recover"),
         const SizedBox(height: 35),
       ],
@@ -235,8 +235,8 @@ class _RecoverAccountState extends State<RecoverAccount> {
             borderRadius: const BorderRadius.all(Radius.circular(6.0)),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6.0)),
             borderSide: BorderSide(color: AppColors.mainColor, width: 1.0),
           ),
           errorBorder: const OutlineInputBorder(

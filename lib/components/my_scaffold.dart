@@ -4,10 +4,10 @@ class MyScaffold extends StatefulWidget {
   final Widget body;
   final AppBar appBar;
   const MyScaffold({
-    Key? key,
+    super.key,
     required this.appBar,
     required this.body,
-  }) : super(key: key);
+  });
 
   @override
   State<MyScaffold> createState() => _MyScaffoldState();

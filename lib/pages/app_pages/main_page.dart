@@ -55,6 +55,7 @@ class _MainPageState extends State<MainHomePage>
   bool get wantKeepAlive => true;
   @override
   void initState() {
+    print("CURRENT UID: ${supabase.auth.currentUser!.id}");
     super.initState();
 
     // Fetches the user's data from the database.
