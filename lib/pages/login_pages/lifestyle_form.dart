@@ -205,14 +205,27 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       "job_sector": _selectedJobSector,
       "personality_type": _selectedPersonalityType,
       "annual_income": (annualIncome).toInt(),
-      "hobbies": _selectedHobbies.toString(),
-      "interests": _selectedInterests.toString(),
       "smoking": _smoking,
       "education": _selectedEduLevel,
       "cast": _castController.text,
       "religion": _selectedReligion
     }).select();
 
+    // Add the selected hobbies and interests to the user_hobbies and user_interests tables
+    for (var i = 0; i < _selectedHobbies.length; i++) {
+      await supabase.from("user_hobbies").insert({
+        "uid": supabase.auth.currentUser!.id,
+        "hobby": _selectedHobbies.elementAt(i)
+      });
+    }
+
+    for (var i = 0; i < _selectedInterests.length; i++) {
+      await supabase.from("user_interests").insert({
+        "uid": supabase.auth.currentUser!.id,
+        "interest": _selectedInterests.elementAt(i)
+      });
+    }
+    // Update the user's lid
     final id = (response[0]['lid']);
     await supabase
         .from("users")

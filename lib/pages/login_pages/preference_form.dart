@@ -83,7 +83,6 @@ class _PreferenceFormState extends State<PreferenceForm> {
 
     // Create a map of the data to be submitted
     final formData = {
-      'religion': _selectedReligions,
       'education': _selectedEduLevel,
       'marital_status': _martialStatus,
       'smoking': _smoking,
@@ -95,18 +94,15 @@ class _PreferenceFormState extends State<PreferenceForm> {
     final List<Map<String, dynamic>> response =
         await supabase.from("preference").insert(formData).select();
 
+    for (var religion in _selectedReligions) {
+      await supabase
+          .from("user_religions")
+          .insert({"uid": supabase.auth.currentUser!.id, "religion": religion});
+    }
     final id = (response[0]['pid']);
     final res = await supabase
         .from("users")
         .update({"pid": id}).eq("uid", supabase.auth.currentUser!.id);
-
-    // // Example: Send the data to an API endpoint
-    // final url = Uri.parse('https://your-api-endpoint.com/preferences');
-    // final response = await http.post(
-    //   url,
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode(formData),
-    // );
 
     // // Handle the response
     if (res == null) {
