@@ -12,7 +12,7 @@ class ProfileInfoContainer extends StatelessWidget {
 
     final double topMargin = dimensions.height(50);
     final double containerWidth = dimensions.width(85);
-    final double containerHeight = dimensions.height(22);
+    final double containerHeight = dimensions.height(70);
     final double borderRadius = dimensions.width(3.54);
     const Color shadowColor = MainColors.shadowColor;
 
@@ -24,8 +24,8 @@ class ProfileInfoContainer extends StatelessWidget {
         color: shadowColor.withOpacity(0.18),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: const SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(10.0, 40.0, 10.0, 10.0),
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(10.0, 150.0, 10.0, 10.0),
         child: ProfileRichText(),
       ),
     );
