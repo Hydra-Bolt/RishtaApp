@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
+import 'package:supabase_auth/components/my_drop_down.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
 
@@ -35,7 +36,15 @@ class TopContainer extends StatefulWidget {
 class _TopContainerState extends State<TopContainer> {
   bool isLoading = true;
   List? photos;
-
+  String? _selectedReason;
+  Map<String, String> reportReasons = {
+    "Inavlid Info": "inv_info",
+    "Explicit Content": "exp_content",
+    "Hate Speech": "hate_speech",
+    "Spam": "spam",
+    "Other": "other",
+  };
+  String? _reportDetails;
   @override
   void initState() {
     super.initState();
@@ -98,7 +107,79 @@ class _TopContainerState extends State<TopContainer> {
                   Positioned(
                     top: 8.0,
                     right: 8.0,
-                    child: CustomButtons.popupMenuButton(),
+                    child: CustomButtons.popupMenuButton(
+                      onSelected: (value) {
+                        if (value == 1) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 100),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.grey[800],
+                                    ),
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 20),
+                                        child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Report",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              CustomDropdownFormField(
+                                                  label: "Reason",
+                                                  value: _selectedReason,
+                                                  items: reportReasons.keys
+                                                      .toList(),
+                                                  onChanged: (value) => {
+                                                        setState(() {
+                                                          _selectedReason =
+                                                              reportReasons[
+                                                                      value] ??
+                                                                  value;
+                                                        })
+                                                      }),
+                                              const SizedBox(height: 20),
+                                              Expanded(
+                                                child: TextFormField(
+                                                  maxLines: null,
+                                                  decoration: InputDecoration(
+                                                      hintText:
+                                                          "Add details of the report..."),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      _reportDetails = value;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  print(_reportDetails);
+                                                  print(_selectedReason);
+                                                  // your report submission logic here
+                                                },
+                                                child: Text('Submit Report'),
+                                              ),
+                                            ])));
+                              });
+                        } else if (value == 2) {
+                          print('Dont show again');
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
