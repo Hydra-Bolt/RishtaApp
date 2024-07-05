@@ -123,7 +123,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
       appBar: AppBar(
         title: const Text(
           "Preference Details",
-          style: TextStyle(color: AppColors.grey),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(
@@ -132,7 +132,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
           children: [
             const Text("What are your prefered religions?",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 )),
@@ -150,7 +150,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Education Level",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -170,7 +170,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Marital Status",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -190,7 +190,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Smoking",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -210,13 +210,14 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Minimum Height",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Slider(
               activeColor: AppColors.mainColor,
+              inactiveColor: Colors.white10,
               value: _minHeight,
               min: 150,
               max: 250,
@@ -232,13 +233,14 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Preferred Age Range",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             RangeSlider(
               activeColor: AppColors.mainColor,
+              inactiveColor: Colors.white10,
               values: _ageRange,
               min: 18,
               max: 80,

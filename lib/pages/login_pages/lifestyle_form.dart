@@ -243,7 +243,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       appBar: AppBar(
         title: const Text(
           "Tell us a little about yourself",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(
@@ -284,7 +284,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                     controller: _pageController,
                     count: 3,
                     effect: const WormEffect(
-                      activeDotColor: AppColors.mainColor,
+                      activeDotColor: Colors.white,
                       dotWidth: 10,
                       dotHeight: 10,
                     ),
@@ -527,7 +527,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             const SizedBox(height: 20),
             Text(
               'Annual Income: ${annualIncome.toStringAsFixed(0)}Rs+', // Display the slider value as text
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: const TextStyle(fontSize: 14, color: Colors.white),
             ),
             Slider(
               activeColor: AppColors.mainColor,
@@ -546,7 +546,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
               children: [
                 Text(
                   "Do you smoke?",
-                  style: TextStyle(color: Colors.black, fontSize: 18),
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 SizedBox(height: 10),
                 SingleChildScrollView(
@@ -578,7 +578,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             RichText(
               text: TextSpan(
                 text: "Don't know your personality type? ",
-                style: const TextStyle(color: Colors.black, fontSize: 12),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
                 children: [
                   TextSpan(
                     text: "Click here",
@@ -622,7 +622,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             value,
             style: TextStyle(
               fontSize: 10.0,
-              color: _smoking == value ? AppColors.mainColor : Colors.black,
+              color: _smoking == value ? AppColors.mainColor : Colors.white,
               fontWeight:
                   _smoking == value ? FontWeight.bold : FontWeight.normal,
             ),
