@@ -118,9 +118,14 @@ class _RecoverAccountState extends State<RecoverAccount> {
     return MyScaffold(
       appBar: AppBar(
         leading: BackButton(
+          color: Colors.white,
           onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
         ),
-        title: const Text("Recover Account"),
+        title: const Text(
+          "Recover Account",
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -168,14 +173,13 @@ class _RecoverAccountState extends State<RecoverAccount> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          child: Image.asset('assets/images/recover.png'),
-        ),
+        Image.asset('assets/images/recover.png', height: 100),
         const Text(
           "Enter your email and we will send you a link to reset your password",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 25),
@@ -193,7 +197,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
               onTap: () => sendVerification(),
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
                 decoration: BoxDecoration(
                   color: Colors.white10,
                   border: Border.all(color: Colors.white, width: 1),
@@ -201,7 +205,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
                 ),
                 child: Text(
                   codeSent ? "Resend Code" : "Send Code",
-                  style: const TextStyle(color: Color(0xFFc7052c)),
+                  style: const TextStyle(color: AppColors.mainColor),
                 ),
               ),
             ),
@@ -227,7 +231,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
       child: TextFormField(
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: Colors.white10,
           counterText: "",
           contentPadding:
               const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
@@ -249,7 +253,9 @@ class _RecoverAccountState extends State<RecoverAccount> {
           ),
         ),
         controller: _codeControllers[index],
+        style: const TextStyle(color: Colors.white, fontSize: 20.0),
         keyboardType: TextInputType.number,
+        cursorColor: AppColors.mainColor,
         textAlign: TextAlign.center,
         maxLength: 1,
         onChanged: (value) {
