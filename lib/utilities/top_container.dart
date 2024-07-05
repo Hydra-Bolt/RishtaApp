@@ -54,7 +54,8 @@ class _TopContainerState extends State<TopContainer> {
   void _getPhotos() async {
     var rishtaUid = widget.rishta['uid'];
 
-    var res = await supabase.from("userphoto").select('*').eq('uid', rishtaUid);
+    var res =
+        await supabase.from("user_photo").select('*').eq('uid', rishtaUid);
     setState(() {
       isLoading = false;
       photos = res;
@@ -123,57 +124,60 @@ class _TopContainerState extends State<TopContainer> {
                                     child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 20),
-                                        child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Report",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 30,
-                                                  fontWeight: FontWeight.bold,
+                                        child: Scaffold(
+                                          backgroundColor: Colors.transparent,
+                                          body: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Report",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 30,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              CustomDropdownFormField(
-                                                  label: "Reason",
-                                                  value: _selectedReason,
-                                                  items: reportReasons.keys
-                                                      .toList(),
-                                                  onChanged: (value) => {
-                                                        setState(() {
-                                                          _selectedReason =
-                                                              reportReasons[
-                                                                      value] ??
-                                                                  value;
-                                                        })
-                                                      }),
-                                              const SizedBox(height: 20),
-                                              Expanded(
-                                                child: TextFormField(
-                                                  maxLines: null,
-                                                  decoration: InputDecoration(
-                                                      hintText:
-                                                          "Add details of the report..."),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      _reportDetails = value;
-                                                    });
+                                                const SizedBox(height: 10),
+                                                CustomDropdownFormField(
+                                                    label: "Reason",
+                                                    value: _selectedReason,
+                                                    items: reportReasons.keys
+                                                        .toList(),
+                                                    onChanged: (value) => {
+                                                          setState(() {
+                                                            _selectedReason =
+                                                                reportReasons[
+                                                                        value] ??
+                                                                    value;
+                                                          })
+                                                        }),
+                                                const SizedBox(height: 10),
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    maxLines: null,
+                                                    decoration: InputDecoration(
+                                                        hintText:
+                                                            "Add details of the report..."),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _reportDetails = value;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    print(_reportDetails);
+                                                    print(_selectedReason);
+                                                    // your report submission logic here
                                                   },
+                                                  child: Text('Submit Report'),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  print(_reportDetails);
-                                                  print(_selectedReason);
-                                                  // your report submission logic here
-                                                },
-                                                child: Text('Submit Report'),
-                                              ),
-                                            ])));
+                                              ]),
+                                        )));
                               });
                         } else if (value == 2) {
                           print('Dont show again');
