@@ -12,7 +12,7 @@ class MyCustomButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 45),
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
+              border: Border.all(color: Colors.white54),
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               color: AppColors
                   .mainColor), // Assuming AppColors.mainColor is the primary color

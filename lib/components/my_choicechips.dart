@@ -33,17 +33,22 @@ class _MultiSelectChipWidgetState extends State<MultiSelectChipWidget> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4.0),
           child: ChoiceChip(
-            label: _selectedItems.contains(item)
-                ? Text(
-                    item,
-                    style: const TextStyle(color: Colors.white),
-                  )
-                : Text(
-                    item,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-            checkmarkColor: Colors.white,
-            selectedColor: AppColors.mainColor,
+            label: Text(
+              item,
+              style: TextStyle(color: Colors.white),
+            ),
+            checkmarkColor: AppColors.mainColor,
+            selectedColor: Colors.grey[850],
+            backgroundColor:
+                Colors.grey[850], // Lighter background for unselected chips
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: _selectedItems.contains(item)
+                    ? AppColors.mainColor
+                    : Colors.grey[300]!,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
             selected: _selectedItems.contains(item),
             onSelected: (bool selected) {
               setState(() {

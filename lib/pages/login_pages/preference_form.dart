@@ -28,12 +28,14 @@ class _PreferenceFormState extends State<PreferenceForm> {
     'Atheism',
     'Agnosticism',
   ];
-  List<String> eduLevels = [
-    'At least Intermediate',
-    'At least Bachelor\'s Degree',
-    'At least Master\'s Degree',
-    'At least Doctorate Degree',
-  ];
+
+  Map<String, String> eduLevelsMap = {
+    'At least Intermediate': 'Intermediate',
+    'At least Bachelor\'s Degree': 'Bachelor',
+    'At least Master\'s Degree': 'Master',
+    'At least Doctorate Degree': 'Doctorate',
+  };
+
   List<String> martialStatuses = [
     'Divorced',
     'Married',
@@ -81,7 +83,6 @@ class _PreferenceFormState extends State<PreferenceForm> {
 
     // Create a map of the data to be submitted
     final formData = {
-      'religion': _selectedReligions,
       'education': _selectedEduLevel,
       'marital_status': _martialStatus,
       'smoking': _smoking,
@@ -93,18 +94,15 @@ class _PreferenceFormState extends State<PreferenceForm> {
     final List<Map<String, dynamic>> response =
         await supabase.from("preference").insert(formData).select();
 
+    for (var religion in _selectedReligions) {
+      await supabase
+          .from("user_religions")
+          .insert({"uid": supabase.auth.currentUser!.id, "religion": religion});
+    }
     final id = (response[0]['pid']);
     final res = await supabase
         .from("users")
         .update({"pid": id}).eq("uid", supabase.auth.currentUser!.id);
-
-    // // Example: Send the data to an API endpoint
-    // final url = Uri.parse('https://your-api-endpoint.com/preferences');
-    // final response = await http.post(
-    //   url,
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode(formData),
-    // );
 
     // // Handle the response
     if (res == null) {
@@ -125,7 +123,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
       appBar: AppBar(
         title: const Text(
           "Preference Details",
-          style: TextStyle(color: AppColors.grey),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(
@@ -134,7 +132,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
           children: [
             const Text("What are your prefered religions?",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 )),
@@ -152,7 +150,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Education Level",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -161,7 +159,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             CustomDropdownFormField(
               label: "Education Level",
               value: _selectedEduLevel,
-              items: eduLevels,
+              items: eduLevelsMap.keys.toList(),
               onChanged: (value) {
                 setState(() {
                   _selectedEduLevel = value;
@@ -172,7 +170,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Marital Status",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -192,7 +190,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Smoking",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -212,13 +210,14 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Minimum Height",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Slider(
               activeColor: AppColors.mainColor,
+              inactiveColor: Colors.white10,
               value: _minHeight,
               min: 150,
               max: 250,
@@ -234,13 +233,14 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Preferred Age Range",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             RangeSlider(
               activeColor: AppColors.mainColor,
+              inactiveColor: Colors.white10,
               values: _ageRange,
               min: 18,
               max: 80,

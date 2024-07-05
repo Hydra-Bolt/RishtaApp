@@ -40,6 +40,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   curved_navigation_bar: ^1.0.3
   another_carousel_pro: ^1.0.2
+  google_fonts: ^6.2.1
   
 dev_dependencies:
   flutter_test:

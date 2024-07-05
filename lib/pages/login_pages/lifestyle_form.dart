@@ -95,12 +95,12 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
     'Agnosticism',
   ];
 
-  List<String> eduLevels = [
-    'Intermediate',
-    'Some Bachelor\'s Degree',
-    'Some Master\'s Degree',
-    'Some Doctorate',
-  ];
+  Map<String, String> eduLevelsMap = {
+    'Intermediate': 'Intermediate',
+    'Some Bachelor\'s Degree': 'Bachelor',
+    'Some Master\'s Degree': 'Master',
+    'Some Doctorate': 'Doctorate',
+  };
 
   final Set<String> _selectedHobbies = Set<String>();
 
@@ -205,14 +205,27 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       "job_sector": _selectedJobSector,
       "personality_type": _selectedPersonalityType,
       "annual_income": (annualIncome).toInt(),
-      "hobbies": _selectedHobbies.toString(),
-      "interests": _selectedInterests.toString(),
       "smoking": _smoking,
       "education": _selectedEduLevel,
       "cast": _castController.text,
       "religion": _selectedReligion
     }).select();
 
+    // Add the selected hobbies and interests to the user_hobbies and user_interests tables
+    for (var i = 0; i < _selectedHobbies.length; i++) {
+      await supabase.from("user_hobbies").insert({
+        "uid": supabase.auth.currentUser!.id,
+        "hobby": _selectedHobbies.elementAt(i)
+      });
+    }
+
+    for (var i = 0; i < _selectedInterests.length; i++) {
+      await supabase.from("user_interests").insert({
+        "uid": supabase.auth.currentUser!.id,
+        "interest": _selectedInterests.elementAt(i)
+      });
+    }
+    // Update the user's lid
     final id = (response[0]['lid']);
     await supabase
         .from("users")
@@ -230,7 +243,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       appBar: AppBar(
         title: const Text(
           "Tell us a little about yourself",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(
@@ -271,7 +284,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                     controller: _pageController,
                     count: 3,
                     effect: const WormEffect(
-                      activeDotColor: AppColors.mainColor,
+                      activeDotColor: Colors.white,
                       dotWidth: 10,
                       dotHeight: 10,
                     ),
@@ -505,16 +518,16 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             CustomDropdownFormField(
                 label: "Highest Qualification",
                 value: _selectedEduLevel,
-                items: eduLevels,
+                items: eduLevelsMap.keys.toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedEduLevel = value;
+                    _selectedEduLevel = value; // Assign the key directly
                   });
                 }),
             const SizedBox(height: 20),
             Text(
               'Annual Income: ${annualIncome.toStringAsFixed(0)}Rs+', // Display the slider value as text
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: const TextStyle(fontSize: 14, color: Colors.white),
             ),
             Slider(
               activeColor: AppColors.mainColor,
@@ -533,7 +546,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
               children: [
                 Text(
                   "Do you smoke?",
-                  style: TextStyle(color: Colors.black, fontSize: 18),
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 SizedBox(height: 10),
                 SingleChildScrollView(
@@ -565,7 +578,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             RichText(
               text: TextSpan(
                 text: "Don't know your personality type? ",
-                style: const TextStyle(color: Colors.black, fontSize: 12),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
                 children: [
                   TextSpan(
                     text: "Click here",
@@ -609,7 +622,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             value,
             style: TextStyle(
               fontSize: 10.0,
-              color: _smoking == value ? AppColors.mainColor : Colors.black,
+              color: _smoking == value ? AppColors.mainColor : Colors.white,
               fontWeight:
                   _smoking == value ? FontWeight.bold : FontWeight.normal,
             ),

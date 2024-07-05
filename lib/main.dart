@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:supabase_auth/pages/login_pages/lifestyle_form.dart';
 import 'package:supabase_auth/pages/login_pages/login_page.dart';
@@ -29,6 +30,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData().copyWith(
+          textTheme: GoogleFonts.ralewayTextTheme(
+        Theme.of(context).textTheme,
+      )),
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashPage(),

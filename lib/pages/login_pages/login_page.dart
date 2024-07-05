@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text(
           "Login Page",
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.transparent,
       ),

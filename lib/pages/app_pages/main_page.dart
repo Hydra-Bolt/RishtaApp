@@ -55,6 +55,7 @@ class _MainPageState extends State<MainHomePage>
   bool get wantKeepAlive => true;
   @override
   void initState() {
+    print("CURRENT UID: ${supabase.auth.currentUser!.id}");
     super.initState();
 
     // Fetches the user's data from the database.
@@ -92,39 +93,11 @@ class _MainPageState extends State<MainHomePage>
 
   Future<void> _fetchRishta() async {
     try {
-      final response = await supabase.from('users').select('''
-          *,
-          preference(*)''').eq('uid', supabase.auth.currentUser!.id).single();
-      final usrPrefer = response['preference'];
-      const maleFilter = "Female";
-      const femaleFilter = "Male";
-      final minAge = usrPrefer['min_age'];
-      final maxAge = usrPrefer['max_age'];
-      final religionString = usrPrefer['religion'];
-      List<dynamic> religions = religionString
-          .substring(1, religionString.length - 1) // Remove square brackets
-          .split(', ') // Split by comma and space
-          .map((religion) =>
-              religion.replaceAll('"', '')) // Remove double quotes
-          .toList();
-      var baseQuery = supabase.from('users').select('''
-          *,
-          lifestyle(*)
-''');
-
-      if (!mounted) return;
-      if (response['gender'] == "Male") {
-        baseQuery = baseQuery.eq('gender', maleFilter);
-      }
-      if (response['gender'] == "Female") {
-        baseQuery = baseQuery.eq('gender', femaleFilter);
-      }
-
-      baseQuery = baseQuery.gte('age', minAge).lte('age', maxAge);
-
-      baseQuery = baseQuery.inFilter('lifestyle.religion', religions);
-      final rishtasFound = await baseQuery;
-
+      final uid = supabase.auth.currentUser!.id;
+      final List<dynamic> response =
+          await supabase.rpc('fetch_rishta', params: {'in_uid': uid});
+      print(response);
+      final rishtasFound = response;
       setState(() {
         rishtas = rishtasFound;
         rishtaItr = rishtas.iterator;
@@ -248,8 +221,8 @@ class _MainPageState extends State<MainHomePage>
                             CustomButtons.closeButton(() {
                               // _rejected()
 
+                              handleMatch("No request made");
                               if (rishtaItr!.moveNext()) {
-                                handleMatch("No request made");
                                 setState(() {
                                   rishta = rishtaItr!.current;
                                 });

@@ -54,7 +54,7 @@ class _SignUpState extends State<SignUp> {
     return MyScaffold(
       appBar: AppBar(
         title: const Text("Let's get you set up!",
-            style: TextStyle(color: Colors.grey)),
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
       ),
       body: Padding(
@@ -82,7 +82,7 @@ class _SignUpState extends State<SignUp> {
               isObscure: true,
             ),
             const SizedBox(
-              height: 15,
+              height: 20,
             ),
             Row(
               children: [
@@ -93,7 +93,7 @@ class _SignUpState extends State<SignUp> {
                       enabled: requestedCode),
                 ),
                 const SizedBox(
-                  width: 5,
+                  width: 8,
                 ),
                 GestureDetector(
                   onTap: codeEnabled
@@ -109,7 +109,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 20),
+                        horizontal: 30, vertical: 14),
                     decoration: BoxDecoration(
                       color: codeEnabled ? Colors.white12 : Colors.white10,
                       border: Border.all(color: Colors.white, width: 1),
