@@ -521,7 +521,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                 items: eduLevelsMap.keys.toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedEduLevel = eduLevelsMap[value] ?? value;
+                    _selectedEduLevel = value; // Assign the key directly
                   });
                 }),
             const SizedBox(height: 20),

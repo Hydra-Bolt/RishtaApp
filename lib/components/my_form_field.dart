@@ -26,14 +26,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return TextFormField(
       decoration: InputDecoration(
         labelText: widget.label,
-        labelStyle: const TextStyle(color: Colors.black, fontSize: 12.0),
+        labelStyle: const TextStyle(color: Colors.white, fontSize: 12.0),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.white10,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
         enabledBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: Colors.grey.shade700),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(6.0)),
@@ -49,7 +49,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ),
       ),
       controller: widget.controller,
-      style: const TextStyle(color: Colors.black87, fontSize: 12.0),
+      style: const TextStyle(color: Colors.white, fontSize: 12.0),
       cursorColor: mainColor,
       cursorWidth: 1.2,
       enabled: widget.enabled,

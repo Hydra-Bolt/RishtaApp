@@ -162,7 +162,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
               items: eduLevelsMap.keys.toList(),
               onChanged: (value) {
                 setState(() {
-                  _selectedEduLevel = eduLevelsMap[value] ?? value;
+                  _selectedEduLevel = value;
                 });
               },
             ),

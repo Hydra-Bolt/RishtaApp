@@ -20,14 +20,14 @@ class CustomDropdownFormField extends StatelessWidget {
       value: value,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.black, fontSize: 12.0),
+        labelStyle: const TextStyle(color: Colors.white, fontSize: 12.0),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.white10,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 8.0, horizontal: 9.0),
         enabledBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: Colors.grey.shade700),
         ),
         focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(6.0)),
@@ -45,10 +45,11 @@ class CustomDropdownFormField extends StatelessWidget {
       items: items.map((String item) {
         return DropdownMenuItem<String>(
           value: item,
-          child: Text(item),
+          child: Text(item, style: TextStyle(color: Colors.white)),
         );
       }).toList(),
       onChanged: onChanged,
+      dropdownColor: Colors.grey[850], // Background color of the dropdown items
     );
   }
 }
