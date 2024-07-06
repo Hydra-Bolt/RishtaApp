@@ -20,19 +20,34 @@ class _ReportsState extends State<Reports> {
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
-        appBar: AppBar(title: const Text('Reports')),
-        body: FutureBuilder<List>(
-          future: reportedUsers,
-          builder: (context, snapshot) {
-            return _buildReports(snapshot);
-          },
+        appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: const Text(
+              'Reports',
+              style: TextStyle(color: Colors.white),
+            )),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20.0),
+          child: FutureBuilder<List>(
+            future: reportedUsers,
+            builder: (context, snapshot) {
+              return _buildReports(snapshot);
+            },
+          ),
         ));
   }
 
   Future<List> _fetchReportedUsers() async {
     // Fetches the user's data from the database.
     var uid = supabase.auth.currentUser!.id;
-    return await supabase.from('reports').select().eq('report_by', uid);
+    return await supabase
+        .from('reports')
+        .select(
+            'report_reported_user_fkey (name), report_report_by_fkey(name), reason, status, report_date')
+        .eq('report_by', uid);
   }
 
   Widget _buildReports(AsyncSnapshot<List> snapshot) {
@@ -54,11 +69,51 @@ class _ReportsState extends State<Reports> {
   }
 
   Widget _reportedUserCard(param0) {
+    print(param0);
+    DateTime reportDate = DateTime.parse(param0['report_date']);
+    final now = DateTime.now();
+    final difference = now.difference(reportDate);
+    final differenceInDays = difference.inDays;
+    String timeAgo;
+    if (differenceInDays == 0) {
+      final differenceInMinutes = difference.inMinutes;
+      if (differenceInMinutes < 60) {
+        timeAgo = '${differenceInMinutes}m ago';
+        if (differenceInMinutes < 1) {
+          timeAgo = 'Just now';
+        }
+      } else {
+        final differenceInHours = difference.inHours;
+        timeAgo = '${differenceInHours}h ago';
+      }
+    } else {
+      timeAgo = '${differenceInDays}d ago';
+    }
     return Card(
         color: Colors.white10,
         child: ListTile(
-          title: Text(param0['report_by']),
-          subtitle: Text(param0['report_to']),
+          title: Text(
+            param0['report_reported_user_fkey']['name'],
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                param0['reason'],
+                style: TextStyle(color: Colors.white),
+              ),
+              Text(
+                'Reported $timeAgo',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          trailing: Text(
+            param0['status'],
+            style: TextStyle(color: Colors.white),
+          ),
         ));
   }
 }

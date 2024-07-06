@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
 class CustomButtons {
-  static Widget closeButton(void Function()? onPressed) {
+  static Widget closeButton(
+    void Function()? onPressed,
+  ) {
     return SizedBox(
       width: 110,
       child: ElevatedButton(
