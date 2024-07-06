@@ -191,6 +191,8 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
                               Expanded(
                                 child: SizedBox(
                                   child: MyTextFormInputField(
+                                    isEnabled:
+                                        widget.chatBoxDetails['enableChat'],
                                     controller: _messageController,
                                     textHint: "Say Hi",
                                     keyboardType: TextInputType.multiline,

@@ -43,7 +43,7 @@ class _ChatsPageState extends State<ChatsPage> {
           'chatUser': element['user1'] == uid ? 'user2' : 'user1',
           'chatUserUID':
               element['user1'] == uid ? element['user2'] : element['user1'],
-
+          'enableChat': element['friends'],
           'me': myUsername,
           // Same setup for Last Message and Email will be done in the future. If needed.
         };
