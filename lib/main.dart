@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_auth/pages/app_pages/blocked_users.dart';
-import 'package:supabase_auth/pages/app_pages/profile_views.dart';
+
 import 'package:supabase_auth/pages/app_pages/reports.dart';
 import 'package:supabase_auth/pages/login_pages/lifestyle_form.dart';
 import 'package:supabase_auth/pages/login_pages/login_page.dart';
@@ -46,9 +46,8 @@ class MyApp extends StatelessWidget {
         '/userform': (context) => const UserForm(),
         '/preference': (context) => const PreferenceForm(),
         '/lifestyle': (context) => const LifeStyleForm(),
-        'blocked': (context) => const BlockedUsers(),
+        '/blocked': (context) => const BlockedUsers(),
         '/reports': (context) => const Reports(),
-        '/profile_views': (context) => const ProfileViews(),
       },
     );
   }

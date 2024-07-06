@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/main.dart';
+import 'package:supabase_auth/utilities/colors.dart';
 import 'package:supabase_auth/utilities/dimensions.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -25,10 +26,8 @@ class _SettingsPageState extends State<SettingsPage>
     isLoading = true;
     // Fetches the user's data from the database.
     var uid = supabase.auth.currentUser!.id;
-    print("CURRENT UID: $uid");
     var response =
         await supabase.from('users').select("name").eq('uid', uid).single();
-    print(response);
     setState(() {
       userData = response;
       isLoading = false;
@@ -61,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage>
                       userData?['name'],
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -85,7 +84,7 @@ class _SettingsPageState extends State<SettingsPage>
       {Function()? onTap}) {
     final dim = Dimensions(context);
     return GestureDetector(
-      onTap: () => onTap,
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white10, borderRadius: BorderRadius.circular(10)),
@@ -99,10 +98,21 @@ class _SettingsPageState extends State<SettingsPage>
               title,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
-            )
+            ),
+            Spacer(),
+            title == "Profile Views"
+                ? Text(
+                    '73',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  )
+                : Container(),
+            SizedBox(width: dim.width(2)),
+            title != "Profile Views" && title != "Logout"
+                ? Icon(Icons.chevron_right, color: Colors.white)
+                : Container(),
           ],
         ),
       ),
@@ -136,13 +146,68 @@ class _SettingsPageState extends State<SettingsPage>
                     context,
                     'Blocked Users',
                     Icons.block,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/blocked');
+                    },
                   ),
                   SizedBox(height: dim.height(1)),
-                  _buildCard(context, 'Reports', Icons.report),
+                  _buildCard(
+                    context,
+                    'Reports',
+                    Icons.report,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/reports');
+                    },
+                  ),
                   SizedBox(height: dim.height(1)),
-                  _buildCard(context, 'Profile Views', Icons.visibility),
+                  _buildCard(
+                    context,
+                    'Profile Views',
+                    Icons.visibility,
+                  ),
                   SizedBox(height: dim.height(1)),
-                  _buildCard(context, 'Logout', Icons.logout),
+                  _buildCard(
+                    context,
+                    'Logout',
+                    Icons.logout,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          contentPadding: EdgeInsets.all(20),
+                          backgroundColor: Colors.grey[700],
+                          titleTextStyle: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                          contentTextStyle: const TextStyle(fontSize: 16),
+                          title: const Text('Logout'),
+                          content:
+                              const Text('Are you sure you want to logout?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel',
+                                  style: TextStyle(
+                                      color: MainColors.mainThemeColor)),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // Sign out of Supabase
+                                supabase.auth.signOut();
+                                Navigator.pushNamed(context, '/');
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Logout',
+                                  style: TextStyle(
+                                      color: MainColors.mainThemeColor)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   SizedBox(height: dim.height(1)),
                 ],
               ),
