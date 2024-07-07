@@ -246,10 +246,4 @@ class _SignUpState extends State<SignUp> {
       ));
     }
   }
-
-  CustomTextFormField _myFormField(
-      String label, TextEditingController controller, bool enabled) {
-    return CustomTextFormField(
-        label: label, controller: controller, enabled: enabled);
-  }
 }
