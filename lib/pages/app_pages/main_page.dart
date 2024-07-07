@@ -68,12 +68,13 @@ class _MainPageState extends State<MainHomePage>
   Future<void> _fetchUserData() async {
     try {
       final response = await supabase
-          .from('Users')
+          .from("Users")
           .select()
           .eq('uid', supabase.auth.currentUser!.id)
-          .single();
+          .eq('username', supabase.auth.currentUser!.userMetadata!['username']);
+
       setState(() {
-        userData = response;
+        userData = response[0];
       });
       if (!mounted) return;
 
@@ -85,7 +86,7 @@ class _MainPageState extends State<MainHomePage>
           .then((value) => true)
           .onError((error, stackTrace) => false);
 
-      final bool filledPreferenceForm = await supabase
+      final filledPreferenceForm = await supabase
           .from('Preference')
           .select()
           .eq('uid', supabase.auth.currentUser!.id)
@@ -110,8 +111,8 @@ class _MainPageState extends State<MainHomePage>
   Future<void> _fetchRishta() async {
     try {
       final uid = supabase.auth.currentUser!.id;
-      final List<dynamic> response =
-          await supabase.rpc('fetch_rishta', params: {'in_uid': uid});
+      final List<dynamic> response = await supabase
+          .rpc('get_user_matches_on_religion', params: {'in_uid': uid});
       print(response);
       final rishtasFound = response;
       setState(() {
@@ -125,7 +126,7 @@ class _MainPageState extends State<MainHomePage>
       // Handle the error appropriately here
       if (mounted) {
         isLoading = false; // Add this line
-        print('Error fetching user data: $error');
+        print('Error fetching user data probelm in fetchin grishta: $error');
       }
     }
   }

@@ -61,7 +61,6 @@ class _ChatsPageState extends State<ChatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: const Text(
@@ -73,6 +72,10 @@ class _ChatsPageState extends State<ChatsPage> {
           ),
         ),
         centerTitle: true,
+        leading: Icon(
+          Icons.message_outlined,
+          color: Colors.white,
+        ),
       ),
       backgroundColor: Colors.transparent,
       body: FutureBuilder<List<Map<String, dynamic>>>(
