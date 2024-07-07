@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/utilities/text_form_fields.dart';
+import 'package:supabase_auth/utilities/colors.dart';
 
-class EditProfilePage extends StatelessWidget {
+class EditProfilePage extends StatefulWidget {
   final String initialName;
   final String initialEmail;
 
@@ -12,7 +13,102 @@ class EditProfilePage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _EditProfilePageState createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  double annualIncome = 10000;
+
+  @override
   Widget build(BuildContext context) {
+    final List<String> genders = ['Male', 'Female', 'Other'];
+
+    final List<String> jobSectors = [
+      'Technology',
+      'Healthcare',
+      'Finance',
+      'Education',
+      'Manufacturing',
+      'Retail',
+      'Other',
+    ];
+
+    final List<String> personalityTypes = [
+      'ISTJ',
+      'ISFJ',
+      'INFJ',
+      'INTJ',
+      'ISTP',
+      'ISFP',
+      'INFP',
+      'INTP',
+      'ESTP',
+      'ESFP',
+      'ENFP',
+      'ENTP',
+      'ESTJ',
+      'ESFJ',
+      'ENFJ',
+      'ENTJ',
+    ];
+
+    final List<String> religions = [
+      'Christianity',
+      'Islam',
+      'Sikhism',
+      'Atheism',
+      'Agnosticism',
+    ];
+
+    final List<String> citiesInPakistan = [
+      'Karachi',
+      'Lahore',
+      'Islamabad',
+      'Rawalpindi',
+      'Faisalabad',
+      'Multan',
+      'Peshawar',
+      'Quetta',
+      'Sialkot',
+      'Gujranwala',
+      'Hyderabad',
+      'Sukkur',
+      'Larkana',
+      'Mardan',
+      'Abbottabad',
+      'Bahawalpur',
+      'Sargodha',
+      'Sahiwal',
+      'Rahim Yar Khan',
+      'Sheikhupura',
+      'Mirpur',
+      'Jhelum',
+      'Nowshera',
+      'Okara',
+    ];
+
+    final List<String> maritalStatus = [
+      'Single',
+      'Married',
+      'Divorced',
+      'Widowed',
+      'Any'
+    ];
+
+    final List<String> smokerOptions = [
+      'Never',
+      'Rarely',
+      'Sometimes',
+      'Often'
+    ];
+
+    final Map<String, String> education = {
+      'Intermediate': 'Intermediate',
+      'Some Bachelor\'s Degree': 'Bachelors',
+      'Some Master\'s Degree': 'Masters',
+      'Some Doctorate': 'Doctorate',
+    };
+
     return Stack(
       children: [
         Image.asset(
@@ -24,7 +120,7 @@ class EditProfilePage extends StatelessWidget {
         Scaffold(
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 40.0, 16.0, 40.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -32,15 +128,45 @@ class EditProfilePage extends StatelessWidget {
                   _buildLabeledTextField('Name', 'Your name'),
                   _buildDateRow(),
                   _buildMeasurementRow('Weight', 'Kgs', 'Height', 'cm'),
-                  _buildLabeledTextField('Gender', 'Your gender'),
-                  _buildLocationRow('Country', 'City'),
-                  _buildLocationRow('Religion', 'Cast'),
-                  _buildLabeledTextField('Education', 'Education'),
-                  _buildLabeledTextField('Job', 'Job'),
-                  _buildLabeledTextField('Annual Income', 'Income'),
-                  _buildLabeledTextField('Smoker', 'Yes/No'),
-                  _buildLabeledTextField('Interests', 'Your interests'),
-                  _buildLabeledTextField('Hobbies', 'Your hobbies'),
+                  Row(
+                    children: [
+                      Expanded(child: _buildDropdownField('Gender', genders)),
+                      SizedBox(width: 12),
+                      Expanded(
+                          child: _buildDropdownField(
+                              'Personality Type', personalityTypes)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: _buildDropdownField('City', citiesInPakistan)),
+                      SizedBox(width: 12),
+                      Expanded(
+                          child: _buildDropdownField('Religion', religions)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: _buildDropdownField(
+                              'Education', education.keys.toList())),
+                      SizedBox(width: 12),
+                      Expanded(
+                          child: _buildDropdownField('Job Sector', jobSectors)),
+                    ],
+                  ),
+                  _buildIncomeSlider(),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: _buildDropdownField('Smoker', smokerOptions)),
+                      SizedBox(width: 12),
+                      Expanded(
+                          child: _buildDropdownField(
+                              'Marital Status', maritalStatus)),
+                    ],
+                  ),
                   _buildDescriptionField(),
                   SizedBox(height: 12),
                   _buildButtonRow(context),
@@ -65,27 +191,32 @@ class EditProfilePage extends StatelessWidget {
             color: Colors.white,
           ),
         ),
+        // SizedBox(height: 4),
         CustomTextFormField(hint: hint),
-        SizedBox(height: 4),
+        SizedBox(height: 12),
       ],
     );
   }
 
-  Widget _buildDropdownField(
-      String label, List<DropdownMenuItem<String>> items) {
+  Widget _buildDropdownField(String label, List<String> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             color: Colors.white,
           ),
         ),
         SizedBox(height: 4),
         DropdownButtonFormField(
-          items: items,
+          items: items.map((item) {
+            return DropdownMenuItem(
+              value: item,
+              child: Text(item),
+            );
+          }).toList(),
           onChanged: (value) {
             // Handle dropdown value change if needed
           },
@@ -93,10 +224,13 @@ class EditProfilePage extends StatelessWidget {
             filled: true,
             fillColor: Colors.white,
             hintText: '$label',
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
           ),
+          isExpanded: true, // Ensures dropdown fills the available space
         ),
-        SizedBox(height: 4),
+        SizedBox(height: 12),
       ],
     );
   }
@@ -107,11 +241,11 @@ class EditProfilePage extends StatelessWidget {
         Expanded(
           child: _buildDropdownField('Day', _buildDayItems()),
         ),
-        SizedBox(width: 12),
+        SizedBox(width: 8),
         Expanded(
           child: _buildDropdownField('Month', _buildMonthItems()),
         ),
-        SizedBox(width: 12),
+        SizedBox(width: 8),
         Expanded(
           child: _buildDropdownField('Year', _buildYearItems()),
         ),
@@ -119,31 +253,83 @@ class EditProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildMeasurementRow(
-      String label1, String hint1, String label2, String hint2) {
-    return Row(
+  Widget _buildIncomeSlider() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: _buildLabeledTextField(label1, hint1),
+        Text(
+          'Annual Income (Rs)',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+          ),
         ),
-        SizedBox(width: 12),
-        Expanded(
-          child: _buildLabeledTextField(label2, hint2),
+        Slider(
+          activeColor: MainColors.mainThemeColor,
+          min: 0,
+          max: 100000,
+          divisions: 1000,
+          value: annualIncome,
+          onChanged: (value) {
+            setState(() {
+              annualIncome = value;
+            });
+          },
         ),
+        Text(
+          'Rs ${annualIncome.toStringAsFixed(0)}',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(height: 12),
       ],
     );
   }
 
-  Widget _buildLocationRow(String label1, String label2) {
-    return Row(
+  Widget _buildMeasurementRow(
+      String label1, String hint1, String label2, String hint2) {
+    return Column(
       children: [
-        Expanded(
-          child: _buildLabeledTextField(label1, label1),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label1,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  // SizedBox(height: 4),
+                  CustomTextFormField(hint: hint1),
+                ],
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label2,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  // SizedBox(height: 4),
+                  CustomTextFormField(hint: hint2),
+                ],
+              ),
+            ),
+          ],
         ),
-        SizedBox(width: 12),
-        Expanded(
-          child: _buildLabeledTextField(label2, label2),
-        ),
+        SizedBox(height: 12),
       ],
     );
   }
@@ -201,20 +387,15 @@ class EditProfilePage extends StatelessWidget {
     );
   }
 
-  List<DropdownMenuItem<String>> _buildDayItems() {
-    List<DropdownMenuItem<String>> items = [];
+  List<String> _buildDayItems() {
+    List<String> items = [];
     for (int i = 1; i <= 31; i++) {
-      items.add(
-        DropdownMenuItem(
-          value: i.toString(),
-          child: Text(i.toString()),
-        ),
-      );
+      items.add(i.toString());
     }
     return items;
   }
 
-  List<DropdownMenuItem<String>> _buildMonthItems() {
+  List<String> _buildMonthItems() {
     List<String> months = [
       'January',
       'February',
@@ -230,23 +411,13 @@ class EditProfilePage extends StatelessWidget {
       'December'
     ];
 
-    return months.map((month) {
-      return DropdownMenuItem(
-        value: month,
-        child: Text(month),
-      );
-    }).toList();
+    return months;
   }
 
-  List<DropdownMenuItem<String>> _buildYearItems() {
-    List<DropdownMenuItem<String>> items = [];
+  List<String> _buildYearItems() {
+    List<String> items = [];
     for (int year = 1950; year <= DateTime.now().year; year++) {
-      items.add(
-        DropdownMenuItem(
-          value: year.toString(),
-          child: Text(year.toString()),
-        ),
-      );
+      items.add(year.toString());
     }
     return items.reversed.toList();
   }
