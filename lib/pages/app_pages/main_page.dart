@@ -130,7 +130,8 @@ class _MainPageState extends State<MainHomePage>
         return {
           'name':
               '${res['first_name'].toString().toCapitalized()} ${res['last_name'].toString().toCapitalized()}',
-          'age': userAge
+          'age': userAge,
+          'uid': res['uid'],
         };
       }).toList();
 

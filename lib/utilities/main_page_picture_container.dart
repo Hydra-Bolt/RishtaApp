@@ -36,8 +36,7 @@ class TopContainer extends StatefulWidget {
 }
 
 class _TopContainerState extends State<TopContainer> {
-  bool isLoading = true;
-  List? photos;
+  bool isLoading = false;
   String? _selectedReason;
   List<String> reportReasons = [
     "Invalid Info",
@@ -51,18 +50,6 @@ class _TopContainerState extends State<TopContainer> {
   @override
   void initState() {
     super.initState();
-    _getPhotos();
-  }
-
-  void _getPhotos() async {
-    var rishtaUid = widget.rishta['uid'];
-
-    var res =
-        await supabase.from("user_photo").select('*').eq('uid', rishtaUid);
-    setState(() {
-      isLoading = false;
-      photos = res;
-    });
   }
 
   @override
@@ -92,18 +79,11 @@ class _TopContainerState extends State<TopContainer> {
               child: Stack(
                 children: [
                   AnotherCarousel(
-                    images: photos!.isEmpty
-                        ? [
-                            widget.rishta['gender'] == 'Male'
-                                ? AssetImage('assets/images/male.jpg')
-                                : AssetImage('assets/images/female.jpg'),
-                            AssetImage('assets/images/not_found.png'),
-                          ]
-                        : [
-                            AssetImage('assets/images/muneeb1.png'),
-                            AssetImage('assets/images/muneeb2.png'),
-                            AssetImage('assets/images/muneeb3.png')
-                          ],
+                    images: [
+                      AssetImage('assets/images/muneeb1.png'),
+                      AssetImage('assets/images/muneeb2.png'),
+                      AssetImage('assets/images/muneeb3.png')
+                    ],
                     dotSize: 3,
                     indicatorBgPadding: 4,
                     autoplayDuration: const Duration(seconds: 5),
@@ -264,6 +244,7 @@ class _TopContainerState extends State<TopContainer> {
       return;
     }
     var uid = supabase.auth.currentUser!.id;
+    print(widget.rishta);
     try {
       await supabase.from('reports').insert({
         'report_by': uid,

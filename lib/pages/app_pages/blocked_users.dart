@@ -20,15 +20,27 @@ class _BlockedUsersState extends State<BlockedUsers> {
   Future<List> _fetchBlockedUsers() async {
     // Fetches the user's data from the database.
     var uid = supabase.auth.currentUser!.id;
-    return await supabase.from('blocked').select().eq('blocker', uid);
+    var list = await supabase
+        .from('blocked')
+        .select(
+            'blocked_blocked_fkey(first_name), blocked_blocker_fkey(first_name), blocked_on')
+        .eq('blocker', uid);
+    print(list);
+    return list;
   }
 
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
         appBar: AppBar(
-          title: const Text('Blocked Users'),
-        ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: const Text(
+              'Blocked',
+              style: TextStyle(color: Colors.white),
+            )),
         body: FutureBuilder<List>(
           future: blockedUsers,
           builder: (context, snapshot) {
@@ -45,7 +57,7 @@ class _BlockedUsersState extends State<BlockedUsers> {
     }
     if (snapshot.data!.isEmpty) {
       return const Center(
-        child: Text('No blocked users'),
+        child: Text('No blocked users', style: TextStyle(color: Colors.white)),
       );
     }
     return ListView.builder(
@@ -56,6 +68,25 @@ class _BlockedUsersState extends State<BlockedUsers> {
   }
 
   Widget _blockedUserCard(param0) {
+    DateTime blockDate = DateTime.parse(param0['blocked_on']);
+    final now = DateTime.now();
+    final difference = now.difference(blockDate);
+    final differenceInDays = difference.inDays;
+    String timeAgo;
+    if (differenceInDays == 0) {
+      final differenceInMinutes = difference.inMinutes;
+      if (differenceInMinutes < 60) {
+        timeAgo = '${differenceInMinutes}m ago';
+        if (differenceInMinutes < 1) {
+          timeAgo = 'Just now';
+        }
+      } else {
+        final differenceInHours = difference.inHours;
+        timeAgo = '${differenceInHours}h ago';
+      }
+    } else {
+      timeAgo = '${differenceInDays}d ago';
+    }
     return Card(
         color: Colors.white10,
         shape: RoundedRectangleBorder(
@@ -63,13 +94,17 @@ class _BlockedUsersState extends State<BlockedUsers> {
         ),
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            leading: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 20,
-              child: const Icon(Icons.person),
-            ),
-            title: Text(param0['blocked'])));
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          leading: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 20,
+            child: const Icon(Icons.person),
+          ),
+          title: Text(param0['blocked_blocked_fkey']['first_name'],
+              style: TextStyle(color: Colors.white)),
+          subtitle:
+              Text("Blocked $timeAgo", style: TextStyle(color: Colors.white54)),
+        ));
   }
 }
