@@ -56,11 +56,11 @@ class CustomButtons {
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
         const PopupMenuItem<int>(
           value: 1,
-          child: Text('Option 1'),
+          child: Text('Report this rishta'),
         ),
         const PopupMenuItem<int>(
           value: 2,
-          child: Text('Option 2'),
+          child: Text('Don`t Recommend this rishta again'),
         ),
       ],
     );

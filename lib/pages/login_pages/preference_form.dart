@@ -17,6 +17,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
   List<String> _selectedReligions = [];
   String? _selectedEduLevel;
   String? _martialStatus;
+  String? _financialStrength;
   String? _smoking;
   double _minHeight = 150;
   RangeValues _ageRange = const RangeValues(18, 40);
@@ -31,8 +32,8 @@ class _PreferenceFormState extends State<PreferenceForm> {
 
   Map<String, String> eduLevelsMap = {
     'At least Intermediate': 'Intermediate',
-    'At least Bachelor\'s Degree': 'Bachelor',
-    'At least Master\'s Degree': 'Master',
+    'At least Bachelor\'s Degree': 'Bachelors',
+    'At least Master\'s Degree': 'Masters',
     'At least Doctorate Degree': 'Doctorate',
   };
 
@@ -43,6 +44,8 @@ class _PreferenceFormState extends State<PreferenceForm> {
     'Widowed',
     'Any'
   ];
+
+  List<String> financialStrength = ['Low', 'Normal', 'Strong', 'Any'];
 
   List<String> smoking = [
     "Never",
@@ -81,44 +84,65 @@ class _PreferenceFormState extends State<PreferenceForm> {
       return;
     }
 
+    if (_financialStrength == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a financial preference')),
+      );
+      return;
+    }
+
     // Create a map of the data to be submitted
     final formData = {
-      'religion': _selectedReligions,
-      'education': _selectedEduLevel,
+      'uid': supabase.auth.currentUser!.id,
+      'education': eduLevelsMap[_selectedEduLevel],
       'marital_status': _martialStatus,
-      'smoking': _smoking,
-      'min_height': _minHeight,
-      'min_age': (_ageRange.start).toInt(),
+      'smoking': _smoking == 'Doesn\'t matter' ? 'Any' : _smoking,
+      'min_height': _minHeight.toInt(),
+      'min_age': _ageRange.start.toInt(),
       'max_age': _ageRange.end.toInt(),
+      'financial_strength': _financialStrength,
     };
 
-    final List<Map<String, dynamic>> response =
-        await supabase.from("preference").insert(formData).select();
+    try {
+      final List<Map<String, dynamic>> response =
+          await supabase.from("Preference").insert(formData).select();
 
-    final id = (response[0]['pid']);
-    final res = await supabase
-        .from("users")
-        .update({"pid": id}).eq("uid", supabase.auth.currentUser!.id);
+      for (var religion in _selectedReligions) {
+        print(religion);
+        await supabase
+            .from("UserPreferredReligion")
+            .insert({"pid": response[0]['pid'], "religion": religion});
+      }
 
-    // // Example: Send the data to an API endpoint
-    // final url = Uri.parse('https://your-api-endpoint.com/preferences');
-    // final response = await http.post(
-    //   url,
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode(formData),
-    // );
-
-    // // Handle the response
-    if (res == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Preferences submitted successfully!')),
+        const SnackBar(
+          content: Text('Preferences submitted successfully!'),
+        ),
       );
       Navigator.of(context).pushReplacementNamed('/home');
-    } else {
+    } on Exception catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: const Text('Failed to submit preferences')),
+        const SnackBar(content: Text('Failed to submit preferences')),
       );
     }
+
+    // final id = (response[0]['pid']);
+    // final res = await supabase
+    //     .from("users")
+    //     .update({"pid": id}).eq("uid", supabase.auth.currentUser!.id);
+
+    // // Handle the response
+    // if (res == null) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Preferences submitted successfully!')),
+    //   );
+    //   Navigator.of(context).pushReplacementNamed('/home');
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Failed to submit preferences')),
+    //   );
+    // }
   }
 
   @override
@@ -127,7 +151,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
       appBar: AppBar(
         title: const Text(
           "Preference Details",
-          style: TextStyle(color: AppColors.grey),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(
@@ -136,7 +160,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
           children: [
             const Text("What are your prefered religions?",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 )),
@@ -154,7 +178,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Education Level",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -166,7 +190,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
               items: eduLevelsMap.keys.toList(),
               onChanged: (value) {
                 setState(() {
-                  _selectedEduLevel = eduLevelsMap[value] ?? value;
+                  _selectedEduLevel = value;
                 });
               },
             ),
@@ -174,7 +198,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Marital Status",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -194,7 +218,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Partner's Smoking",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -212,15 +236,36 @@ class _PreferenceFormState extends State<PreferenceForm> {
             ),
             const SizedBox(height: 20),
             const Text(
+              "Partner's Financial Stability",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            CustomDropdownFormField(
+              label: "Financial Strength",
+              value: _financialStrength,
+              items: financialStrength,
+              onChanged: (value) {
+                setState(() {
+                  _financialStrength = value;
+                });
+              },
+            ),
+            const SizedBox(height: 20),
+            const Text(
               "Minimum Height",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Slider(
               activeColor: AppColors.mainColor,
+              inactiveColor: Colors.white10,
               value: _minHeight,
               min: 150,
               max: 250,
@@ -236,13 +281,14 @@ class _PreferenceFormState extends State<PreferenceForm> {
             const Text(
               "Preferred Age Range",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             RangeSlider(
               activeColor: AppColors.mainColor,
+              inactiveColor: Colors.white10,
               values: _ageRange,
               min: 18,
               max: 80,

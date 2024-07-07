@@ -34,7 +34,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
       });
       await supabase.auth.resetPasswordForEmail(_emailController.text);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Account Recovery code sent!'),
           backgroundColor: Colors.green,
         ),
@@ -62,7 +62,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
       await supabase.auth
           .verifyOTP(token: enteredCode, type: OtpType.recovery, email: email);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Verification successful!'),
           backgroundColor: Colors.green,
         ),
@@ -86,7 +86,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
     String confirmPassword = _confirmPasswordController.text.trim();
     if (newPassword != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Passwords do not match'),
           backgroundColor: Colors.red,
         ),
@@ -97,7 +97,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
     try {
       await supabase.auth.updateUser(UserAttributes(password: newPassword));
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Password reset successful!'),
           backgroundColor: Colors.green,
         ),
@@ -118,9 +118,14 @@ class _RecoverAccountState extends State<RecoverAccount> {
     return MyScaffold(
       appBar: AppBar(
         leading: BackButton(
+          color: Colors.white,
           onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
         ),
-        title: const Text("Recover Account"),
+        title: const Text(
+          "Recover Account",
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -156,7 +161,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
           controller: _confirmPasswordController,
           enabled: true,
         ),
-        Spacer(),
+        const Spacer(),
         MyCustomButton(onTap: () => resetPassword(), text: "Reset Password"),
         const SizedBox(height: 35),
       ],
@@ -168,14 +173,13 @@ class _RecoverAccountState extends State<RecoverAccount> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          child: Image.asset('assets/images/recover.png'),
-        ),
+        Image.asset('assets/images/recover.png', height: 100),
         const Text(
           "Enter your email and we will send you a link to reset your password",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 25),
@@ -193,7 +197,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
               onTap: () => sendVerification(),
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
                 decoration: BoxDecoration(
                   color: Colors.white10,
                   border: Border.all(color: Colors.white, width: 1),
@@ -201,7 +205,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
                 ),
                 child: Text(
                   codeSent ? "Resend Code" : "Send Code",
-                  style: const TextStyle(color: Color(0xFFc7052c)),
+                  style: const TextStyle(color: AppColors.mainColor),
                 ),
               ),
             ),
@@ -212,7 +216,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(6, (index) => _buildCodeDigitField(index)),
         ),
-        Spacer(),
+        const Spacer(),
         MyCustomButton(onTap: () => verifyCode(), text: "Recover"),
         const SizedBox(height: 35),
       ],
@@ -227,7 +231,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
       child: TextFormField(
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: Colors.white10,
           counterText: "",
           contentPadding:
               const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
@@ -235,8 +239,8 @@ class _RecoverAccountState extends State<RecoverAccount> {
             borderRadius: const BorderRadius.all(Radius.circular(6.0)),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6.0)),
             borderSide: BorderSide(color: AppColors.mainColor, width: 1.0),
           ),
           errorBorder: const OutlineInputBorder(
@@ -249,7 +253,9 @@ class _RecoverAccountState extends State<RecoverAccount> {
           ),
         ),
         controller: _codeControllers[index],
+        style: const TextStyle(color: Colors.white, fontSize: 20.0),
         keyboardType: TextInputType.number,
+        cursorColor: AppColors.mainColor,
         textAlign: TextAlign.center,
         maxLength: 1,
         onChanged: (value) {

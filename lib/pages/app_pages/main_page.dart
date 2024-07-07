@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/pages/app_pages/rishta_clicked_page.dart';
@@ -56,6 +55,7 @@ class _MainPageState extends State<MainHomePage>
   bool get wantKeepAlive => true;
   @override
   void initState() {
+    print("CURRENT UID: ${supabase.auth.currentUser!.id}");
     super.initState();
 
     // Fetches the user's data from the database.
@@ -68,18 +68,34 @@ class _MainPageState extends State<MainHomePage>
   Future<void> _fetchUserData() async {
     try {
       final response = await supabase
-          .from('users')
+          .from('Users')
           .select()
           .eq('uid', supabase.auth.currentUser!.id)
           .single();
-
       setState(() {
         userData = response;
       });
       if (!mounted) return;
-      if (userData!['lid'] == null) {
+
+      final bool filledLifeStyleForm = await supabase
+          .from('Lifestyle')
+          .select()
+          .eq('uid', supabase.auth.currentUser!.id)
+          .single()
+          .then((value) => true)
+          .onError((error, stackTrace) => false);
+
+      final bool filledPreferenceForm = await supabase
+          .from('Preference')
+          .select()
+          .eq('uid', supabase.auth.currentUser!.id)
+          .single()
+          .then((value) => true)
+          .onError((error, stackTrace) => false);
+
+      if (filledLifeStyleForm == false) {
         Navigator.of(context).pushReplacementNamed('/lifestyle');
-      } else if (userData!['pid'] == null) {
+      } else if (filledPreferenceForm == false) {
         Navigator.of(context).pushReplacementNamed('/preference');
       }
     } catch (error) {
@@ -115,7 +131,7 @@ class _MainPageState extends State<MainHomePage>
   }
 
   void handleMatch(String status) async {
-    await supabase.from("matches").insert({
+    await supabase.from("Matches").insert({
       'request_by': supabase.auth.currentUser!.id,
       'request_to': rishta['uid'],
       'status': status

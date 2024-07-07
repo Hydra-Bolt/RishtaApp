@@ -2,9 +2,9 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/pages/app_pages/connections.dart';
 import 'package:supabase_auth/pages/app_pages/main_page.dart';
-import 'package:supabase_auth/pages/app_pages/messages.dart';
 import 'package:supabase_auth/pages/app_pages/profile.dart';
 import 'package:supabase_auth/pages/app_pages/settings.dart';
+import 'package:supabase_auth/pages/chat_pages/chats.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
 class MainPage extends StatefulWidget {
@@ -74,12 +74,12 @@ class _MainPageState extends State<MainPage> {
               pageStateIndex = index;
             });
           },
-          children: const [
-            ProfilePage(),
-            MessagesPage(),
-            MainHomePage(),
-            ConnectionsPage(),
-            SettingsPage(),
+          children: [
+            const ProfilePage(),
+            ChatsPage(),
+            const MainHomePage(),
+            const ConnectionsPage(),
+            const SettingsPage(),
           ],
         ),
       )
