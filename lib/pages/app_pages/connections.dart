@@ -22,7 +22,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
 
   Future<void> handleFriendResponse(bool isAdded, String requestBy) async {
     try {
-      final response = await supabase
+      await supabase
           .from('Matches')
           .update({'response': isAdded ? 'Accepted' : 'Rejected'})
           .eq("request_to", supabase.auth.currentUser!.id)
@@ -33,7 +33,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
         'user2': requestBy,
         'friends': 'Yes'
       };
-      final chatResponse = await supabase.from('Chats').insert(chat_obj);
+      await supabase.from('Chats').insert(chat_obj);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text("Done!"),

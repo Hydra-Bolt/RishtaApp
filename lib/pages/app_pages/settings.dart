@@ -26,8 +26,11 @@ class _SettingsPageState extends State<SettingsPage>
     isLoading = true;
     // Fetches the user's data from the database.
     var uid = supabase.auth.currentUser!.id;
-    var response =
-        await supabase.from('users').select("name").eq('uid', uid).single();
+    var response = await supabase
+        .from('Users')
+        .select("first_name")
+        .eq('uid', uid)
+        .single();
     setState(() {
       userData = response;
       isLoading = false;
@@ -57,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      userData?['name'],
+                      userData?['first_name'],
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 30,
@@ -65,7 +68,8 @@ class _SettingsPageState extends State<SettingsPage>
                       ),
                     ),
                     Text(
-                      supabase.auth.currentUser!.email!,
+                      "@" +
+                          supabase.auth.currentUser!.userMetadata!['username'],
                       style: TextStyle(
                         color: Colors.white60,
                       ),
@@ -171,47 +175,48 @@ class _SettingsPageState extends State<SettingsPage>
                     'Logout',
                     Icons.logout,
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          contentPadding: EdgeInsets.all(20),
-                          backgroundColor: Colors.grey[700],
-                          titleTextStyle: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          contentTextStyle: const TextStyle(fontSize: 16),
-                          title: const Text('Logout'),
-                          content:
-                              const Text('Are you sure you want to logout?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel',
-                                  style: TextStyle(
-                                      color: MainColors.mainThemeColor)),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Sign out of Supabase
-                                supabase.auth.signOut();
-                                Navigator.pushNamed(context, '/');
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Logout',
-                                  style: TextStyle(
-                                      color: MainColors.mainThemeColor)),
-                            ),
-                          ],
-                        ),
-                      );
+                      logoutConfimationDialogue(context);
                     },
                   ),
                   SizedBox(height: dim.height(1)),
                 ],
               ),
             ),
+    );
+  }
+
+  Future<dynamic> logoutConfimationDialogue(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        contentPadding: EdgeInsets.all(20),
+        backgroundColor: Colors.grey[700],
+        titleTextStyle:
+            const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        contentTextStyle: const TextStyle(fontSize: 16),
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel',
+                style: TextStyle(color: MainColors.mainThemeColor)),
+          ),
+          TextButton(
+            onPressed: () {
+              // Sign out of Supabase
+              supabase.auth.signOut();
+              Navigator.pushNamed(context, '/');
+              Navigator.pop(context);
+            },
+            child: const Text('Logout',
+                style: TextStyle(color: MainColors.mainThemeColor)),
+          ),
+        ],
+      ),
     );
   }
 }

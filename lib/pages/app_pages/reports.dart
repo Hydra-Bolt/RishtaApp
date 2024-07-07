@@ -69,7 +69,6 @@ class _ReportsState extends State<Reports> {
   }
 
   Widget _reportedUserCard(param0) {
-    print(param0);
     DateTime reportDate = DateTime.parse(param0['report_date']);
     final now = DateTime.now();
     final difference = now.difference(reportDate);
