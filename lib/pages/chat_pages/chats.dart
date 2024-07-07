@@ -72,13 +72,13 @@ class _ChatsPageState extends State<ChatsPage> {
           ),
         ),
         centerTitle: true,
-        leading: const Icon(
+        leading: Icon(
           Icons.message_outlined,
           color: Colors.white,
         ),
       ),
       backgroundColor: Colors.transparent,
-      body: Column(
+      body: Stack(
         children: [
           const Divider(
             color: Colors.black,
@@ -86,49 +86,47 @@ class _ChatsPageState extends State<ChatsPage> {
             indent: 30,
             endIndent: 30,
           ),
-          Expanded(
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: _fetchChats(supabase.auth.currentUser!.id),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator.adaptive(
-                      backgroundColor: Colors.black,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final chatBoxData = snapshot.data!;
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.topCenter,
-                          padding: const EdgeInsets.only(
-                              top: 4, left: 14, right: 10),
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(40),
-                            ),
-                          ),
-                          child: MyChatBoxCardsSectionCreator(
-                            service: service,
-                            chatsData: chatBoxData,
+          FutureBuilder<List<Map<String, dynamic>>>(
+            future: _fetchChats(supabase.auth.currentUser!.id),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator.adaptive(
+                    backgroundColor: Colors.black,
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                final chatBoxData = snapshot.data!;
+                return Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        padding:
+                            const EdgeInsets.only(top: 4, left: 14, right: 10),
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(40),
                           ),
                         ),
+                        child: MyChatBoxCardsSectionCreator(
+                          service: service,
+                          chatsData: chatBoxData,
+                        ),
                       ),
-                    ],
-                  );
-                } else {
-                  return const Center(
-                      child: Text(
-                    "No Chats Available.",
-                    style: TextStyle(color: Colors.black, fontSize: 30),
-                  ));
-                }
-              },
-            ),
+                    ),
+                  ],
+                );
+              } else {
+                return Center(
+                    child: Text(
+                  "No Chats Available.",
+                  style: TextStyle(color: Colors.white, fontSize: 30),
+                ));
+              }
+            },
           ),
         ],
       ),

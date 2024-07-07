@@ -147,7 +147,7 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
             height: double.infinity,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 246, 233, 233).withOpacity(0.9),
+              color: Color.fromARGB(255, 246, 233, 233).withOpacity(0.9),
               backgroundBlendMode: BlendMode.darken,
             ),
           ),
@@ -262,8 +262,9 @@ class MyMessageSectionWidget extends StatelessWidget {
       itemCount: messages.length,
       itemBuilder: (context, index) {
         final message = messages[index];
+        print(message.showMessage);
         if (!message.showMessage) {
-          return const SizedBox.shrink();
+          return SizedBox.shrink();
         }
         return GestureDetector(
             onLongPress: () {
