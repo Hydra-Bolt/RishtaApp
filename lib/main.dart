@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_auth/pages/app_pages/blocked_users.dart';
 
@@ -14,10 +15,13 @@ import 'package:supabase_auth/pages/login_pages/user_info_form.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+
+  String supabaseUrl = dotenv.env['SUPABASE_URL']!;
+  String supabaseKey = dotenv.env['SUPABASE_KEY']!;
   await Supabase.initialize(
-    url: 'https://hoogaibcqnhvxbqmkpvo.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhvb2dhaWJjcW5odnhicW1rcHZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY3MTM4NTgsImV4cCI6MjAzMjI4OTg1OH0.q8RL7Sprp1U1ah6UGRPgOJ_H0x-avfh6U-5CEtGdJv8',
+    url: supabaseUrl,
+    anonKey: supabaseKey,
   );
   runApp(const MyApp());
 }

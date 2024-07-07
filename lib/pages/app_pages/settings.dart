@@ -209,8 +209,7 @@ class _SettingsPageState extends State<SettingsPage>
             onPressed: () {
               // Sign out of Supabase
               supabase.auth.signOut();
-              Navigator.pushNamed(context, '/');
-              Navigator.pop(context);
+              Navigator.of(context).pushReplacementNamed('/');
             },
             child: const Text('Logout',
                 style: TextStyle(color: MainColors.mainThemeColor)),
