@@ -37,18 +37,17 @@ class BottomContainer extends StatelessWidget {
         border: Border.all(color: borderColor, width: borderWidth),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.fromLTRB(8.0, 60.0, 8.0, 8.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomRichText(
-                  rishta: rishta,
-                ),
-                CustomButtons.heartButton(),
-              ],
+            CustomRichText(
+              rishta: rishta,
+            ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: CustomButtons.heartButton(),
             ),
           ],
         ),

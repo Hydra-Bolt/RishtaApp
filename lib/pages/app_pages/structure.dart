@@ -43,7 +43,7 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.transparent,
         extendBody: true,
         bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Color(0xFF323232),
           color: MainColors.navigationBackground,
           buttonBackgroundColor: Colors.transparent,
           animationDuration: const Duration(milliseconds: 300),

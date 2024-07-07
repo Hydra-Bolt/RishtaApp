@@ -8,4 +8,5 @@ class MainColors {
   static const Color mainPageContainer1Background = Color(0xFF535353);
   static const Color mainPageContainer2Background = Color(0xFFC3C3C3);
   static const Color textColor = Colors.white;
+  static const Color profilePageContainerBackground = Color(0xFFD9D9D9);
 }

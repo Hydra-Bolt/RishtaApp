@@ -67,4 +67,17 @@ class CustomButtons {
       ],
     );
   }
+
+  static Widget editButton({required VoidCallback onPressed}) {
+    return FloatingActionButton.extended(
+      icon: const Icon(
+        Icons.edit,
+        color: MainColors.textColor,
+      ),
+      onPressed: onPressed,
+      backgroundColor: MainColors.mainThemeColor,
+      label: const Text('Edit'),
+      foregroundColor: MainColors.textColor,
+    );
+  }
 }
