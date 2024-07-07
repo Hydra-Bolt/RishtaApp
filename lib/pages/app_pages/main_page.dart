@@ -179,89 +179,87 @@ class _MainPageState extends State<MainHomePage>
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          alignment: Alignment.topCenter,
-          child: isLoading
-              ? Transform.scale(
-                  scale: 1.3,
-                  child: const Center(
-                      child: CircularProgressIndicator(
-                    color: AppColors.mainColor,
-                  )),
-                ) // Add this line
-              : rishta == null
-                  ? Container(
-                      padding: const EdgeInsets.all(20),
-                      alignment: Alignment.topCenter,
-                      child: const Text(
-                        'Oh no! It seems we don`t have any rishtas for you at the moment. But don`t worry, something special might be just around the corner!',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
+      body: Container(
+        alignment: Alignment.topCenter,
+        child: isLoading
+            ? Transform.scale(
+                scale: 1.3,
+                child: const Center(
+                    child: CircularProgressIndicator(
+                  color: AppColors.mainColor,
+                )),
+              ) // Add this line
+            : rishta == null
+                ? Container(
+                    padding: const EdgeInsets.all(20),
+                    alignment: Alignment.topCenter,
+                    child: const Text(
+                      'Oh no! It seems we don`t have any rishtas for you at the moment. But don`t worry, something special might be just around the corner!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  )
+                : Stack(
+                    children: [
+                      // Bottom Container
+                      BottomContainer(
+                        rishta: rishta,
+                        height: container1Height,
+                        width: container1Width,
+                        topMargin: container1TopMargin,
+                        bottomMargin: container1BotttomMargin,
+                        backgroundColor: mainPageContainer1Background,
+                        borderRadius: borderRadius,
+                        borderColor: mainThemeColor,
+                        borderWidth: containerBorderWidth,
+                      ),
+                      // Top Container
+                      TopContainer(
+                        rishta: rishta,
+                        height: container2Height,
+                        width: container2Width,
+                        bottomMargin: container2BottomMargin,
+                        backgroundColor: mainPageContainer2Background,
+                        borderRadius: borderRadius,
+                        borderColor: mainThemeColor,
+                        borderWidth: containerBorderWidth,
+                        shadowColor: shadowColor,
+                      ),
+                      // Buttons
+                      Positioned(
+                        bottom: dimensions.height(9.5),
+                        width: container1Width,
+                        child: ButtonBar(
+                          alignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButtons.closeButton(() {
+                              // _rejected()
+
+                              handleMatch("No request made");
+                              if (rishtaItr!.moveNext()) {
+                                setState(() {
+                                  rishta = rishtaItr!.current;
+                                });
+                              }
+                            }),
+                            const SizedBox(width: 20),
+                            CustomButtons.checkButton(() async {
+                              // _accepted()
+
+                              handleMatch("Waiting for response");
+                              if (rishtaItr!.moveNext()) {
+                                setState(() {
+                                  rishta = rishtaItr!.current;
+                                });
+                              }
+                            }),
+                          ],
                         ),
                       ),
-                    )
-                  : Stack(
-                      children: [
-                        // Bottom Container
-                        BottomContainer(
-                          rishta: rishta,
-                          height: container1Height,
-                          width: container1Width,
-                          topMargin: container1TopMargin,
-                          bottomMargin: container1BotttomMargin,
-                          backgroundColor: mainPageContainer1Background,
-                          borderRadius: borderRadius,
-                          borderColor: mainThemeColor,
-                          borderWidth: containerBorderWidth,
-                        ),
-                        // Top Container
-                        TopContainer(
-                          rishta: rishta,
-                          height: container2Height,
-                          width: container2Width,
-                          bottomMargin: container2BottomMargin,
-                          backgroundColor: mainPageContainer2Background,
-                          borderRadius: borderRadius,
-                          borderColor: mainThemeColor,
-                          borderWidth: containerBorderWidth,
-                          shadowColor: shadowColor,
-                        ),
-                        // Buttons
-                        Positioned(
-                          bottom: dimensions.height(9.5),
-                          width: container1Width,
-                          child: ButtonBar(
-                            alignment: MainAxisAlignment.center,
-                            children: [
-                              CustomButtons.closeButton(() {
-                                // _rejected()
-
-                                handleMatch("No request made");
-                                if (rishtaItr!.moveNext()) {
-                                  setState(() {
-                                    rishta = rishtaItr!.current;
-                                  });
-                                }
-                              }),
-                              const SizedBox(width: 20),
-                              CustomButtons.checkButton(() async {
-                                // _accepted()
-
-                                handleMatch("Waiting for response");
-                                if (rishtaItr!.moveNext()) {
-                                  setState(() {
-                                    rishta = rishtaItr!.current;
-                                  });
-                                }
-                              }),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-        ),
+                    ],
+                  ),
       ),
     );
   }
