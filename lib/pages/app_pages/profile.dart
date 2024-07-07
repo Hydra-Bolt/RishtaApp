@@ -1,51 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/pages/app_pages/edit_lifestyle_page.dart';
+import 'package:supabase_auth/pages/app_pages/preference_page.dart';
 import 'package:supabase_auth/utilities/profile_info_container.dart';
 import 'package:supabase_auth/utilities/profile_picture_container.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
+import 'package:supabase_auth/utilities/colors.dart';
+import 'package:supabase_auth/pages/app_pages/lifestyle_page.dart'; // Import the LifestyleTab widget
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key});
 
   @override
   Widget build(BuildContext context) {
     // Example initial data, replace with your actual data source
-    final String name = 'John Doe';
-    final String email = 'john.doe@example.com';
-
+    
     return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 60.0),
-        child: SizedBox(
-          height: 35,
-          width: 100,
-          child: CustomButtons.editButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditProfilePage(
-                    initialName: name,
-                    initialEmail: email,
-                  ),
-                ),
-              );
-            },
-          ),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: const Text(
+          'Profile',
+          style: TextStyle(color: Colors.white),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      
       backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
-        child: Center(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              ProfileInfoContainer(),
-              ProfileImageContainer(),
-            ],
-          ),
+      body: DefaultTabController(
+        length: 2, // Number of tabs
+        child: Column(
+          children: [
+            TabBar(
+              labelColor: MainColors.mainThemeColor,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: MainColors.mainThemeColor,
+              overlayColor: MaterialStatePropertyAll(Colors.white10),
+              tabs: [
+                Tab(text: 'Lifestyle'),
+                Tab(text: 'Preferences'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  // First Tab: Lifestyle
+                  LifestyleTab(), // Use the LifestyleTab widget here
+
+                  // Second Tab: Preferences
+                  PreferencesTab(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

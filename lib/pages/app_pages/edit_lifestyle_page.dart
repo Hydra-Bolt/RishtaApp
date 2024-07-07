@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:supabase_auth/utilities/text_form_fields.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
-class EditProfilePage extends StatefulWidget {
+class EditLifestylePage extends StatefulWidget {
   final String initialName;
   final String initialEmail;
 
-  const EditProfilePage({
-    Key? key,
+  const EditLifestylePage({
+    super.key,
     required this.initialName,
     required this.initialEmail,
-  }) : super(key: key);
+  });
 
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  _EditLifestylePageState createState() => _EditLifestylePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditLifestylePageState extends State<EditLifestylePage> {
   double annualIncome = 10000;
 
   @override
@@ -99,7 +99,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'Never',
       'Rarely',
       'Sometimes',
-      'Often'
+      'Often',
+      'Any'
     ];
 
     final Map<String, String> education = {
@@ -319,7 +320,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     label2,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                   // SizedBox(height: 4),
