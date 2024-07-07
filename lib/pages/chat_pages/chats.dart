@@ -123,7 +123,7 @@ class _ChatsPageState extends State<ChatsPage> {
                 return Center(
                     child: Text(
                   "No Chats Available.",
-                  style: TextStyle(color: Colors.black, fontSize: 30),
+                  style: TextStyle(color: Colors.white, fontSize: 30),
                 ));
               }
             },

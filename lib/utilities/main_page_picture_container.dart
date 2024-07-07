@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
-import 'package:supabase_auth/components/my_button.dart';
 import 'package:supabase_auth/components/my_drop_down.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
-import 'package:supabase_auth/utilities/colors.dart';
 
 class TopContainer extends StatefulWidget {
   final double height;
@@ -37,19 +34,31 @@ class TopContainer extends StatefulWidget {
 
 class _TopContainerState extends State<TopContainer> {
   bool isLoading = false;
+  List? photos;
   String? _selectedReason;
-  List<String> reportReasons = [
-    "Invalid Info",
-    "Explicit Content",
-    "Hate Speech",
-    "Spam",
-    "Other"
-  ];
+  Map<String, String> reportReasons = {
+    "Inavlid Info": "inv_info",
+    "Explicit Content": "exp_content",
+    "Hate Speech": "hate_speech",
+    "Spam": "spam",
+    "Other": "other",
+  };
   String? _reportDetails;
-
   @override
   void initState() {
     super.initState();
+    // _getPhotos();
+  }
+
+  void _getPhotos() async {
+    var rishtaUid = widget.rishta['uid'];
+
+    var res =
+        await supabase.from("user_photo").select('*').eq('uid', rishtaUid);
+    setState(() {
+      isLoading = false;
+      photos = res;
+    });
   }
 
   @override
@@ -79,11 +88,18 @@ class _TopContainerState extends State<TopContainer> {
               child: Stack(
                 children: [
                   AnotherCarousel(
-                    images: [
-                      AssetImage('assets/images/muneeb1.png'),
-                      AssetImage('assets/images/muneeb2.png'),
-                      AssetImage('assets/images/muneeb3.png')
-                    ],
+                    images: photos == null
+                        ? [
+                            widget.rishta['gender'] == 'Male'
+                                ? const AssetImage('assets/images/cutie.jpg')
+                                : const AssetImage('assets/images/female.jpg'),
+                            const AssetImage('assets/images/not_found.png'),
+                          ]
+                        : [
+                            const AssetImage('assets/images/muneeb1.png'),
+                            const AssetImage('assets/images/muneeb2.png'),
+                            const AssetImage('assets/images/muneeb3.png')
+                          ],
                     dotSize: 3,
                     indicatorBgPadding: 4,
                     autoplayDuration: const Duration(seconds: 5),
@@ -94,9 +110,78 @@ class _TopContainerState extends State<TopContainer> {
                     child: CustomButtons.popupMenuButton(
                       onSelected: (value) {
                         if (value == 1) {
-                          _reportDialogue(context);
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 100),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.grey[800],
+                                    ),
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 20),
+                                        child: Scaffold(
+                                          backgroundColor: Colors.transparent,
+                                          body: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  "Report",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 30,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                CustomDropdownFormField(
+                                                    label: "Reason",
+                                                    value: _selectedReason,
+                                                    items: reportReasons.keys
+                                                        .toList(),
+                                                    onChanged: (value) => {
+                                                          setState(() {
+                                                            _selectedReason =
+                                                                reportReasons[
+                                                                        value] ??
+                                                                    value;
+                                                          })
+                                                        }),
+                                                const SizedBox(height: 10),
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    maxLines: null,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                            hintText:
+                                                                "Add details of the report..."),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _reportDetails = value;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    print(_reportDetails);
+                                                    print(_selectedReason);
+                                                    // your report submission logic here
+                                                  },
+                                                  child: const Text(
+                                                      'Submit Report'),
+                                                ),
+                                              ]),
+                                        )));
+                              });
                         } else if (value == 2) {
-                          _blockDialogue(context);
+                          print('Dont show again');
                         }
                       },
                     ),
@@ -105,157 +190,5 @@ class _TopContainerState extends State<TopContainer> {
               ),
             ),
     );
-  }
-
-  Future<dynamic> _blockDialogue(BuildContext context) async {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            backgroundColor: Colors.grey[800],
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Block",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Are you sure you want to block ${widget.rishta['name']}?",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CustomButtons.closeButton(
-                        () => Navigator.of(context).pop(),
-                      ),
-                      const SizedBox(width: 10),
-                      CustomButtons.checkButton(
-                        () {
-                          supabase.from('blocked').insert({
-                            'blocker': supabase.auth.currentUser!.id,
-                            'blocked': widget.rishta['uid'],
-                          }).then((value) => Navigator.of(context).pop());
-                        },
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  Future<dynamic> _reportDialogue(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          backgroundColor: Colors.grey[800],
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Report",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                CustomDropdownFormField(
-                  label: "Reason",
-                  value: _selectedReason,
-                  items: reportReasons,
-                  onChanged: (value) => {
-                    setState(() {
-                      _selectedReason = value;
-                    })
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  minLines: 4,
-                  maxLines: null,
-                  cursorColor: MainColors.mainThemeColor,
-                  decoration: InputDecoration(
-                    hintText: "Add details of the report...",
-                    hintStyle: TextStyle(color: Colors.white30),
-                    filled: true,
-                    fillColor: Colors.white10,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _reportDetails = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: 10),
-                Center(
-                  child: MyCustomButton(
-                    onTap: () {
-                      _reportUser(context);
-                    },
-                    text: "Submit Report",
-                  ),
-                ),
-                const SizedBox(height: 10),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _reportUser(BuildContext dialogContext) async {
-    if (_selectedReason == null) {
-      ScaffoldMessenger.of(dialogContext).showSnackBar(
-        const SnackBar(content: Text('Please select a reason for the report')),
-      );
-      return;
-    }
-    var uid = supabase.auth.currentUser!.id;
-    print(widget.rishta);
-    try {
-      await supabase.from('reports').insert({
-        'report_by': uid,
-        'reported_user': widget.rishta['uid'],
-        'reason': _selectedReason,
-        'detail': _reportDetails
-      });
-    } on Exception catch (e) {
-      print(e);
-    }
-
-    Navigator.of(dialogContext).pop();
   }
 }
