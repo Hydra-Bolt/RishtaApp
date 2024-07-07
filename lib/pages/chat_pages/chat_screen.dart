@@ -3,6 +3,7 @@ import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/pages/chat_pages/message.dart';
 import 'package:supabase_auth/utilities/input_text_field.dart';
 import 'package:supabase_auth/utils/db_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyChatScreenUI extends StatefulWidget {
   final Map<String, dynamic> chatBoxDetails;
@@ -14,21 +15,91 @@ class MyChatScreenUI extends StatefulWidget {
 }
 
 class _MyChatScreenUIState extends State<MyChatScreenUI> {
+  String? channelName;
   final String _uid = supabase.auth.currentUser!.id;
   final List<Message> _messages = [];
   final TextEditingController _messageController = TextEditingController();
   final DBService _service = DBService();
+  late RealtimeChannel channel;
 
   @override
   void initState() {
     super.initState();
+    channelName = "ChatChannel" + widget.chatBoxDetails['chatID'].toString();
     _fetchMessages(widget.chatBoxDetails['chatID']);
+    _addSupabaseMessageListener();
+  }
+
+  void _addSupabaseMessageListener() {
+    channel = supabase
+        .channel(channelName!)
+        .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'Message',
+            filter: PostgresChangeFilter(
+              type: PostgresChangeFilterType.eq,
+              column: 'chatbox_id',
+              value: widget.chatBoxDetails['chatID'],
+            ),
+            callback: (payload) {
+              bool showMsgFor = false;
+
+              final bool isMe = payload.newRecord['sender'] == _uid;
+
+              switch (payload.newRecord['deleted_for']) {
+                case 'None':
+                  showMsgFor = true;
+                  break;
+                case 'Sender':
+                  showMsgFor = isMe ? false : true;
+                  break;
+                case 'Receiver':
+                  showMsgFor = isMe;
+                  break;
+                case 'Both':
+                  showMsgFor = false;
+                  break;
+              }
+
+              final newMessage = Message(
+                  id: payload.newRecord['id'],
+                  isMe: isMe,
+                  chatboxId: payload.newRecord['chatbox_id'],
+                  message: payload.newRecord['message'],
+                  messageSentTime:
+                      DateTime.parse(payload.newRecord['message_sent_time']),
+                  showMessage: showMsgFor);
+
+              if (payload.oldRecord.isNotEmpty) {
+                String? change = payload.oldRecord['deleted_for'];
+                if (change == 'None' && showMsgFor) {
+                  setState(() {
+                    _messages.insert(0, newMessage);
+                  });
+                } else if (change != 'None' && showMsgFor == false) {
+                  setState(() {
+                    _messages.removeWhere(
+                      (element) {
+                        return element.id == newMessage.id;
+                      },
+                    );
+                  });
+                }
+              } else {
+                setState(() {
+                  _messages.insert(0, newMessage);
+                });
+              }
+            })
+        .subscribe();
   }
 
   void _fetchMessages(int chatBoxID) async {
     try {
       final List<dynamic> response =
           await _service.getMessagesFromChatBoxID(chatBoxID);
+
       setState(() {
         _messages.clear();
         _messages.addAll(
@@ -77,14 +148,14 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
     final response = await _service.addMessageUsingChatBoxID(
         widget.chatBoxDetails['chatID'], data);
 
-    if (response != null) {
-      msg.isSent = true;
-      msg.id = response[0]['id'];
-      msg.messageSentTime = DateTime.parse(response[0]['message_sent_time']);
-      setState(() {
-        _messages.insert(0, msg);
-      });
-    }
+    // if (response != null) {
+    //   msg.isSent = true;
+    //   msg.id = response[0]['id'];
+    //   msg.messageSentTime = DateTime.parse(response[0]['message_sent_time']);
+    //   setState(() {
+    //     _messages.insert(0, msg);
+    //   });
+    // }
 
     _messageController.clear();
   }
@@ -131,7 +202,10 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
             size: 30,
             color: Colors.black,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            final status = await supabase.removeChannel(channel);
+            Navigator.pop(context);
+          },
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 246, 233, 233),
