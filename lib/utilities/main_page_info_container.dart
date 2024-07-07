@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
 import 'package:supabase_auth/utilities/custom_richtext.dart';
 
@@ -40,18 +38,15 @@ class BottomContainer extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8.0, 60.0, 8.0, 8.0),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.only(top: 10),
-              alignment: Alignment.center,
-              child: CustomRichText(
-                rishta: rishta,
-              ),
+            CustomRichText(
+              rishta: rishta,
             ),
             const Spacer(),
             Align(
-              alignment: Alignment.topRight,
+              alignment: Alignment.bottomRight,
               child: CustomButtons.heartButton(),
             ),
           ],

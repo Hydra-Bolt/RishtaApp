@@ -28,6 +28,14 @@ class MyTextFormInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController _scrollController = ScrollController();
+    controller?.addListener(() {
+      if (controller!.text.isNotEmpty &&
+          controller!.selection.extentOffset > 0) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+
     return TextFormField(
       controller: controller,
       enabled: isEnabled,
@@ -38,6 +46,7 @@ class MyTextFormInputField extends StatelessWidget {
       minLines: 1,
       maxLines: 10,
       textInputAction: TextInputAction.newline,
+      scrollController: _scrollController,
       decoration: InputDecoration(
         filled: true,
         hintText: textHint,
