@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:supabase_auth/components/my_drop_down.dart';
 import 'package:supabase_auth/main.dart';
@@ -34,7 +33,7 @@ class TopContainer extends StatefulWidget {
 }
 
 class _TopContainerState extends State<TopContainer> {
-  bool isLoading = true;
+  bool isLoading = false;
   List? photos;
   String? _selectedReason;
   Map<String, String> reportReasons = {
@@ -48,7 +47,7 @@ class _TopContainerState extends State<TopContainer> {
   @override
   void initState() {
     super.initState();
-    _getPhotos();
+    // _getPhotos();
   }
 
   void _getPhotos() async {
@@ -89,17 +88,17 @@ class _TopContainerState extends State<TopContainer> {
               child: Stack(
                 children: [
                   AnotherCarousel(
-                    images: photos!.isEmpty
+                    images: photos == null
                         ? [
                             widget.rishta['gender'] == 'Male'
-                                ? AssetImage('assets/images/male.jpg')
-                                : AssetImage('assets/images/female.jpg'),
-                            AssetImage('assets/images/not_found.png'),
+                                ? const AssetImage('assets/images/cutie.jpg')
+                                : const AssetImage('assets/images/female.jpg'),
+                            const AssetImage('assets/images/not_found.png'),
                           ]
                         : [
-                            AssetImage('assets/images/muneeb1.png'),
-                            AssetImage('assets/images/muneeb2.png'),
-                            AssetImage('assets/images/muneeb3.png')
+                            const AssetImage('assets/images/muneeb1.png'),
+                            const AssetImage('assets/images/muneeb2.png'),
+                            const AssetImage('assets/images/muneeb3.png')
                           ],
                     dotSize: 3,
                     indicatorBgPadding: 4,
@@ -131,7 +130,7 @@ class _TopContainerState extends State<TopContainer> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
+                                                const Text(
                                                   "Report",
                                                   style: TextStyle(
                                                     color: Colors.white,
@@ -157,9 +156,10 @@ class _TopContainerState extends State<TopContainer> {
                                                 Expanded(
                                                   child: TextFormField(
                                                     maxLines: null,
-                                                    decoration: InputDecoration(
-                                                        hintText:
-                                                            "Add details of the report..."),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                            hintText:
+                                                                "Add details of the report..."),
                                                     onChanged: (value) {
                                                       setState(() {
                                                         _reportDetails = value;
@@ -174,7 +174,8 @@ class _TopContainerState extends State<TopContainer> {
                                                     print(_selectedReason);
                                                     // your report submission logic here
                                                   },
-                                                  child: Text('Submit Report'),
+                                                  child: const Text(
+                                                      'Submit Report'),
                                                 ),
                                               ]),
                                         )));
