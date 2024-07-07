@@ -67,12 +67,13 @@ class _MainPageState extends State<MainHomePage>
   Future<void> _fetchUserData() async {
     try {
       final response = await supabase
-          .from('Users')
+          .from("Users")
           .select()
           .eq('uid', supabase.auth.currentUser!.id)
-          .single();
+          .eq('username', supabase.auth.currentUser!.userMetadata!['username']);
+
       setState(() {
-        userData = response;
+        userData = response[0];
       });
       if (!mounted) return;
 
@@ -84,7 +85,7 @@ class _MainPageState extends State<MainHomePage>
           .then((value) => true)
           .onError((error, stackTrace) => false);
 
-      final bool filledPreferenceForm = await supabase
+      final filledPreferenceForm = await supabase
           .from('Preference')
           .select()
           .eq('uid', supabase.auth.currentUser!.id)
@@ -109,8 +110,8 @@ class _MainPageState extends State<MainHomePage>
   Future<void> _fetchRishta() async {
     try {
       final uid = supabase.auth.currentUser!.id;
-      final List<dynamic> response =
-          await supabase.rpc('fetch_rishta', params: {'in_uid': uid});
+      final List<dynamic> response = await supabase
+          .rpc('get_user_matches_on_religion', params: {'in_uid': uid});
       print(response);
       final rishtasFound = response;
       setState(() {
@@ -124,7 +125,7 @@ class _MainPageState extends State<MainHomePage>
       // Handle the error appropriately here
       if (mounted) {
         isLoading = false; // Add this line
-        print('Error fetching user data: $error');
+        print('Error fetching user data probelm in fetchin grishta: $error');
       }
     }
   }
@@ -178,87 +179,89 @@ class _MainPageState extends State<MainHomePage>
           ),
         ),
       ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: isLoading
-            ? Transform.scale(
-                scale: 1.3,
-                child: const Center(
-                    child: CircularProgressIndicator(
-                  color: AppColors.mainColor,
-                )),
-              ) // Add this line
-            : rishta == null
-                ? Container(
-                    padding: const EdgeInsets.all(20),
-                    alignment: Alignment.topCenter,
-                    child: const Text(
-                      'Oh no! It seems we don`t have any rishtas for you at the moment. But don`t worry, something special might be just around the corner!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                  )
-                : Stack(
-                    children: [
-                      // Bottom Container
-                      BottomContainer(
-                        rishta: rishta,
-                        height: container1Height,
-                        width: container1Width,
-                        topMargin: container1TopMargin,
-                        bottomMargin: container1BotttomMargin,
-                        backgroundColor: mainPageContainer1Background,
-                        borderRadius: borderRadius,
-                        borderColor: mainThemeColor,
-                        borderWidth: containerBorderWidth,
-                      ),
-                      // Top Container
-                      TopContainer(
-                        rishta: rishta,
-                        height: container2Height,
-                        width: container2Width,
-                        bottomMargin: container2BottomMargin,
-                        backgroundColor: mainPageContainer2Background,
-                        borderRadius: borderRadius,
-                        borderColor: mainThemeColor,
-                        borderWidth: containerBorderWidth,
-                        shadowColor: shadowColor,
-                      ),
-                      // Buttons
-                      Positioned(
-                        bottom: dimensions.height(9.5),
-                        width: container1Width,
-                        child: ButtonBar(
-                          alignment: MainAxisAlignment.center,
-                          children: [
-                            CustomButtons.closeButton(() {
-                              // _rejected()
-
-                              handleMatch("No request made");
-                              if (rishtaItr!.moveNext()) {
-                                setState(() {
-                                  rishta = rishtaItr!.current;
-                                });
-                              }
-                            }),
-                            const SizedBox(width: 20),
-                            CustomButtons.checkButton(() async {
-                              // _accepted()
-
-                              handleMatch("Waiting for response");
-                              if (rishtaItr!.moveNext()) {
-                                setState(() {
-                                  rishta = rishtaItr!.current;
-                                });
-                              }
-                            }),
-                          ],
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.topCenter,
+          child: isLoading
+              ? Transform.scale(
+                  scale: 1.3,
+                  child: const Center(
+                      child: CircularProgressIndicator(
+                    color: AppColors.mainColor,
+                  )),
+                ) // Add this line
+              : rishta == null
+                  ? Container(
+                      padding: const EdgeInsets.all(20),
+                      alignment: Alignment.topCenter,
+                      child: const Text(
+                        'Oh no! It seems we don`t have any rishtas for you at the moment. But don`t worry, something special might be just around the corner!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
                         ),
                       ),
-                    ],
-                  ),
+                    )
+                  : Stack(
+                      children: [
+                        // Bottom Container
+                        BottomContainer(
+                          rishta: rishta,
+                          height: container1Height,
+                          width: container1Width,
+                          topMargin: container1TopMargin,
+                          bottomMargin: container1BotttomMargin,
+                          backgroundColor: mainPageContainer1Background,
+                          borderRadius: borderRadius,
+                          borderColor: mainThemeColor,
+                          borderWidth: containerBorderWidth,
+                        ),
+                        // Top Container
+                        TopContainer(
+                          rishta: rishta,
+                          height: container2Height,
+                          width: container2Width,
+                          bottomMargin: container2BottomMargin,
+                          backgroundColor: mainPageContainer2Background,
+                          borderRadius: borderRadius,
+                          borderColor: mainThemeColor,
+                          borderWidth: containerBorderWidth,
+                          shadowColor: shadowColor,
+                        ),
+                        // Buttons
+                        Positioned(
+                          bottom: dimensions.height(9.5),
+                          width: container1Width,
+                          child: ButtonBar(
+                            alignment: MainAxisAlignment.center,
+                            children: [
+                              CustomButtons.closeButton(() {
+                                // _rejected()
+
+                                handleMatch("No request made");
+                                if (rishtaItr!.moveNext()) {
+                                  setState(() {
+                                    rishta = rishtaItr!.current;
+                                  });
+                                }
+                              }),
+                              const SizedBox(width: 20),
+                              CustomButtons.checkButton(() async {
+                                // _accepted()
+
+                                handleMatch("Waiting for response");
+                                if (rishtaItr!.moveNext()) {
+                                  setState(() {
+                                    rishta = rishtaItr!.current;
+                                  });
+                                }
+                              }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+        ),
       ),
     );
   }

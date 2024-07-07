@@ -48,6 +48,7 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void dispose() {
+    usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     otpController.dispose();
