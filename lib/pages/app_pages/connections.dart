@@ -325,6 +325,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
         itemCount: matches.length,
         itemBuilder: (context, index) {
           var match = matches[index];
+          print("Accepted $match");
           return Card(
             color: Colors.white10, // Add your color here
             shape: RoundedRectangleBorder(
@@ -343,9 +344,9 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                 ),
               ),
               title: Text(
-                match['matches_request_by_fkey']['first_name'] +
+                match['matches_request_to_fkey']['first_name'] +
                     " " +
-                    match['matches_request_by_fkey']['last_name'],
+                    match['matches_request_to_fkey']['last_name'],
                 style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold),
               ),
