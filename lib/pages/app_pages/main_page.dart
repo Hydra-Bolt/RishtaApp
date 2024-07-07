@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/main.dart';
-import 'package:supabase_auth/utilities/bottom_container.dart';
+import 'package:supabase_auth/pages/app_pages/rishta_clicked_page.dart';
+import 'package:supabase_auth/utilities/main_page_info_container.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 import 'package:supabase_auth/utilities/dimensions.dart';
-import 'package:supabase_auth/utilities/top_container.dart';
+import 'package:supabase_auth/utilities/main_page_picture_container.dart';
 import 'package:supabase_auth/utils/colors.dart';
 import 'package:supabase_auth/utils/string_extension.dart';
 
@@ -184,7 +185,7 @@ class _MainPageState extends State<MainHomePage>
     container1TopMargin = dimensions.height(47);
     container2Height = dimensions.height(66.16);
     container2Width = dimensions.width(84.07);
-    container2BottomMargin = dimensions.height(36.38);
+    container2BottomMargin = dimensions.height(38.3);
     container1BotttomMargin = dimensions.height(9.38);
     borderRadius = dimensions.width(3.54);
     containerBorderWidth = 1.5;
@@ -194,6 +195,7 @@ class _MainPageState extends State<MainHomePage>
     mainPageContainer1Background = MainColors.mainPageContainer1Background;
     mainPageContainer2Background = MainColors.mainPageContainer2Background;
     shadowColor = MainColors.shadowColor;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -248,16 +250,22 @@ class _MainPageState extends State<MainHomePage>
                         borderWidth: containerBorderWidth,
                       ),
                       // Top Container
-                      TopContainer(
-                        rishta: rishta,
-                        height: container2Height,
-                        width: container2Width,
-                        bottomMargin: container2BottomMargin,
-                        backgroundColor: mainPageContainer2Background,
-                        borderRadius: borderRadius,
-                        borderColor: mainThemeColor,
-                        borderWidth: containerBorderWidth,
-                        shadowColor: shadowColor,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ExtendedRishtaPage()));
+                        },
+                        child: TopContainer(
+                          rishta: rishta,
+                          height: container2Height,
+                          width: container2Width,
+                          bottomMargin: container2BottomMargin,
+                          backgroundColor: mainPageContainer2Background,
+                          borderRadius: borderRadius,
+                          borderColor: mainThemeColor,
+                          borderWidth: containerBorderWidth,
+                          shadowColor: shadowColor,
+                        ),
                       ),
                       // Buttons
                       Positioned(

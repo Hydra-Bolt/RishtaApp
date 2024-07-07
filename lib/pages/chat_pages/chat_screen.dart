@@ -253,7 +253,7 @@ class MyMessageSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width * 0.5;
-    final double height = MediaQuery.of(context).size.height;
+    // final double height = MediaQuery.of(context).size.height;
     const double radius = 25;
 
     return ListView.builder(
