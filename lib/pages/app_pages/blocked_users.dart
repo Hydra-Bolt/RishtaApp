@@ -96,15 +96,15 @@ class _BlockedUsersState extends State<BlockedUsers> {
         child: ListTile(
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-          leading: CircleAvatar(
+          leading: const CircleAvatar(
             backgroundColor: Colors.white,
             radius: 20,
-            child: const Icon(Icons.person),
+            child: Icon(Icons.person),
           ),
           title: Text(param0['blocked_blocked_fkey']['first_name'],
-              style: TextStyle(color: Colors.white)),
-          subtitle:
-              Text("Blocked $timeAgo", style: TextStyle(color: Colors.white54)),
+              style: const TextStyle(color: Colors.white)),
+          subtitle: Text("Blocked $timeAgo",
+              style: const TextStyle(color: Colors.white54)),
         ));
   }
 }

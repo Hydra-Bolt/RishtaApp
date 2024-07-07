@@ -112,14 +112,39 @@ class _MainPageState extends State<MainHomePage>
   Future<void> _fetchRishta() async {
     try {
       final uid = supabase.auth.currentUser!.id;
+
+      // Fetch already added rishtas
+      final alreadyAddedRishtas = await supabase
+          .from('Matches')
+          .select()
+          .or('request_by.eq.$uid,request_to.eq.$uid');
+      print('Already Added $alreadyAddedRishtas');
+
+      List<String> addedUids = [];
+
+      for (var match in alreadyAddedRishtas) {
+        if (match['request_by'] != uid) {
+          addedUids.add(match['request_by']);
+        }
+        if (match['request_to'] != uid) {
+          addedUids.add(match['request_to']);
+        }
+      }
+
+      print('Filtered UIDs: $addedUids');
+
+      // Fetch rishtas that match the user's criteria
       final List<dynamic>? response = await supabase
           .rpc('get_user_matches_on_religion', params: {'in_uid': uid});
+
       print(response);
 
       List<Map<String, dynamic>> rishtasFound = [];
 
       if (response != null && response.isNotEmpty) {
-        rishtasFound = response.map((res) {
+        rishtasFound = response.where((res) {
+          return !addedUids.contains(res['uid']);
+        }).map((res) {
           // Calculate age
           final DateTime today = DateTime.now();
           final DateTime dob = DateTime.parse(res['dob']);
@@ -129,7 +154,7 @@ class _MainPageState extends State<MainHomePage>
             userAge--;
           }
 
-          // Create a map with 'name' and 'age'
+          // Create a map with 'name', 'age', 'uid', and 'gender'
           return {
             'name':
                 '${res['first_name'].toString().toCapitalized()} ${res['last_name'].toString().toCapitalized()}',
@@ -140,8 +165,8 @@ class _MainPageState extends State<MainHomePage>
         }).toList();
       }
 
-      // Print the result
-      print(rishtasFound);
+      // Print the filtered result
+      print('Rishtas Found: $rishtasFound');
 
       setState(() {
         rishtas = rishtasFound;
@@ -174,6 +199,7 @@ class _MainPageState extends State<MainHomePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final double height = MediaQuery.of(context).size.height;
     dimensions = Dimensions(context);
     appBarHeight = dimensions.height(8.78);
     leadingWidth = dimensions.screenWidth();
@@ -222,46 +248,22 @@ class _MainPageState extends State<MainHomePage>
                     child: CircularProgressIndicator(
                   color: AppColors.mainColor,
                 )),
-              )
+              ) // Add this line
             : rishta == null
-                ? Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 20),
-                        Image.asset(
-                          './assets/images/search.png',
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Oh no! It seems we don`t have any rishtas for you at the moment.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'But don`t worry, something special might be just around the corner!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
+                ? Container(
+                    padding: const EdgeInsets.all(20),
+                    alignment: Alignment.topCenter,
+                    child: const Text(
+                      'Oh no! It seems we don`t have any rishtas for you at the moment. But don`t worry, something special might be just around the corner!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                     ),
                   )
                 : Stack(
                     children: [
-                      // Bottom Container
+                      // // Bottom Container
                       BottomContainer(
                         rishta: rishta,
                         height: container1Height,
@@ -277,7 +279,8 @@ class _MainPageState extends State<MainHomePage>
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ExtendedRishtaPage()));
+                              builder: (context) =>
+                                  const ExtendedRishtaPage()));
                         },
                         child: TopContainer(
                           rishta: rishta,
@@ -301,10 +304,14 @@ class _MainPageState extends State<MainHomePage>
                             CustomButtons.closeButton(() {
                               // _rejected()
 
-                              handleMatch("No request made");
+                              // handleMatch("Rejected");
                               if (rishtaItr!.moveNext()) {
                                 setState(() {
                                   rishta = rishtaItr!.current;
+                                });
+                              } else {
+                                setState(() {
+                                  rishta = null;
                                 });
                               }
                             }),
@@ -312,10 +319,18 @@ class _MainPageState extends State<MainHomePage>
                             CustomButtons.checkButton(() async {
                               // _accepted()
 
-                              handleMatch("Waiting for response");
-                              if (rishtaItr!.moveNext()) {
+                              handleMatch("Pending");
+
+                              await Future.delayed(
+                                  const Duration(milliseconds: 2000));
+
+                              if (rishtaItr!.moveNext() == true) {
                                 setState(() {
                                   rishta = rishtaItr!.current;
+                                });
+                              } else {
+                                setState(() {
+                                  rishta = null;
                                 });
                               }
                             }),

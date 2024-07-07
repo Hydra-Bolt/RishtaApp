@@ -74,12 +74,12 @@ class _MainPageState extends State<MainPage> {
               pageStateIndex = index;
             });
           },
-          children: [
-            const ProfilePage(),
+          children: const [
+            ProfilePage(),
             ChatsPage(),
-            const MainHomePage(),
-            const ConnectionsPage(),
-            const SettingsPage(),
+            MainHomePage(),
+            ConnectionsPage(),
+            SettingsPage(),
           ],
         ),
       )

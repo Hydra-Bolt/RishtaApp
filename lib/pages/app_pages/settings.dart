@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 import 'package:supabase_auth/utilities/dimensions.dart';
+import 'package:supabase_auth/utils/string_extension.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -60,8 +61,8 @@ class _SettingsPageState extends State<SettingsPage>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      userData?['first_name'],
-                      style: TextStyle(
+                      userData!['first_name'].toString().toCapitalized(),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -70,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage>
                     Text(
                       "@" +
                           supabase.auth.currentUser!.userMetadata!['username'],
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white60,
                       ),
                     ),
@@ -100,22 +101,22 @@ class _SettingsPageState extends State<SettingsPage>
             const SizedBox(width: 20),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             title == "Profile Views"
-                ? Text(
+                ? const Text(
                     '73',
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   )
                 : Container(),
             SizedBox(width: dim.width(2)),
             title != "Profile Views" && title != "Logout"
-                ? Icon(Icons.chevron_right, color: Colors.white)
+                ? const Icon(Icons.chevron_right, color: Colors.white)
                 : Container(),
           ],
         ),
@@ -192,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
-        contentPadding: EdgeInsets.all(20),
+        contentPadding: const EdgeInsets.all(20),
         backgroundColor: Colors.grey[700],
         titleTextStyle:
             const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
