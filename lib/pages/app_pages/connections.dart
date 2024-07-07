@@ -20,31 +20,59 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
     setMatches();
   }
 
+  Future<void> handleFriendResponse(bool isAdded, String requestBy) async {
+    try {
+      final response = await supabase
+          .from('Matches')
+          .update({'response': isAdded ? 'Accepted' : 'Rejected'})
+          .eq("request_to", supabase.auth.currentUser!.id)
+          .eq("request_by", requestBy);
+
+      final Map<String, dynamic> chat_obj = {
+        'user1': supabase.auth.currentUser!.id,
+        'user2': requestBy,
+        'friends': 'Yes'
+      };
+      final chatResponse = await supabase.from('Chats').insert(chat_obj);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text("Done!"),
+        backgroundColor: isAdded ? Colors.greenAccent : Colors.redAccent,
+      ));
+
+      Navigator.pop(context);
+    } on Exception catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Oops! An Error Occurred.")));
+    }
+  }
+
   Future<List> getAccepted() async {
     return await supabase
-        .from('matches')
+        .from('Matches')
         .select(
-            'request_by, request_to, request_date, status, matches_request_by_fkey(name), matches_request_to_fkey(name)')
+            'request_by, request_to, request_date, response, matches_request_by_fkey(first_name, last_name), matches_request_to_fkey(first_name, last_name)')
         .eq("request_by", supabase.auth.currentUser!.id)
-        .eq("status", "Accepted");
+        .eq("response", "Accepted");
   }
 
   Future<List> getPending() async {
     return await supabase
-        .from('matches')
+        .from('Matches')
         .select(
-            'request_by, request_to, request_date, status, matches_request_by_fkey(name), matches_request_to_fkey(name)')
+            'request_by, request_to, request_date, response, matches_request_by_fkey(first_name, last_name), matches_request_to_fkey(first_name, last_name)')
         .eq("request_by", supabase.auth.currentUser!.id)
-        .eq("status", "Waiting for response");
+        .eq("response", "Pending");
   }
 
   Future<List> getIncoming() async {
     return await supabase
-        .from('matches')
+        .from('Matches')
         .select(
-            'request_by, request_to, request_date, status, matches_request_by_fkey(name, height, age, dob, city, spouse, kids), matches_request_to_fkey(name)')
+            'request_by, request_to, request_date, response, matches_request_by_fkey(uid, first_name, last_name, height, weight, dob, city, marital_status), matches_request_to_fkey(first_name, last_name)')
         .eq("request_to", supabase.auth.currentUser!.id)
-        .eq('status', 'Waiting for response');
+        .eq("response", "Pending");
   }
 
   Widget _buildAccepted() {
@@ -75,6 +103,14 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
   }
 
   void _showProfile(Map<String, dynamic> user) {
+    final DateTime dob = DateTime.parse(user['dob']);
+    final DateTime today = DateTime.now();
+
+    int userAge = today.year - dob.year;
+    if (today.month < dob.month ||
+        (today.month == dob.month && today.day < dob.day)) {
+      userAge--;
+    }
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -91,8 +127,8 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user['name'],
-                    style: TextStyle(
+                    user['first_name'] + ' ' + user['last_name'],
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -106,7 +142,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _profileDetail('City', user['city']),
-                            _profileDetail('Age', user['age'].toString()),
+                            _profileDetail('Age', userAge.toString()),
                             _profileDetail('Height', "${user['height']} cm"),
                           ],
                         ),
@@ -116,8 +152,8 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _profileDetail('Kids', user['kids'].toString()),
-                            _profileDetail('Spouse', user['spouse'].toString()),
+                            _profileDetail(
+                                'Marital Status', user['marital_status']),
                             _profileDetail('DOB', user['dob'].toString()),
                           ],
                         ),
@@ -125,7 +161,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                     ],
                   ),
                   const SizedBox(height: 30),
-                  Spacer(),
+                  const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -153,6 +189,30 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                         },
                         child: const Text('View Profile'),
                       ),
+                      TextButton(
+                        style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              MainColors.mainThemeColor,
+                            ),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                                Colors.white10)),
+                        onPressed: () {
+                          handleFriendResponse(true, user['uid']);
+                        },
+                        child: const Text('Accept'),
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              MainColors.mainThemeColor,
+                            ),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                                Colors.white10)),
+                        onPressed: () {
+                          handleFriendResponse(false, user['uid']);
+                        },
+                        child: const Text('Reject'),
+                      ),
                     ],
                   ),
                 ],
@@ -170,7 +230,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
         children: [
           Text(
             '$label: ',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -178,7 +238,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
           ),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 15,
             ),
@@ -219,17 +279,20 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                         vertical: 10, horizontal: 15),
                     leading: CircleAvatar(
                       backgroundColor: Colors.white,
-                      child: Text(match['matches_request_by_fkey']['name'][0]),
+                      child: Text(
+                          match['matches_request_by_fkey']['first_name'][0]),
                     ),
                     title: Text(
-                      match['matches_request_by_fkey']['name'],
+                      match['matches_request_by_fkey']['first_name'] +
+                          " " +
+                          match['matches_request_by_fkey']['last_name'],
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       match['request_date'] == null
-                          ? "Recieved on Unknown Date"
-                          : "Recieved on ${DateTime.parse(match['request_date']).toString().split(' ').first}",
+                          ? "Received some time ago."
+                          : "Received on ${DateTime.parse(match['request_date']).toString().split(' ').first}",
                       style: const TextStyle(color: Colors.white),
                     ),
                     trailing: GestureDetector(
@@ -274,26 +337,29 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
               leading: CircleAvatar(
                 backgroundColor: Colors.white, // Add your color here
                 child: Text(
-                  match['matches_request_to_fkey']['name']
+                  match['matches_request_to_fkey']['first_name']
                       [0], // Display the first letter of the name
                   style: const TextStyle(color: Colors.black),
                 ),
               ),
               title: Text(
-                match['matches_request_to_fkey']['name'],
+                match['matches_request_by_fkey']['first_name'] +
+                    " " +
+                    match['matches_request_by_fkey']['last_name'],
                 style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 match['request_date'] == null
-                    ? 'Sent on Unknown Date'
+                    ? 'Sent some time ago.'
                     : 'Sent on ${DateTime.parse(match['request_date']).toString().split(' ').first}',
                 style: const TextStyle(color: Colors.white70),
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  match['status'] != 'Accepted'
+                  match['response'] != 'Accepted' &&
+                          match['response'] != 'Rejected'
                       ? GestureDetector(
                           onTap: () => showDialog(
                             context: context,
@@ -384,9 +450,9 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
   cancelMatchRequest(requestBy, requestTo) async {
     try {
       await supabase
-          .from('matches')
+          .from('Matches')
           .delete()
-          .eq('request_by', requestBy)
+          .eq("request_by", requestBy)
           .eq("request_to", requestTo);
     } on Exception catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
