@@ -7,6 +7,7 @@ import 'package:supabase_auth/utilities/colors.dart';
 import 'package:supabase_auth/utilities/dimensions.dart';
 import 'package:supabase_auth/utilities/top_container.dart';
 import 'package:supabase_auth/utils/colors.dart';
+import 'package:supabase_auth/utils/string_extension.dart';
 
 class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key});
@@ -113,7 +114,28 @@ class _MainPageState extends State<MainHomePage>
       final List<dynamic> response = await supabase
           .rpc('get_user_matches_on_religion', params: {'in_uid': uid});
       print(response);
-      final rishtasFound = response;
+
+      final List<Map<String, dynamic>> rishtasFound = response.map((res) {
+        // Calculate age
+        final DateTime today = DateTime.now();
+        final DateTime dob = DateTime.parse(res['dob']);
+        int userAge = today.year - dob.year;
+        if (today.month < dob.month ||
+            (today.month == dob.month && today.day < dob.day)) {
+          userAge--;
+        }
+
+        // Create a map with 'name' and 'age'
+        return {
+          'name':
+              '${res['first_name'].toString().toCapitalized()} ${res['last_name'].toString().toCapitalized()}',
+          'age': userAge
+        };
+      }).toList();
+
+      // Print the result
+      print(rishtasFound);
+
       setState(() {
         rishtas = rishtasFound;
         rishtaItr = rishtas.iterator;
@@ -134,7 +156,7 @@ class _MainPageState extends State<MainHomePage>
     await supabase.from("Matches").insert({
       'request_by': supabase.auth.currentUser!.id,
       'request_to': rishta['uid'],
-      'status': status
+      'response': status
     });
   }
 
