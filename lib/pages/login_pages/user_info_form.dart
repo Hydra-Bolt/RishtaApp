@@ -18,15 +18,13 @@ class _UserFormState extends State<UserForm> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
-  final TextEditingController spousesController = TextEditingController();
-  final TextEditingController childrenController = TextEditingController();
 
   String? selectedCity;
   String? selectedDay;
   String? selectedMonth;
   String? selectedYear;
   String? selectedGender;
-  int? calculatedAge;
+  String? selectedMaritalStatus = 'Any';
 
   final List<String> citiesInPakistan = [
     'Karachi',
@@ -63,14 +61,19 @@ class _UserFormState extends State<UserForm> {
       100, (index) => (DateTime.now().year - index).toString());
 
   final List<String> genders = ['Male', 'Female', 'Other'];
+  final List<String> maritalStatus = [
+    'Single',
+    'Married',
+    'Divorced',
+    'Widowed',
+    'Any'
+  ];
 
   Future<void> _submit() async {
     final String firstName = firstNameController.text.trim();
     final String lastName = lastNameController.text.trim();
     final int? weight = int.tryParse(weightController.text);
     final int? height = int.tryParse(heightController.text);
-    final int? spouses = int.tryParse(spousesController.text);
-    final int? children = int.tryParse(childrenController.text);
 
     if (firstName.isEmpty ||
         lastName.isEmpty ||
@@ -80,7 +83,8 @@ class _UserFormState extends State<UserForm> {
         selectedMonth == null ||
         selectedYear == null ||
         selectedGender == null ||
-        selectedCity == null) {
+        selectedCity == null ||
+        selectedMaritalStatus == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all the fields')),
       );
@@ -90,22 +94,22 @@ class _UserFormState extends State<UserForm> {
     final String dob = '$selectedYear-$selectedMonth-$selectedDay';
     Object values = {
       'uid': supabase.auth.currentUser!.id,
-      'name': firstName + lastName,
+      'username': supabase.auth.currentUser!.userMetadata!['username'],
+      'first_name': firstName,
+      'last_name': lastName,
       'weight': weight,
       'height': height,
       'dob': dob,
-      'age': calculatedAge,
       'gender': selectedGender,
       'city': selectedCity,
-      'spouse': spouses ?? 0,
-      'kids': children ?? 0,
+      'marital_status': selectedMaritalStatus,
     };
-
+    // {uid: sauhduh324jknkjwe23, username: esrjsekjk, first_name: Moiz, last_name: Khan, weight: 47, height: 121, dob: 2015-4-7, age: 9, gender: Male, city: Sialkot, maritalStatus: Single}
     try {
-      await supabase.from('users').insert(values);
+      await supabase.from('Users').insert(values);
 
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User data saved successfully!')));
+          const SnackBar(content: Text('User Data Saved Successfully!')));
       Navigator.of(context).pushReplacementNamed('/home');
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context)
@@ -116,26 +120,27 @@ class _UserFormState extends State<UserForm> {
     }
   }
 
-  void calculateAge() {
-    if (selectedDay != null && selectedMonth != null && selectedYear != null) {
-      final int day = int.parse(selectedDay!);
-      final int month = int.parse(selectedMonth!);
-      final int year = int.parse(selectedYear!);
+  // No need of Age here.
+  // void calculateAge() {
+  //   if (selectedDay != null && selectedMonth != null && selectedYear != null) {
+  //     final int day = int.parse(selectedDay!);
+  //     final int month = int.parse(selectedMonth!);
+  //     final int year = int.parse(selectedYear!);
 
-      final DateTime dob = DateTime(year, month, day);
-      final DateTime today = DateTime.now();
+  //     final DateTime dob = DateTime(year, month, day);
+  //     final DateTime today = DateTime.now();
 
-      int age = today.year - dob.year;
-      if (today.month < dob.month ||
-          (today.month == dob.month && today.day < dob.day)) {
-        age--;
-      }
+  //     int age = today.year - dob.year;
+  //     if (today.month < dob.month ||
+  //         (today.month == dob.month && today.day < dob.day)) {
+  //       age--;
+  //     }
 
-      setState(() {
-        calculatedAge = age;
-      });
-    }
-  }
+  //     setState(() {
+  //       calculatedAge = age;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +187,7 @@ class _UserFormState extends State<UserForm> {
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedDay = newValue;
-                        calculateAge();
+                        // calculateAge();
                       });
                     },
                   ),
@@ -196,7 +201,7 @@ class _UserFormState extends State<UserForm> {
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedMonth = newValue;
-                        calculateAge();
+                        // calculateAge();
                       });
                     },
                   ),
@@ -210,7 +215,7 @@ class _UserFormState extends State<UserForm> {
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedYear = newValue;
-                        calculateAge();
+                        // calculateAge();
                       });
                     },
                   ),
@@ -218,13 +223,6 @@ class _UserFormState extends State<UserForm> {
               ],
             ),
             const SizedBox(height: 24.0),
-            // if (calculatedAge != null)
-            //   Text(
-            //     'Age: $calculatedAge years',
-            //     style: const TextStyle(
-            //         fontSize: 16.0, fontWeight: FontWeight.bold),
-            //   ),
-            // const SizedBox(height: 24.0),
             CustomDropdownFormField(
               label: "Gender",
               value: selectedGender,
@@ -267,24 +265,15 @@ class _UserFormState extends State<UserForm> {
               },
             ),
             const SizedBox(height: 24.0),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextFormField(
-                    label: "Spouses",
-                    controller: spousesController,
-                    enabled: true,
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: CustomTextFormField(
-                    label: "Children",
-                    controller: childrenController,
-                    enabled: true,
-                  ),
-                ),
-              ],
+            CustomDropdownFormField(
+              label: "Marital Status",
+              value: selectedMaritalStatus,
+              items: maritalStatus,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedMaritalStatus = newValue;
+                });
+              },
             ),
             const SizedBox(height: 24.0),
             ElevatedButton(

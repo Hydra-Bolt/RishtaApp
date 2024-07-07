@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:supabase_auth/components/my_drop_down.dart';
-import 'package:supabase_auth/components/my_form_field.dart';
+// import 'package:supabase_auth/components/my_form_field.dart';
 import 'package:supabase_auth/components/my_scaffold.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utils/colors.dart';
@@ -17,7 +17,7 @@ class LifeStyleForm extends StatefulWidget {
 
 class _LifeStyleFormState extends State<LifeStyleForm> {
   // Controllers for other form fields
-  final TextEditingController _castController = TextEditingController();
+  // final TextEditingController _castController = TextEditingController();
   final PageController _pageController = PageController(initialPage: 0);
   final List<String> _selectedInterests = [];
 
@@ -97,17 +97,17 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
 
   Map<String, String> eduLevelsMap = {
     'Intermediate': 'Intermediate',
-    'Some Bachelor\'s Degree': 'Bachelor',
-    'Some Master\'s Degree': 'Master',
+    'Some Bachelor\'s Degree': 'Bachelors',
+    'Some Master\'s Degree': 'Masters',
     'Some Doctorate': 'Doctorate',
   };
 
-  final Set<String> _selectedHobbies = Set<String>();
+  final Set<String> _selectedHobbies = <String>{};
 
   @override
   void dispose() {
     // Dispose the controllers when the widget is disposed
-    _castController.dispose();
+    // _castController.dispose();
     super.dispose();
   }
 
@@ -150,7 +150,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
   void _submitPersonal() {
     // Handle the submission of personal details
     if (_selectedEduLevel == null ||
-        _castController.text.isEmpty ||
+        // _castController.text.isEmpty ||
         _selectedReligion == null ||
         _selectedJobSector == null ||
         _selectedPersonalityType == null) {
@@ -200,39 +200,50 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       _pageController.jumpToPage(2);
       return;
     }
+    final String financial_strength;
+
+    if ((annualIncome).toInt() < 100000) {
+      financial_strength = 'Low';
+    } else if ((annualIncome).toInt() < 500000) {
+      financial_strength = 'Normal';
+    } else {
+      financial_strength = 'Strong';
+    }
+
     final List<Map<String, dynamic>> response =
-        await supabase.from("lifestyle").insert({
+        await supabase.from("Lifestyle").insert({
       "job_sector": _selectedJobSector,
       "personality_type": _selectedPersonalityType,
-      "annual_income": (annualIncome).toInt(),
+      "financial_strength": financial_strength,
       "smoking": _smoking,
-      "education": _selectedEduLevel,
-      "cast": _castController.text,
-      "religion": _selectedReligion
+      "education": eduLevelsMap[_selectedEduLevel],
+      // "cast": _castController.text,
+      "religion": _selectedReligion,
+      "uid": supabase.auth.currentUser!.id,
     }).select();
 
     // Add the selected hobbies and interests to the user_hobbies and user_interests tables
     for (var i = 0; i < _selectedHobbies.length; i++) {
-      await supabase.from("user_hobbies").insert({
-        "uid": supabase.auth.currentUser!.id,
-        "hobby": _selectedHobbies.elementAt(i)
-      });
+      await supabase.from("Hobby").insert(
+          {"lid": response[0]['lid'], "hobby": _selectedHobbies.elementAt(i)});
     }
 
     for (var i = 0; i < _selectedInterests.length; i++) {
-      await supabase.from("user_interests").insert({
-        "uid": supabase.auth.currentUser!.id,
+      await supabase.from("Interest").insert({
+        "lid": response[0]['lid'],
         "interest": _selectedInterests.elementAt(i)
       });
     }
+
     // Update the user's lid
-    final id = (response[0]['lid']);
-    await supabase
-        .from("users")
-        .update({"lid": id}).eq("uid", supabase.auth.currentUser!.id);
+    // final id = (response[0]['lid']);
+    // await supabase
+    //     .from("users")
+    //     .update({"lid": id}).eq("uid", supabase.auth.currentUser!.id);
+
     // Navigate to the next page
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Done!")));
+        .showSnackBar(const SnackBar(content: Text("Done!")));
 
     Navigator.of(context).pushReplacementNamed('/preference');
   }
@@ -276,10 +287,10 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                   GestureDetector(
                       onTap: () {
                         _pageController.previousPage(
-                            duration: Duration(milliseconds: 400),
+                            duration: const Duration(milliseconds: 400),
                             curve: Curves.easeInOut);
                       },
-                      child: Icon(Icons.arrow_back_rounded)),
+                      child: const Icon(Icons.arrow_back_rounded)),
                   SmoothPageIndicator(
                     controller: _pageController,
                     count: 3,
@@ -294,14 +305,14 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                           onTap: () {
                             _submit();
                           },
-                          child: Icon(Icons.check))
+                          child: const Icon(Icons.check))
                       : GestureDetector(
                           onTap: () {
                             _pageController.nextPage(
-                                duration: Duration(milliseconds: 400),
+                                duration: const Duration(milliseconds: 400),
                                 curve: Curves.easeInOut);
                           },
-                          child: Icon(Icons.arrow_forward_rounded)),
+                          child: const Icon(Icons.arrow_forward_rounded)),
                 ],
               ),
             ),
@@ -505,13 +516,13 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
                           });
                         })),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: CustomTextFormField(
-                    label: "Cast",
-                    controller: _castController,
-                    enabled: true,
-                  ),
-                ),
+                // Expanded(
+                //   child: CustomTextFormField(
+                //     label: "Cast",
+                //     controller: _castController,
+                //     enabled: true,
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(height: 10),
@@ -544,11 +555,11 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Do you smoke?",
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(

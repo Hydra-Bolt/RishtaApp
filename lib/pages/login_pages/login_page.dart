@@ -20,8 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   Color mainColor = const Color(0xFFFA2A55);
-  // final _passwordController = TextEditingController();
-
   late final StreamSubscription<AuthState> _authSubsription;
 
   @override
@@ -32,7 +30,6 @@ class _LoginPageState extends State<LoginPage> {
       if (session != null) {
         Navigator.of(context).pushReplacementNamed('/home');
       }
-      ;
     });
   }
 
@@ -72,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
               enabled: true,
               isObscure: true,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
@@ -110,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       const Text(
                         "or",
-                        style: const TextStyle(color: Colors.grey),
+                        style: TextStyle(color: Colors.grey),
                       ),
                       const SizedBox(
                         width: 4,
