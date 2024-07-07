@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:supabase_auth/components/my_button.dart';
 import 'package:supabase_auth/components/my_drop_down.dart';
@@ -79,7 +78,7 @@ class _TopContainerState extends State<TopContainer> {
               child: Stack(
                 children: [
                   AnotherCarousel(
-                    images: [
+                    images: const [
                       AssetImage('assets/images/muneeb1.png'),
                       AssetImage('assets/images/muneeb2.png'),
                       AssetImage('assets/images/muneeb3.png')
@@ -122,7 +121,7 @@ class _TopContainerState extends State<TopContainer> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Block",
                     style: TextStyle(
                       color: Colors.white,
@@ -133,7 +132,7 @@ class _TopContainerState extends State<TopContainer> {
                   const SizedBox(height: 10),
                   Text(
                     "Are you sure you want to block ${widget.rishta['name']}?",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                     ),
@@ -178,7 +177,7 @@ class _TopContainerState extends State<TopContainer> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Report",
                   style: TextStyle(
                     color: Colors.white,
@@ -204,7 +203,7 @@ class _TopContainerState extends State<TopContainer> {
                   cursorColor: MainColors.mainThemeColor,
                   decoration: InputDecoration(
                     hintText: "Add details of the report...",
-                    hintStyle: TextStyle(color: Colors.white30),
+                    hintStyle: const TextStyle(color: Colors.white30),
                     filled: true,
                     fillColor: Colors.white10,
                     border: OutlineInputBorder(
