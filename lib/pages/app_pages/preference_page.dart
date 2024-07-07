@@ -1,10 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
 import 'package:supabase_auth/pages/app_pages/edit_preference_page.dart';
 
-class PreferencesTab extends StatelessWidget {
+class PreferencesTab extends StatefulWidget {
+  @override
+  _PreferencesTabState createState() => _PreferencesTabState();
+}
+
+class _PreferencesTabState extends State<PreferencesTab> {
+  bool isLoading = true;
+  Map<String, dynamic>? preferenceInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  void _fetchUserData() async {
+    setState(() {
+      isLoading = true;
+    });
+    var uid = supabase.auth.currentUser!.id;
+    try {
+      var response =
+          await supabase.from('Preference').select().eq('uid', uid).single();
+      setState(() {
+        preferenceInfo = response;
+        isLoading = false;
+      });
+    } on Exception catch (e) {
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 60.0),
@@ -30,40 +72,41 @@ class PreferencesTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _buildLabelWithValue('Education', preferenceInfo!['education']),
+              SizedBox(height: 24.0),
               Row(
                 children: [
                   Expanded(
-                      child: _buildLabelWithValue('Education', 'Bachelors')),
-                  SizedBox(width: 12),
-                  Expanded(child: _buildLabelWithValue('Religion', 'Islam')),
+                      child: _buildLabelWithValue(
+                          'Marital Status', preferenceInfo!['marital_status'])),
+                  SizedBox(width: 12.0),
+                  Expanded(
+                      child: _buildLabelWithValue('Financial Strength',
+                          preferenceInfo!['financial_strength'])),
                 ],
               ),
               SizedBox(height: 24.0),
               Row(
                 children: [
                   Expanded(
-                      child: _buildLabelWithValue('Marital Status', 'Single')),
-                  SizedBox(width: 12.0),
+                      child: _buildLabelWithValue('Minimum Height (cm)',
+                          preferenceInfo!['min_height'].toString())),
+                  SizedBox(width: 10.0),
                   Expanded(
-                      child:
-                          _buildLabelWithValue('Financial Strength', 'Normal')),
+                      child: _buildLabelWithValue(
+                          'Smokes', preferenceInfo!['smoking'])),
                 ],
               ),
               SizedBox(height: 24.0),
               Row(
                 children: [
                   Expanded(
-                      child: _buildLabelWithValue('MinHeight (cm)', '170')),
-                  SizedBox(width: 12.0),
-                  Expanded(child: _buildLabelWithValue('Smokes', 'Never')),
-                ],
-              ),
-              SizedBox(height: 24.0),
-              Row(
-                children: [
-                  Expanded(child: _buildLabelWithValue('Min Age', '25')),
-                  SizedBox(width: 12.0),
-                  Expanded(child: _buildLabelWithValue('Max Age', '30')),
+                      child: _buildLabelWithValue(
+                          'Min Age', preferenceInfo!['min_age'].toString())),
+                  SizedBox(width: 10.0),
+                  Expanded(
+                      child: _buildLabelWithValue(
+                          'Max Age', preferenceInfo!['max_age'].toString())),
                 ],
               ),
             ],

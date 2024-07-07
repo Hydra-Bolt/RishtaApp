@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_auth/pages/app_pages/edit_lifestyle_page.dart';
 import 'package:supabase_auth/pages/app_pages/preference_page.dart';
-import 'package:supabase_auth/utilities/profile_info_container.dart';
-import 'package:supabase_auth/utilities/profile_picture_container.dart';
-import 'package:supabase_auth/utilities/buttons.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 import 'package:supabase_auth/pages/app_pages/lifestyle_page.dart'; // Import the LifestyleTab widget
 
@@ -13,7 +9,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Example initial data, replace with your actual data source
-    
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -22,13 +18,12 @@ class ProfilePage extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      
       backgroundColor: Colors.transparent,
       body: DefaultTabController(
         length: 2, // Number of tabs
         child: Column(
           children: [
-            TabBar(
+            const TabBar(
               labelColor: MainColors.mainThemeColor,
               unselectedLabelColor: Colors.grey,
               indicatorColor: MainColors.mainThemeColor,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/text_form_fields.dart';
 
 class EditPreferencesPage extends StatefulWidget {
@@ -13,12 +15,78 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
   String? selectedFinancialStrength;
   String? selectedSmokerOption;
 
-  final List<String> educationLevels = [
-    'Intermediate',
-    'Some Bachelor\'s Degree',
-    'Some Master\'s Degree',
-    'Some Doctorate',
-  ];
+  TextEditingController minHeightController = TextEditingController();
+  TextEditingController minAgeController = TextEditingController();
+  TextEditingController maxAgeController = TextEditingController();
+  bool isLoading = true;
+
+  Map<String, dynamic>? preferenceInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  void _submitChanges() async {
+    var uid = supabase.auth.currentUser!.id;
+    try {
+      await supabase.from('Preference').update({
+        'education': education[selectedEducationLevel],
+        'marital_status': selectedMaritalStatus,
+        'financial_strength': selectedFinancialStrength,
+        'smoking': selectedSmokerOption,
+        'min_age': minAgeController.text.trim(),
+        'max_age': maxAgeController.text.trim(),
+        'min_height': minHeightController.text.trim(),
+      }).eq('uid', uid);
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    Navigator.of(context).pop();
+  }
+
+  void _fetchUserData() async {
+    var uid = supabase.auth.currentUser!.id;
+    try {
+      var response =
+          await supabase.from('Preference').select().eq('uid', uid).single();
+      setState(() {
+        preferenceInfo = response;
+      });
+      print(preferenceInfo);
+
+      minHeightController.text = preferenceInfo!['min_height'].toString();
+      minAgeController.text = preferenceInfo!['min_age'].toString();
+      maxAgeController.text = preferenceInfo!['max_age'].toString();
+
+      selectedEducationLevel =
+          getEducationKeyByValue(preferenceInfo!['education']);
+      selectedReligion = preferenceInfo!['religion'];
+      selectedMaritalStatus = preferenceInfo!['marital_status'];
+      selectedFinancialStrength = preferenceInfo!['financial_strength'];
+      selectedSmokerOption = preferenceInfo!['smoking'];
+      isLoading = false;
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  final Map<String, String> education = {
+    'Intermediate': 'Intermediate',
+    'Some Bachelor\'s Degree': 'Bachelors',
+    'Some Master\'s Degree': 'Masters',
+    'Some Doctorate': 'Doctorate'
+  };
+
+  String? getEducationKeyByValue(String? value) {
+    try {
+      return education.entries.firstWhere((entry) => entry.value == value).key;
+    } catch (e) {
+      return null;
+    }
+  }
 
   final List<String> maritalStatusOptions = [
     'Single',
@@ -59,102 +127,111 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
         width: MediaQuery.of(context).size.width,
         fit: BoxFit.cover,
       ),
-      Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(16.0, 40.0, 16.0, 40.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDropdownField(
-                        'Education', educationLevels, selectedEducationLevel,
-                        (String? value) {
-                      setState(() {
-                        selectedEducationLevel = value;
-                      });
-                    }),
-                  ),
-                  SizedBox(width: 12.0),
-                  Expanded(
-                    child: _buildDropdownField(
-                        'Religion', religions, selectedReligion,
-                        (String? value) {
-                      setState(() {
-                        selectedReligion = value;
-                      });
-                    }),
-                  ),
-                ],
+      preferenceInfo == null
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16.0, 40.0, 16.0, 40.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildDropdownField(
+                              'Education',
+                              education.keys.toList(),
+                              selectedEducationLevel, (String? value) {
+                            setState(() {
+                              selectedEducationLevel = value;
+                            });
+                          }),
+                        ),
+                        SizedBox(width: 12.0),
+                        Expanded(
+                          child: _buildDropdownField(
+                              'Religion', religions, selectedReligion,
+                              (String? value) {
+                            setState(() {
+                              selectedReligion = value;
+                            });
+                          }),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildDropdownField(
+                              'Marital Status',
+                              maritalStatusOptions,
+                              selectedMaritalStatus, (String? value) {
+                            setState(() {
+                              selectedMaritalStatus = value;
+                            });
+                          }),
+                        ),
+                        SizedBox(width: 12.0),
+                        Expanded(
+                          child: _buildDropdownField(
+                              'Financial Strength',
+                              financialStrengthOptions,
+                              selectedFinancialStrength, (String? value) {
+                            setState(() {
+                              selectedFinancialStrength = value;
+                            });
+                          }),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildLabeledTextField(
+                              'MinHeight', 'cm', minHeightController),
+                        ),
+                        SizedBox(width: 12.0),
+                        Expanded(
+                          child: _buildDropdownField(
+                              'Smoker', smokerOptions, selectedSmokerOption,
+                              (String? value) {
+                            setState(() {
+                              selectedSmokerOption = value;
+                            });
+                          }),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildLabeledTextField(
+                              'Min Age', '25', minAgeController),
+                        ),
+                        SizedBox(width: 12.0),
+                        Expanded(
+                          child: _buildLabeledTextField(
+                              'Max Age', '30', maxAgeController),
+                        ),
+                      ],
+                    ),
+                    _buildButtonRow(context),
+                    SizedBox(height: 40),
+                  ],
+                ),
               ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDropdownField(
-                        'Marital Status',
-                        maritalStatusOptions,
-                        selectedMaritalStatus, (String? value) {
-                      setState(() {
-                        selectedMaritalStatus = value;
-                      });
-                    }),
-                  ),
-                  SizedBox(width: 12.0),
-                  Expanded(
-                    child: _buildDropdownField(
-                        'Financial Strength',
-                        financialStrengthOptions,
-                        selectedFinancialStrength, (String? value) {
-                      setState(() {
-                        selectedFinancialStrength = value;
-                      });
-                    }),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildLabeledTextField('MinHeight', 'cm'),
-                  ),
-                  SizedBox(width: 12.0),
-                  Expanded(
-                    child: _buildDropdownField(
-                        'Smoker', smokerOptions, selectedSmokerOption,
-                        (String? value) {
-                      setState(() {
-                        selectedSmokerOption = value;
-                      });
-                    }),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildLabeledTextField('Min Age', '25'),
-                  ),
-                  SizedBox(width: 12.0),
-                  Expanded(
-                    child: _buildLabeledTextField('Max Age', '30'),
-                  ),
-                ],
-              ),
-              _buildButtonRow(context),
-              SizedBox(height: 40),
-            ],
-          ),
-        ),
-      ),
+            )
     ]);
   }
 
-  Widget _buildLabeledTextField(String label, String hint) {
+  Widget _buildLabeledTextField(
+      String label, String hint, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -166,7 +243,10 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
           ),
         ),
         SizedBox(height: 8),
-        CustomTextFormField(hint: hint),
+        CustomTextFormField(
+          hint: hint,
+          controller: controller,
+        ),
         SizedBox(height: 12),
       ],
     );
@@ -224,9 +304,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
         ),
         SizedBox(width: 20),
         ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => _submitChanges(),
           style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFFFA2A55),
               foregroundColor: Colors.white),

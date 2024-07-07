@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/text_form_fields.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
@@ -7,22 +8,122 @@ class EditLifestylePage extends StatefulWidget {
   final String initialEmail;
 
   const EditLifestylePage({
-    super.key,
+    Key? key,
     required this.initialName,
     required this.initialEmail,
-  });
+  }) : super(key: key);
 
   @override
-  _EditLifestylePageState createState() => _EditLifestylePageState();
+  _EditProfilePageState createState() => _EditProfilePageState();
 }
 
-class _EditLifestylePageState extends State<EditLifestylePage> {
+class _EditProfilePageState extends State<EditLifestylePage> {
   double annualIncome = 10000;
+  Map<String, dynamic>? userInfo;
+  Map<String, dynamic>? lifeStyleInfo;
+
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+
+  String? selectedGender;
+  String? selectedJobSector;
+  String? selectedEducationLevel;
+  String? selectedReligion;
+  String? selectedMaritalStatus;
+  String? selectedPersonalityType;
+  String? selectedSmokerOption;
+  String? selectedCity;
+  String? day;
+  String? month;
+  String? year;
+  final Map<String, String> education = {
+    'Intermediate': 'Intermediate',
+    'Some Bachelor\'s Degree': 'Bachelors',
+    'Some Master\'s Degree': 'Masters',
+    'Some Doctorate': 'Doctorate'
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  void saveInfo() async {
+    final String financial_strength;
+
+    if ((annualIncome).toInt() < 100000) {
+      financial_strength = 'Low';
+    } else if ((annualIncome).toInt() < 500000) {
+      financial_strength = 'Normal';
+    } else {
+      financial_strength = 'Strong';
+    }
+    var uid = supabase.auth.currentUser!.id;
+    try {
+      await supabase.from('Users').update({
+        'first_name': firstNameController.text.trim(),
+        'last_name': lastNameController.text.trim(),
+        'gender': selectedGender,
+        'city': selectedCity,
+        'marital_status': selectedMaritalStatus,
+        'weight': int.parse(weightController.text.trim()),
+        'height': int.parse(heightController.text.trim()),
+        'dob': '$year-$month-$day',
+      }).eq('uid', uid);
+
+      await supabase.from('Lifestyle').update({
+        'job_sector': selectedJobSector,
+        'education': education[selectedEducationLevel],
+        'religion': selectedReligion,
+        'financial_strength': financial_strength,
+        'personality_type': selectedPersonalityType,
+        'smoking': selectedSmokerOption,
+      }).eq('uid', uid);
+
+      Navigator.pop(context);
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  void _fetchUserData() async {
+    var uid = supabase.auth.currentUser!.id;
+    try {
+      var response1 =
+          await supabase.from('Users').select().eq('uid', uid).single();
+      var response2 =
+          await supabase.from('Lifestyle').select().eq('uid', uid).single();
+      setState(() {
+        userInfo = response1;
+        lifeStyleInfo = response2;
+        firstNameController.text = userInfo!['first_name'];
+        lastNameController.text = userInfo!['last_name'];
+        weightController.text = userInfo!['weight'].toString();
+        heightController.text = userInfo!['height'].toString();
+        selectedGender = userInfo!['gender'];
+        selectedJobSector = lifeStyleInfo!['job_sector'];
+        selectedEducationLevel = lifeStyleInfo!['education'];
+        selectedReligion = lifeStyleInfo!['religion'];
+        selectedMaritalStatus = userInfo!['marital_status'];
+        selectedPersonalityType = lifeStyleInfo!['personality_type'];
+        selectedSmokerOption = lifeStyleInfo!['smoking'];
+        selectedCity = userInfo!['city'];
+        List date = userInfo!['dob'].split('-');
+        day = int.tryParse(date[2]).toString();
+        month = int.tryParse(date[1]).toString();
+        year = int.tryParse(date[0]).toString();
+      });
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final List<String> genders = ['Male', 'Female', 'Other'];
-
     final List<String> jobSectors = [
       'Technology',
       'Healthcare',
@@ -30,9 +131,8 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
       'Education',
       'Manufacturing',
       'Retail',
-      'Other',
+      'Other'
     ];
-
     final List<String> personalityTypes = [
       'ISTJ',
       'ISFJ',
@@ -49,17 +149,15 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
       'ESTJ',
       'ESFJ',
       'ENFJ',
-      'ENTJ',
+      'ENTJ'
     ];
-
     final List<String> religions = [
       'Christianity',
       'Islam',
       'Sikhism',
       'Atheism',
-      'Agnosticism',
+      'Agnosticism'
     ];
-
     final List<String> citiesInPakistan = [
       'Karachi',
       'Lahore',
@@ -84,9 +182,8 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
       'Mirpur',
       'Jhelum',
       'Nowshera',
-      'Okara',
+      'Okara'
     ];
-
     final List<String> maritalStatus = [
       'Single',
       'Married',
@@ -94,21 +191,32 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
       'Widowed',
       'Any'
     ];
-
     final List<String> smokerOptions = [
       'Never',
       'Rarely',
       'Sometimes',
-      'Often',
-      'Any'
+      'Often'
     ];
-
     final Map<String, String> education = {
       'Intermediate': 'Intermediate',
       'Some Bachelor\'s Degree': 'Bachelors',
       'Some Master\'s Degree': 'Masters',
-      'Some Doctorate': 'Doctorate',
+      'Some Doctorate': 'Doctorate'
     };
+
+    String? getEducationKeyByValue(String? value) {
+      try {
+        return education.entries
+            .firstWhere((entry) => entry.value == value)
+            .key;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    if (userInfo == null || lifeStyleInfo == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Stack(
       children: [
@@ -126,52 +234,130 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildLabeledTextField('Name', 'Your name'),
-                  _buildDateRow(),
-                  _buildMeasurementRow('Weight', 'Kgs', 'Height', 'cm'),
+                  const Center(
+                    child: Text(
+                      'Edit Profile',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
-                      Expanded(child: _buildDropdownField('Gender', genders)),
-                      SizedBox(width: 12),
+                      Expanded(
+                        child: _buildLabeledTextField(
+                            'First Name', 'first name', firstNameController),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildLabeledTextField(
+                            'Last Name', 'last name', lastNameController),
+                      ),
+                    ],
+                  ),
+                  _buildDateRow(userInfo!['dob']),
+                  _buildMeasurementRow(
+                    'Weight',
+                    'Kgs',
+                    'Height',
+                    'cm',
+                    weightController,
+                    heightController,
+                  ),
+                  Row(
+                    children: [
                       Expanded(
                           child: _buildDropdownField(
-                              'Personality Type', personalityTypes)),
+                              'Gender', genders, selectedGender,
+                              (String? value) {
+                        setState(() {
+                          selectedGender = value;
+                        });
+                      })),
+                      const SizedBox(width: 12),
+                      Expanded(
+                          child: _buildDropdownField(
+                              'Personality Type',
+                              personalityTypes,
+                              selectedPersonalityType, (value) {
+                        setState(() {
+                          selectedPersonalityType = value;
+                        });
+                      })),
                     ],
                   ),
                   Row(
                     children: [
                       Expanded(
-                          child: _buildDropdownField('City', citiesInPakistan)),
-                      SizedBox(width: 12),
+                          child: _buildDropdownField(
+                              'City', citiesInPakistan, selectedCity, (value) {
+                        setState(() {
+                          selectedCity = value;
+                        });
+                      })),
+                      const SizedBox(width: 12),
                       Expanded(
-                          child: _buildDropdownField('Religion', religions)),
+                        child: _buildDropdownField(
+                            'Religion', religions, selectedReligion, (value) {
+                          setState(() {
+                            selectedReligion = value;
+                          });
+                        }),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
                       Expanded(
-                          child: _buildDropdownField(
-                              'Education', education.keys.toList())),
-                      SizedBox(width: 12),
+                        child: _buildDropdownField(
+                            'Education',
+                            education.keys.toList(),
+                            getEducationKeyByValue(selectedEducationLevel),
+                            (value) {
+                          setState(() {
+                            selectedEducationLevel = value;
+                          });
+                        }),
+                      ),
+                      const SizedBox(width: 12),
                       Expanded(
-                          child: _buildDropdownField('Job Sector', jobSectors)),
+                        child: _buildDropdownField(
+                            'Job Sector', jobSectors, selectedJobSector,
+                            (value) {
+                          setState(() {
+                            selectedJobSector = value;
+                          });
+                        }),
+                      ),
                     ],
                   ),
                   _buildIncomeSlider(),
                   Row(
                     children: [
                       Expanded(
-                          child: _buildDropdownField('Smoker', smokerOptions)),
-                      SizedBox(width: 12),
-                      Expanded(
                           child: _buildDropdownField(
-                              'Marital Status', maritalStatus)),
+                              'Smoker', smokerOptions, selectedSmokerOption,
+                              (value) {
+                        setState(() {
+                          selectedSmokerOption = value;
+                        });
+                      })),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildDropdownField('Marital Status',
+                            maritalStatus, selectedMaritalStatus, (value) {
+                          setState(() {
+                            selectedMaritalStatus = value;
+                          });
+                        }),
+                      ),
                     ],
                   ),
-                  _buildDescriptionField(),
-                  SizedBox(height: 12),
                   _buildButtonRow(context),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -181,46 +367,43 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
     );
   }
 
-  Widget _buildLabeledTextField(String label, String hint) {
+  Widget _buildLabeledTextField(
+      String label, String hint, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-          ),
+          style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
-        // SizedBox(height: 4),
-        CustomTextFormField(hint: hint),
-        SizedBox(height: 12),
+        CustomTextFormField(
+          hint: hint,
+          controller: controller,
+        ),
+        const SizedBox(height: 12),
       ],
     );
   }
 
-  Widget _buildDropdownField(String label, List<String> items) {
+  Widget _buildDropdownField(String label, List<String> items,
+      String? fieldValue, Function(String?)? onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.white,
-          ),
+          style: const TextStyle(fontSize: 14, color: Colors.white),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         DropdownButtonFormField(
+          value: fieldValue,
           items: items.map((item) {
             return DropdownMenuItem(
               value: item,
               child: Text(item),
             );
           }).toList(),
-          onChanged: (value) {
-            // Handle dropdown value change if needed
-          },
+          onChanged: onChanged,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
@@ -229,26 +412,39 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
               borderRadius: BorderRadius.circular(15.0),
             ),
           ),
-          isExpanded: true, // Ensures dropdown fills the available space
+          isExpanded: true,
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
       ],
     );
   }
 
-  Widget _buildDateRow() {
+  Widget _buildDateRow(String dob) {
     return Row(
       children: [
         Expanded(
-          child: _buildDropdownField('Day', _buildDayItems()),
+          child: _buildDropdownField('Day', _buildDayItems(), day, (value) {
+            setState(() {
+              day = value;
+            });
+          }),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Expanded(
-          child: _buildDropdownField('Month', _buildMonthItems()),
+          child:
+              _buildDropdownField('Month', _buildMonthItems(), month, (value) {
+            setState(() {
+              month = value;
+            });
+          }),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Expanded(
-          child: _buildDropdownField('Year', _buildYearItems()),
+          child: _buildDropdownField('Year', _buildYearItems(), year, (value) {
+            setState(() {
+              year = value;
+            });
+          }),
         ),
       ],
     );
@@ -258,12 +454,20 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Annual Income (Rs)',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-          ),
+        Row(
+          children: [
+            const Text(
+              'Annual Income',
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
+            Text(
+              ': Rs ${annualIncome.toStringAsFixed(0)}',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
         Slider(
           activeColor: MainColors.mainThemeColor,
@@ -277,149 +481,80 @@ class _EditLifestylePageState extends State<EditLifestylePage> {
             });
           },
         ),
-        Text(
-          'Rs ${annualIncome.toStringAsFixed(0)}',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-          ),
-        ),
-        SizedBox(height: 12),
       ],
     );
   }
 
   Widget _buildMeasurementRow(
-      String label1, String hint1, String label2, String hint2) {
-    return Column(
+      String label1,
+      String unit1,
+      String label2,
+      String unit2,
+      TextEditingController controller1,
+      TextEditingController controller2) {
+    return Row(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label1,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                  // SizedBox(height: 4),
-                  CustomTextFormField(hint: hint1),
-                ],
-              ),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label2,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                  ),
-                  // SizedBox(height: 4),
-                  CustomTextFormField(hint: hint2),
-                ],
-              ),
-            ),
-          ],
+        Expanded(
+          child: _buildMeasurementField(label1, unit1, controller1),
         ),
-        SizedBox(height: 12),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _buildMeasurementField(label2, unit2, controller2),
+        ),
       ],
     );
   }
 
-  Widget _buildDescriptionField() {
+  Widget _buildMeasurementField(
+      String label, String unit, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Description",
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-          ),
+          label,
+          style: const TextStyle(fontSize: 14, color: Colors.white),
         ),
-        SizedBox(height: 4),
-        TextField(
-          maxLines: 10,
-          keyboardType: TextInputType.multiline,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            hintText: 'Write about yourself',
-            border: OutlineInputBorder(),
-          ),
+        CustomTextFormField(
+          controller: controller,
+          hint: '',
         ),
+        const SizedBox(height: 8),
       ],
     );
   }
 
   Widget _buildButtonRow(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.grey,
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
           ),
-          child: Text('Cancel'),
         ),
-        SizedBox(width: 20),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFFA2A55),
-              foregroundColor: Colors.white),
-          child: Text('Save'),
+        const SizedBox(width: 8),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () => saveInfo(),
+            child: const Text('Save'),
+          ),
         ),
       ],
     );
   }
 
   List<String> _buildDayItems() {
-    List<String> items = [];
-    for (int i = 1; i <= 31; i++) {
-      items.add(i.toString());
-    }
-    return items;
+    return List<String>.generate(31, (index) => (index + 1).toString());
   }
 
   List<String> _buildMonthItems() {
-    List<String> months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-
-    return months;
+    return List<String>.generate(12, (index) => (index + 1).toString());
   }
 
   List<String> _buildYearItems() {
-    List<String> items = [];
-    for (int year = 1950; year <= DateTime.now().year; year++) {
-      items.add(year.toString());
-    }
-    return items.reversed.toList();
+    return List<String>.generate(
+        DateTime.now().year - 1960 + 1, (index) => (1960 + index).toString());
   }
 }
