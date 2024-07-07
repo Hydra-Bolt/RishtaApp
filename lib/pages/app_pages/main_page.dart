@@ -112,43 +112,53 @@ class _MainPageState extends State<MainHomePage>
   Future<void> _fetchRishta() async {
     try {
       final uid = supabase.auth.currentUser!.id;
-      final List<dynamic> response = await supabase
+      final List<dynamic>? response = await supabase
           .rpc('get_user_matches_on_religion', params: {'in_uid': uid});
       print(response);
 
-      final List<Map<String, dynamic>> rishtasFound = response.map((res) {
-        // Calculate age
-        final DateTime today = DateTime.now();
-        final DateTime dob = DateTime.parse(res['dob']);
-        int userAge = today.year - dob.year;
-        if (today.month < dob.month ||
-            (today.month == dob.month && today.day < dob.day)) {
-          userAge--;
-        }
+      List<Map<String, dynamic>> rishtasFound = [];
 
-        // Create a map with 'name' and 'age'
-        return {
-          'name':
-              '${res['first_name'].toString().toCapitalized()} ${res['last_name'].toString().toCapitalized()}',
-          'age': userAge
-        };
-      }).toList();
+      if (response != null && response.isNotEmpty) {
+        rishtasFound = response.map((res) {
+          // Calculate age
+          final DateTime today = DateTime.now();
+          final DateTime dob = DateTime.parse(res['dob']);
+          int userAge = today.year - dob.year;
+          if (today.month < dob.month ||
+              (today.month == dob.month && today.day < dob.day)) {
+            userAge--;
+          }
+
+          // Create a map with 'name' and 'age'
+          return {
+            'name':
+                '${res['first_name'].toString().toCapitalized()} ${res['last_name'].toString().toCapitalized()}',
+            'age': userAge,
+            'uid': res['uid'],
+            'gender': res['gender']
+          };
+        }).toList();
+      }
 
       // Print the result
       print(rishtasFound);
 
       setState(() {
         rishtas = rishtasFound;
-        rishtaItr = rishtas.iterator;
-        rishtaItr!.moveNext();
-        rishta = rishtaItr!.current;
-        isLoading = false; // Add this line
+        if (rishtas.isNotEmpty) {
+          rishtaItr = rishtas.iterator;
+          rishtaItr!.moveNext();
+          rishta = rishtaItr!.current;
+        }
+        isLoading = false;
       });
     } catch (error) {
       // Handle the error appropriately here
       if (mounted) {
-        isLoading = false; // Add this line
-        print('Error fetching user data probelm in fetchin grishta: $error');
+        setState(() {
+          isLoading = false;
+        });
+        print('Error fetching user data problem in fetching rishta: $error');
       }
     }
   }
@@ -212,17 +222,41 @@ class _MainPageState extends State<MainHomePage>
                     child: CircularProgressIndicator(
                   color: AppColors.mainColor,
                 )),
-              ) // Add this line
+              )
             : rishta == null
-                ? Container(
-                    padding: const EdgeInsets.all(20),
-                    alignment: Alignment.topCenter,
-                    child: const Text(
-                      'Oh no! It seems we don`t have any rishtas for you at the moment. But don`t worry, something special might be just around the corner!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
+                ? Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        Image.asset(
+                          './assets/images/search.png',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Oh no! It seems we don`t have any rishtas for you at the moment.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'But don`t worry, something special might be just around the corner!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
                   )
                 : Stack(
