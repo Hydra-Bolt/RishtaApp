@@ -40,6 +40,7 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   another_carousel_pro: ^1.0.2
   google_fonts: ^6.2.1
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,7 @@ flutter:
     - assets/images/
     - assets/images/hobbies/
     - assets/icons/
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
