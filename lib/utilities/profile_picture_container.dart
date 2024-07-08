@@ -3,7 +3,7 @@ import 'package:supabase_auth/utilities/dimensions.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
 class ProfileImageContainer extends StatelessWidget {
-  const ProfileImageContainer({Key? key}) : super(key: key);
+  const ProfileImageContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,23 +19,28 @@ class ProfileImageContainer extends StatelessWidget {
     const Color shadowColor = MainColors.shadowColor;
 
     return Container(
-      margin: EdgeInsets.only(bottom: imageContainerMarginBottom),
       width: containerWidth,
       height: imageContainerHeight,
       decoration: BoxDecoration(
-          color: containerBackground,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border:
-              Border.all(color: mainThemeColor, width: containerBorderWidth),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            )
-          ]),
-      child: Image.asset('./assets/images/muneeb1.png'),
+        color: containerBackground,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(color: mainThemeColor, width: containerBorderWidth),
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          )
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Image.asset(
+          'assets/images/male.jpg',
+          fit: BoxFit.cover, // Adjusted fit property
+        ),
+      ),
     );
   }
 }

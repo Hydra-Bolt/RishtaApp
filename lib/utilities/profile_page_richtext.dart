@@ -1,43 +1,136 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_auth/utils/string_extension.dart';
 
 class ProfileRichText extends StatelessWidget {
-  const ProfileRichText({super.key});
+  final Map<String, dynamic> profileData;
+
+  const ProfileRichText({
+    Key? key,
+    required this.profileData,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 40.0),
-      child: RichText(
-        text: const TextSpan(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Padding(
+        padding: EdgeInsets.all(24.0),
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            TextSpan(
-              text: 'Muneeb\n',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildLabelWithValue(
+                    'Name',
+                    profileData['first_name'].toString().toCapitalized() +
+                        " " +
+                        profileData['last_name'].toString().toCapitalized(),
+                  ),
+                ),
+                Expanded(
+                  child: _buildLabelWithValue(
+                      'Marital Status', profileData['marital_status']),
+                ),
+              ],
             ),
-            TextSpan(
-              text: '20\n',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
+            SizedBox(height: 24.0),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildLabelWithValue(
+                      'Weight', profileData['weight'].toString()),
+                ),
+                SizedBox(height: 24.0),
+                Expanded(
+                  child: _buildLabelWithValue(
+                      'Height', profileData['height'].toString()),
+                ),
+              ],
             ),
-            TextSpan(
-              text:
-                  '\nHello! I\'m Muneeb, a 20-year-old with a zest for life and a passion for meaningful connections. I\'m drawn to older women who carry themselves with confidence and have thick thighs—it\'s a combination that truly captivates me. I believe in making the most out of every day, whether it\'s through embarking on new adventures, savoring different cuisines, or simply enjoying the beauty of the world around us.\nIn my spare time, I love exploring new places, whether it\'s a hidden gem in the city or a serene spot in nature. I\'m a foodie at heart and enjoy discovering new flavors and culinary experiences. But more than anything, I value deep and thoughtful conversations that allow me to connect with others on a genuine level.\nAuthenticity and honesty are cornerstones of my approach to life and relationships. I\'m looking for a woman who knows what she wants, appreciates the finer things in life, and isn\'t afraid to be herself. If you\'re someone who enjoys a good laugh, cherishes meaningful moments, and is open to exploring life\'s possibilities together, let\'s connect. I\'m excited to meet someone special who shares my enthusiasm for life and can join me on this exciting journey.',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14.0,
-              ),
+            SizedBox(height: 24.0),
+            Row(
+              children: [
+                Expanded(
+                    child:
+                        _buildLabelWithValue('Gender', profileData['gender'])),
+                SizedBox(height: 24.0),
+                Expanded(
+                    child: _buildLabelWithValue(
+                        'Smoking', profileData['smoking'])),
+              ],
+            ),
+            SizedBox(height: 24.0),
+            Row(
+              children: [
+                Expanded(
+                    child: _buildLabelWithValue('City', profileData['city'])),
+                SizedBox(height: 24.0),
+                Expanded(
+                    child: _buildLabelWithValue(
+                        'Date of Birth', profileData['dob'])),
+              ],
+            ),
+            SizedBox(height: 24.0),
+            Row(
+              children: [
+                Expanded(
+                    child: _buildLabelWithValue(
+                        'Job Sector', profileData['job_sector'])),
+                SizedBox(height: 24.0),
+                Expanded(
+                    child: _buildLabelWithValue(
+                        'Education', profileData['education'])),
+              ],
+            ),
+            SizedBox(height: 24.0),
+            Row(
+              children: [
+                Expanded(
+                    child: _buildLabelWithValue(
+                        'Religion', profileData['religion'])),
+                SizedBox(height: 24.0),
+                Expanded(
+                  child: _buildLabelWithValue(
+                      'Personality Type', profileData['personality_type']),
+                ),
+              ],
             ),
           ],
         ),
-        textAlign: TextAlign.left,
       ),
+    );
+  }
+
+  Widget _buildLabelWithValue(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(height: 8.0),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey[800],
+          ),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

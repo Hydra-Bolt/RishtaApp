@@ -4,14 +4,16 @@ import 'package:supabase_auth/utilities/text_form_fields.dart';
 import 'package:supabase_auth/utilities/colors.dart';
 
 class EditLifestylePage extends StatefulWidget {
-  final String initialName;
-  final String initialEmail;
+  // final String initialName;
+  // final String initialEmail;
+  final Map<String, dynamic> initialData;
 
   const EditLifestylePage({
-    Key? key,
-    required this.initialName,
-    required this.initialEmail,
-  }) : super(key: key);
+    super.key,
+    required this.initialData,
+    // required this.initialName,
+    // required this.initialEmail,
+  });
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -48,7 +50,7 @@ class _EditProfilePageState extends State<EditLifestylePage> {
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
+    _fetchUserData(widget.initialData);
   }
 
   void saveInfo() async {
@@ -89,36 +91,45 @@ class _EditProfilePageState extends State<EditLifestylePage> {
     }
   }
 
-  void _fetchUserData() async {
-    var uid = supabase.auth.currentUser!.id;
-    try {
-      var response1 =
-          await supabase.from('Users').select().eq('uid', uid).single();
-      var response2 =
-          await supabase.from('Lifestyle').select().eq('uid', uid).single();
-      setState(() {
-        userInfo = response1;
-        lifeStyleInfo = response2;
-        firstNameController.text = userInfo!['first_name'];
-        lastNameController.text = userInfo!['last_name'];
-        weightController.text = userInfo!['weight'].toString();
-        heightController.text = userInfo!['height'].toString();
-        selectedGender = userInfo!['gender'];
-        selectedJobSector = lifeStyleInfo!['job_sector'];
-        selectedEducationLevel = lifeStyleInfo!['education'];
-        selectedReligion = lifeStyleInfo!['religion'];
-        selectedMaritalStatus = userInfo!['marital_status'];
-        selectedPersonalityType = lifeStyleInfo!['personality_type'];
-        selectedSmokerOption = lifeStyleInfo!['smoking'];
-        selectedCity = userInfo!['city'];
-        List date = userInfo!['dob'].split('-');
-        day = int.tryParse(date[2]).toString();
-        month = int.tryParse(date[1]).toString();
-        year = int.tryParse(date[0]).toString();
-      });
-    } on Exception catch (e) {
-      print(e);
-    }
+  void _fetchUserData(Map<String, dynamic> initialData) {
+    setState(() {
+      userInfo = {
+        'first_name': initialData['first_name'],
+        'last_name': initialData['last_name'],
+        'weight': initialData['weight'],
+        'height': initialData['height'],
+        'gender': initialData['gender'],
+        'marital_status': initialData['marital_status'],
+        'city': initialData['city'],
+        'dob': initialData['dob'],
+      };
+
+      lifeStyleInfo = {
+        'job_sector': initialData['job_sector'],
+        'education': initialData['education'],
+        'religion': initialData['religion'],
+        'personality_type': initialData['personality_type'],
+        'smoking': initialData['smoking'],
+      };
+
+      firstNameController.text = userInfo!['first_name'];
+      lastNameController.text = userInfo!['last_name'];
+      weightController.text = userInfo!['weight'].toString();
+      heightController.text = userInfo!['height'].toString();
+      selectedGender = userInfo!['gender'];
+      selectedJobSector = lifeStyleInfo!['job_sector'];
+      selectedEducationLevel = lifeStyleInfo!['education'];
+      selectedReligion = lifeStyleInfo!['religion'];
+      selectedMaritalStatus = userInfo!['marital_status'];
+      selectedPersonalityType = lifeStyleInfo!['personality_type'];
+      selectedSmokerOption = lifeStyleInfo!['smoking'];
+      selectedCity = userInfo!['city'];
+
+      List date = userInfo!['dob'].split('-');
+      day = int.tryParse(date[2]).toString();
+      month = int.tryParse(date[1]).toString();
+      year = int.tryParse(date[0]).toString();
+    });
   }
 
   @override
@@ -528,6 +539,10 @@ class _EditProfilePageState extends State<EditLifestylePage> {
       children: [
         Expanded(
           child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  Color.fromARGB(232, 255, 179, 174)),
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -537,6 +552,10 @@ class _EditProfilePageState extends State<EditLifestylePage> {
         const SizedBox(width: 8),
         Expanded(
           child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  Color.fromARGB(199, 188, 213, 161)),
+            ),
             onPressed: () => saveInfo(),
             child: const Text('Save'),
           ),

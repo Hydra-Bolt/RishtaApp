@@ -42,6 +42,7 @@ class _PreferencesTabState extends State<PreferencesTab> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
+        backgroundColor: Colors.transparent,
         body: Center(
           child: CircularProgressIndicator(),
         ),
@@ -55,12 +56,15 @@ class _PreferencesTabState extends State<PreferencesTab> {
             width: 100,
             child: CustomButtons.editButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditPreferencesPage(),
-                  ),
-                );
+                if (!isLoading && preferenceInfo!.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EditPreferencesPage(initialData: preferenceInfo!),
+                    ),
+                  );
+                }
               },
             ),
           ),

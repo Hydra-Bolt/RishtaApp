@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/text_form_fields.dart';
 
 class EditPreferencesPage extends StatefulWidget {
+  Map<String, dynamic> initialData;
+  EditPreferencesPage({super.key, required this.initialData});
+
   @override
   _EditPreferencesPageState createState() => _EditPreferencesPageState();
 }
@@ -25,7 +27,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
+    _fetchUserData(widget.initialData);
   }
 
   void _submitChanges() async {
@@ -47,16 +49,9 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
     Navigator.of(context).pop();
   }
 
-  void _fetchUserData() async {
-    var uid = supabase.auth.currentUser!.id;
-    try {
-      var response =
-          await supabase.from('Preference').select().eq('uid', uid).single();
-      setState(() {
-        preferenceInfo = response;
-      });
-      print(preferenceInfo);
-
+  void _fetchUserData(Map<String, dynamic> initialData) {
+    setState(() {
+      preferenceInfo = initialData;
       minHeightController.text = preferenceInfo!['min_height'].toString();
       minAgeController.text = preferenceInfo!['min_age'].toString();
       maxAgeController.text = preferenceInfo!['max_age'].toString();
@@ -68,9 +63,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
       selectedFinancialStrength = preferenceInfo!['financial_strength'];
       selectedSmokerOption = preferenceInfo!['smoking'];
       isLoading = false;
-    } on Exception catch (e) {
-      print(e);
-    }
+    });
   }
 
   final Map<String, String> education = {
