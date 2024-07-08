@@ -29,6 +29,7 @@ class ProfileRichText extends StatelessWidget {
                         profileData['last_name'].toString().toCapitalized(),
                   ),
                 ),
+                SizedBox(width: 24.0),
                 Expanded(
                   child: _buildLabelWithValue(
                       'Marital Status', profileData['marital_status']),
@@ -125,7 +126,7 @@ class ProfileRichText extends StatelessWidget {
           child: Text(
             value,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               color: Colors.white,
             ),
           ),

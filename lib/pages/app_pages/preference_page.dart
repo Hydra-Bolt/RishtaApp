@@ -55,6 +55,7 @@ class _PreferencesTabState extends State<PreferencesTab> {
             height: 35,
             width: 100,
             child: CustomButtons.editButton(
+              'preferences',
               onPressed: () {
                 if (!isLoading && preferenceInfo!.isNotEmpty) {
                   Navigator.push(

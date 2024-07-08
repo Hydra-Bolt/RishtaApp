@@ -68,8 +68,9 @@ class CustomButtons {
     );
   }
 
-  static Widget editButton({required VoidCallback onPressed}) {
+  static Widget editButton(String hero, {required VoidCallback onPressed}) {
     return FloatingActionButton.extended(
+      heroTag: hero,
       icon: const Icon(
         Icons.edit,
         color: MainColors.textColor,

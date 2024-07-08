@@ -13,7 +13,7 @@ class ProfileInfoContainer extends StatelessWidget {
 
     // final double topMargin = dimensions.height(40);
     final double containerWidth = dimensions.width(85);
-    final double containerHeight = dimensions.height(80);
+    final double containerHeight = dimensions.height(110);
     final double borderRadius = dimensions.width(3.54);
     const Color shadowColor = MainColors.shadowColor;
 

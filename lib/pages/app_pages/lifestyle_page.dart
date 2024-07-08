@@ -67,6 +67,7 @@ class _LifestyleTabState extends State<LifestyleTab> {
           height: 35,
           width: 100,
           child: CustomButtons.editButton(
+            'lifestyle',
             onPressed: () {
               if (combinedInfo.isNotEmpty && !isLoading) {
                 Navigator.push(
