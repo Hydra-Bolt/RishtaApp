@@ -43,13 +43,11 @@ class _ReportsState extends State<Reports> {
   Future<List> _fetchReportedUsers() async {
     // Fetches the user's data from the database.
     var uid = supabase.auth.currentUser!.id;
-    print(uid);
     var list = await supabase
         .from('reports')
         .select(
             'report_reported_user_fkey (first_name), report_report_by_fkey(first_name), reason, status, report_date')
         .eq('report_by', uid);
-    print(list);
     return list;
   }
 
@@ -96,7 +94,7 @@ class _ReportsState extends State<Reports> {
         child: ListTile(
           title: Text(
             param0['report_reported_user_fkey']['first_name'],
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
           ),
           subtitle: Column(
@@ -104,17 +102,17 @@ class _ReportsState extends State<Reports> {
             children: [
               Text(
                 param0['reason'],
-                style: TextStyle(color: Colors.white54),
+                style: const TextStyle(color: Colors.white54),
               ),
               Text(
                 'Reported $timeAgo',
-                style: TextStyle(color: Colors.white54),
+                style: const TextStyle(color: Colors.white54),
               ),
             ],
           ),
           trailing: Text(
             param0['status'],
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ));
   }

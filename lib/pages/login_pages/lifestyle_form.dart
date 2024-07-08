@@ -159,13 +159,13 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
   }
 
   void _submitHobbies() {
-    if (_selectedHobbies.length < 1) {
+    if (_selectedHobbies.isEmpty) {
       throw Exception('Please select at least one hobby.');
     }
   }
 
   void _submitInterests() {
-    if (_selectedInterests.length < 1) {
+    if (_selectedInterests.isEmpty) {
       throw Exception('Please select at least one interest.');
     }
   }
@@ -200,21 +200,21 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
       _pageController.jumpToPage(2);
       return;
     }
-    final String financial_strength;
+    final String financialStrength;
 
     if ((annualIncome).toInt() < 100000) {
-      financial_strength = 'Low';
+      financialStrength = 'Low';
     } else if ((annualIncome).toInt() < 500000) {
-      financial_strength = 'Normal';
+      financialStrength = 'Normal';
     } else {
-      financial_strength = 'Strong';
+      financialStrength = 'Strong';
     }
 
     final List<Map<String, dynamic>> response =
         await supabase.from("Lifestyle").insert({
       "job_sector": _selectedJobSector,
       "personality_type": _selectedPersonalityType,
-      "financial_strength": financial_strength,
+      "financial_strength": financialStrength,
       "smoking": _smoking,
       "education": eduLevelsMap[_selectedEduLevel],
       // "cast": _castController.text,
@@ -489,126 +489,124 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
   SingleChildScrollView _personalLifeStyle() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            CustomDropdownFormField(
-              label: "Job Sector",
-              value: _selectedJobSector,
-              items: jobSectors,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          CustomDropdownFormField(
+            label: "Job Sector",
+            value: _selectedJobSector,
+            items: jobSectors,
+            onChanged: (value) {
+              setState(() {
+                _selectedJobSector = value;
+              });
+            },
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                  child: CustomDropdownFormField(
+                      label: "Religion",
+                      value: _selectedReligion,
+                      items: religions,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedReligion = value;
+                        });
+                      })),
+              const SizedBox(width: 10),
+              // Expanded(
+              //   child: CustomTextFormField(
+              //     label: "Cast",
+              //     controller: _castController,
+              //     enabled: true,
+              //   ),
+              // ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          CustomDropdownFormField(
+              label: "Highest Qualification",
+              value: _selectedEduLevel,
+              items: eduLevelsMap.keys.toList(),
               onChanged: (value) {
                 setState(() {
-                  _selectedJobSector = value;
+                  _selectedEduLevel = value; // Assign the key directly
                 });
-              },
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                    child: CustomDropdownFormField(
-                        label: "Religion",
-                        value: _selectedReligion,
-                        items: religions,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedReligion = value;
-                          });
-                        })),
-                const SizedBox(width: 10),
-                // Expanded(
-                //   child: CustomTextFormField(
-                //     label: "Cast",
-                //     controller: _castController,
-                //     enabled: true,
-                //   ),
-                // ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            CustomDropdownFormField(
-                label: "Highest Qualification",
-                value: _selectedEduLevel,
-                items: eduLevelsMap.keys.toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedEduLevel = value; // Assign the key directly
-                  });
-                }),
-            const SizedBox(height: 20),
-            Text(
-              'Annual Income: ${annualIncome.toStringAsFixed(0)}Rs+', // Display the slider value as text
-              style: const TextStyle(fontSize: 14, color: Colors.white),
-            ),
-            Slider(
-              activeColor: AppColors.mainColor,
-              min: 0,
-              max: 100000,
-              divisions: 1000,
-              value: annualIncome,
-              onChanged: (value) {
-                setState(() {
-                  annualIncome = value;
-                });
-              },
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Do you smoke?",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                const SizedBox(height: 10),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildRadioButton('Never'),
-                      _buildRadioButton('Rarely'),
-                      _buildRadioButton('Sometimes'),
-                      _buildRadioButton('Often'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            CustomDropdownFormField(
-                label: 'Personality Type',
-                value: _selectedPersonalityType,
-                items: personalityTypes,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedPersonalityType = value;
-                  });
-                }),
-            const SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
-                text: "Don't know your personality type? ",
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-                children: [
-                  TextSpan(
-                    text: "Click here",
-                    style: const TextStyle(
-                      color: AppColors.mainColor,
-                      decoration: TextDecoration.underline,
-                    ),
-                    recognizer: TapGestureRecognizer()..onTap = _launchURL,
-                  ),
-                  const TextSpan(
-                    text: ' to find out.',
-                  ),
-                ],
+              }),
+          const SizedBox(height: 20),
+          Text(
+            'Annual Income: ${annualIncome.toStringAsFixed(0)}Rs+', // Display the slider value as text
+            style: const TextStyle(fontSize: 14, color: Colors.white),
+          ),
+          Slider(
+            activeColor: AppColors.mainColor,
+            min: 0,
+            max: 100000,
+            divisions: 1000,
+            value: annualIncome,
+            onChanged: (value) {
+              setState(() {
+                annualIncome = value;
+              });
+            },
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Do you smoke?",
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
+              const SizedBox(height: 10),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildRadioButton('Never'),
+                    _buildRadioButton('Rarely'),
+                    _buildRadioButton('Sometimes'),
+                    _buildRadioButton('Often'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          CustomDropdownFormField(
+              label: 'Personality Type',
+              value: _selectedPersonalityType,
+              items: personalityTypes,
+              onChanged: (value) {
+                setState(() {
+                  _selectedPersonalityType = value;
+                });
+              }),
+          const SizedBox(height: 10),
+          RichText(
+            text: TextSpan(
+              text: "Don't know your personality type? ",
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+              children: [
+                TextSpan(
+                  text: "Click here",
+                  style: const TextStyle(
+                    color: AppColors.mainColor,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()..onTap = _launchURL,
+                ),
+                const TextSpan(
+                  text: ' to find out.',
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

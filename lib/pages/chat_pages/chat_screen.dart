@@ -131,9 +131,8 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
           }),
         );
       });
-    } catch (e) {
-      print('Error fetching messages: $e');
-    }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   Future<void> _addMessage(String message) async {

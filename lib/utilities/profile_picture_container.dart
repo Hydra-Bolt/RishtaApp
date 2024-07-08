@@ -10,7 +10,7 @@ class ProfileImageContainer extends StatelessWidget {
     final Dimensions dimensions = Dimensions(context);
 
     final double containerWidth = dimensions.width(85);
-    final double imageContainerMarginBottom = dimensions.height(45);
+    dimensions.height(45);
     final double imageContainerHeight = dimensions.height(55);
     final double borderRadius = dimensions.width(3.54);
     const double containerBorderWidth = 1.5;

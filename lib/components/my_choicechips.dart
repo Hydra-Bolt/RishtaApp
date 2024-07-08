@@ -35,7 +35,7 @@ class _MultiSelectChipWidgetState extends State<MultiSelectChipWidget> {
           child: ChoiceChip(
             label: Text(
               item,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
             checkmarkColor: AppColors.mainColor,
             selectedColor: Colors.grey[850],

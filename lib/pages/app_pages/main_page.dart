@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth/main.dart';
-import 'package:supabase_auth/pages/app_pages/rishta_clicked_page.dart';
 import 'package:supabase_auth/utilities/main_page_info_container.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
 import 'package:supabase_auth/utilities/colors.dart';
@@ -56,7 +55,6 @@ class _MainPageState extends State<MainHomePage>
   bool get wantKeepAlive => true;
   @override
   void initState() {
-    print("CURRENT UID: ${supabase.auth.currentUser!.id}");
     super.initState();
 
     // Fetches the user's data from the database.
@@ -104,7 +102,6 @@ class _MainPageState extends State<MainHomePage>
       // Handle the error appropriately here
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/userform');
-        print('Error fetching user data: $error');
       }
     }
   }
@@ -118,7 +115,6 @@ class _MainPageState extends State<MainHomePage>
           .from('Matches')
           .select()
           .or('request_by.eq.$uid,request_to.eq.$uid');
-      print('Already Added $alreadyAddedRishtas');
 
       List<String> addedUids = [];
 
@@ -131,13 +127,9 @@ class _MainPageState extends State<MainHomePage>
         }
       }
 
-      print('Filtered UIDs: $addedUids');
-
       // Fetch rishtas that match the user's criteria
       final List<dynamic>? response = await supabase
           .rpc('get_user_matches_on_religion', params: {'in_uid': uid});
-
-      print(response);
 
       List<Map<String, dynamic>> rishtasFound = [];
 
@@ -166,7 +158,6 @@ class _MainPageState extends State<MainHomePage>
       }
 
       // Print the filtered result
-      print('Rishtas Found: $rishtasFound');
 
       setState(() {
         rishtas = rishtasFound;
@@ -183,7 +174,6 @@ class _MainPageState extends State<MainHomePage>
         setState(() {
           isLoading = false;
         });
-        print('Error fetching user data problem in fetching rishta: $error');
       }
     }
   }

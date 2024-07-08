@@ -54,14 +54,14 @@ class _EditProfilePageState extends State<EditLifestylePage> {
   }
 
   void saveInfo() async {
-    final String financial_strength;
+    final String financialStrength;
 
     if ((annualIncome).toInt() < 100000) {
-      financial_strength = 'Low';
+      financialStrength = 'Low';
     } else if ((annualIncome).toInt() < 500000) {
-      financial_strength = 'Normal';
+      financialStrength = 'Normal';
     } else {
-      financial_strength = 'Strong';
+      financialStrength = 'Strong';
     }
     var uid = supabase.auth.currentUser!.id;
     try {
@@ -80,15 +80,14 @@ class _EditProfilePageState extends State<EditLifestylePage> {
         'job_sector': selectedJobSector,
         'education': education[selectedEducationLevel],
         'religion': selectedReligion,
-        'financial_strength': financial_strength,
+        'financial_strength': financialStrength,
         'personality_type': selectedPersonalityType,
         'smoking': selectedSmokerOption,
       }).eq('uid', uid);
 
       Navigator.pop(context);
-    } on Exception catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } on Exception {}
   }
 
   void _fetchUserData(Map<String, dynamic> initialData) {
@@ -418,7 +417,7 @@ class _EditProfilePageState extends State<EditLifestylePage> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: '$label',
+            hintText: label,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
@@ -473,7 +472,7 @@ class _EditProfilePageState extends State<EditLifestylePage> {
             ),
             Text(
               ': Rs ${annualIncome.toStringAsFixed(0)}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
@@ -541,7 +540,7 @@ class _EditProfilePageState extends State<EditLifestylePage> {
           child: ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
-                  Color.fromARGB(232, 255, 179, 174)),
+                  const Color.fromARGB(232, 255, 179, 174)),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -554,7 +553,7 @@ class _EditProfilePageState extends State<EditLifestylePage> {
           child: ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
-                  Color.fromARGB(199, 188, 213, 161)),
+                  const Color.fromARGB(199, 188, 213, 161)),
             ),
             onPressed: () => saveInfo(),
             child: const Text('Save'),

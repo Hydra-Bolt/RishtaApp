@@ -25,7 +25,6 @@ class MyChatBoxCardsSectionCreator extends StatelessWidget {
           final chat = chatsData[index];
           return GestureDetector(
             onTap: () {
-              print('Clicked');
               Navigator.push(
                 context,
                 MaterialPageRoute(

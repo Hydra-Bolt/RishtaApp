@@ -242,7 +242,6 @@ class _TopContainerState extends State<TopContainer> {
       return;
     }
     var uid = supabase.auth.currentUser!.id;
-    print(widget.rishta);
     try {
       await supabase.from('reports').insert({
         'report_by': uid,
@@ -250,9 +249,8 @@ class _TopContainerState extends State<TopContainer> {
         'reason': _selectedReason,
         'detail': _reportDetails
       });
-    } on Exception catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } on Exception {}
 
     Navigator.of(dialogContext).pop();
   }

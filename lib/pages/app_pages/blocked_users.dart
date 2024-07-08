@@ -25,7 +25,6 @@ class _BlockedUsersState extends State<BlockedUsers> {
         .select(
             'blocked_blocked_fkey(first_name), blocked_blocker_fkey(first_name), blocked_on')
         .eq('blocker', uid);
-    print(list);
     return list;
   }
 

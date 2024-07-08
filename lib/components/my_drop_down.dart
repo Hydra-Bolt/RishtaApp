@@ -45,7 +45,7 @@ class CustomDropdownFormField extends StatelessWidget {
       items: items.map((String item) {
         return DropdownMenuItem<String>(
           value: item,
-          child: Text(item, style: TextStyle(color: Colors.white)),
+          child: Text(item, style: const TextStyle(color: Colors.white)),
         );
       }).toList(),
       onChanged: onChanged,

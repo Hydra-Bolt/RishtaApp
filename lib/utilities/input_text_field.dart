@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 typedef MyCustomValidatorCallback = String? Function(String? arg);
 
 class MyTextFormInputField extends StatelessWidget {
+  // ignore: use_super_parameters
   const MyTextFormInputField({
     Key? key,
     required this.textHint,

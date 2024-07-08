@@ -4,7 +4,7 @@ import 'package:supabase_auth/utilities/colors.dart';
 import 'package:supabase_auth/pages/app_pages/lifestyle_page.dart'; // Import the LifestyleTab widget
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key});
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +20,11 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.transparent,
-      body: DefaultTabController(
+      body: const DefaultTabController(
         length: 2, // Number of tabs
         child: Column(
           children: [
-            const TabBar(
+            TabBar(
               labelColor: MainColors.mainThemeColor,
               unselectedLabelColor: Colors.grey,
               indicatorColor: MainColors.mainThemeColor,
@@ -41,7 +41,7 @@ class ProfilePage extends StatelessWidget {
                   LifestyleTab(), // Use the LifestyleTab widget here
 
                   // Second Tab: Preferences
-                  PreferencesTab(),
+                  const PreferencesTab(),
                 ],
               ),
             ),

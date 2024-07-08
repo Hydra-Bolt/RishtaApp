@@ -6,6 +6,8 @@ import 'package:supabase_auth/utilities/buttons.dart';
 import 'package:supabase_auth/pages/app_pages/edit_lifestyle_page.dart';
 
 class LifestyleTab extends StatefulWidget {
+  const LifestyleTab({super.key});
+
   @override
   _LifestyleTabState createState() => _LifestyleTabState();
 }
@@ -50,9 +52,7 @@ class _LifestyleTabState extends State<LifestyleTab> {
         isLoading = false; // Set isLoading to false after data is fetched
         combinedInfo = combinedData;
       });
-      print(combinedData);
     } catch (e) {
-      print(e);
       // Handle error
     }
   }

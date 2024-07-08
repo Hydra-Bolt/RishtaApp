@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:supabase_auth/components/my_drop_down.dart';
-import 'package:supabase_auth/main.dart';
 import 'package:supabase_auth/utilities/buttons.dart';
 
 class TopContainer extends StatefulWidget {
@@ -43,22 +42,10 @@ class _TopContainerState extends State<TopContainer> {
     "Spam": "spam",
     "Other": "other",
   };
-  String? _reportDetails;
   @override
   void initState() {
     super.initState();
     // _getPhotos();
-  }
-
-  void _getPhotos() async {
-    var rishtaUid = widget.rishta['uid'];
-
-    var res =
-        await supabase.from("user_photo").select('*').eq('uid', rishtaUid);
-    setState(() {
-      isLoading = false;
-      photos = res;
-    });
   }
 
   @override
@@ -161,17 +148,13 @@ class _TopContainerState extends State<TopContainer> {
                                                             hintText:
                                                                 "Add details of the report..."),
                                                     onChanged: (value) {
-                                                      setState(() {
-                                                        _reportDetails = value;
-                                                      });
+                                                      setState(() {});
                                                     },
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 ElevatedButton(
                                                   onPressed: () {
-                                                    print(_reportDetails);
-                                                    print(_selectedReason);
                                                     // your report submission logic here
                                                   },
                                                   child: const Text(
@@ -180,9 +163,7 @@ class _TopContainerState extends State<TopContainer> {
                                               ]),
                                         )));
                               });
-                        } else if (value == 2) {
-                          print('Dont show again');
-                        }
+                        } else if (value == 2) {}
                       },
                     ),
                   ),

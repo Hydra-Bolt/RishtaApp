@@ -7,6 +7,7 @@ class EditPreferencesPage extends StatefulWidget {
   EditPreferencesPage({super.key, required this.initialData});
 
   @override
+  // ignore: library_private_types_in_public_api
   _EditPreferencesPageState createState() => _EditPreferencesPageState();
 }
 
@@ -42,8 +43,8 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
         'max_age': maxAgeController.text.trim(),
         'min_height': minHeightController.text.trim(),
       }).eq('uid', uid);
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
+      //
     }
 
     Navigator.of(context).pop();
@@ -127,7 +128,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
           : Scaffold(
               backgroundColor: Colors.transparent,
               body: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16.0, 40.0, 16.0, 40.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 40.0, 16.0, 40.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -143,7 +144,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
                             });
                           }),
                         ),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         Expanded(
                           child: _buildDropdownField(
                               'Religion', religions, selectedReligion,
@@ -155,7 +156,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     Row(
                       children: [
                         Expanded(
@@ -168,7 +169,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
                             });
                           }),
                         ),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         Expanded(
                           child: _buildDropdownField(
                               'Financial Strength',
@@ -181,14 +182,14 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     Row(
                       children: [
                         Expanded(
                           child: _buildLabeledTextField(
                               'MinHeight', 'cm', minHeightController),
                         ),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         Expanded(
                           child: _buildDropdownField(
                               'Smoker', smokerOptions, selectedSmokerOption,
@@ -200,14 +201,14 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     Row(
                       children: [
                         Expanded(
                           child: _buildLabeledTextField(
                               'Min Age', '25', minAgeController),
                         ),
-                        SizedBox(width: 12.0),
+                        const SizedBox(width: 12.0),
                         Expanded(
                           child: _buildLabeledTextField(
                               'Max Age', '30', maxAgeController),
@@ -215,7 +216,7 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
                       ],
                     ),
                     _buildButtonRow(context),
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -230,17 +231,17 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: Colors.white,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         CustomTextFormField(
           hint: hint,
           controller: controller,
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
       ],
     );
   }
@@ -252,12 +253,12 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: Colors.white,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
           items: items.map((item) {
@@ -270,14 +271,14 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: '$label',
+            hintText: label,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
           ),
           isExpanded: true,
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
       ],
     );
   }
@@ -293,15 +294,15 @@ class _EditPreferencesPageState extends State<EditPreferencesPage> {
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.grey,
           ),
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
-        SizedBox(width: 20),
+        const SizedBox(width: 20),
         ElevatedButton(
           onPressed: () => _submitChanges(),
           style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFFA2A55),
+              backgroundColor: const Color(0xFFFA2A55),
               foregroundColor: Colors.white),
-          child: Text('Save'),
+          child: const Text('Save'),
         ),
       ],
     );

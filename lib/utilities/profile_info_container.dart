@@ -21,7 +21,7 @@ class ProfileInfoContainer extends StatelessWidget {
       // margin: EdgeInsets.only(top: topMargin),
       width: containerWidth,
       height: containerHeight,
-      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
       decoration: BoxDecoration(
         color: shadowColor.withOpacity(0.18),
         borderRadius: BorderRadius.circular(borderRadius),

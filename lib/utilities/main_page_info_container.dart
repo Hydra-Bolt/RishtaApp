@@ -43,7 +43,7 @@ class BottomContainer extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               alignment: Alignment.center,
               child: CustomRichText(
                 rishta: rishta,

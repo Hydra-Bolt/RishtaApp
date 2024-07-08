@@ -49,11 +49,9 @@ class _ChatsPageState extends State<ChatsPage> {
         };
         chats.add(chat);
       }
-      print('Chats $chats');
 
       return chats;
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       return []; // Return an empty list on error
     }
   }

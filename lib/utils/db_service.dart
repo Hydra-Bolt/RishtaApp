@@ -16,7 +16,6 @@ class DBService extends ChangeNotifier {
 
       return response;
     } catch (e) {
-      print('Error fetching user chats: $e');
       rethrow;
     }
   }
@@ -29,11 +28,9 @@ class DBService extends ChangeNotifier {
       });
 
       // Handle the response data as needed
-      print(response);
 
       return response;
     } catch (e) {
-      print('Error fetching messages: $e');
       rethrow;
     }
   }
@@ -42,9 +39,8 @@ class DBService extends ChangeNotifier {
     try {
       final response = await _supabase.from('Message').insert(data).select();
       return response;
-    } on Exception catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } on Exception {}
   }
 
   Future<bool> removeMessageUsingChatBoxID(
@@ -87,8 +83,7 @@ class DBService extends ChangeNotifier {
             .onError((error, stackTrace) => false);
       }
       return response;
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       rethrow;
     }
   }

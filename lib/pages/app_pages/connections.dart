@@ -28,12 +28,12 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
           .eq("request_to", supabase.auth.currentUser!.id)
           .eq("request_by", requestBy);
 
-      final Map<String, dynamic> chat_obj = {
+      final Map<String, dynamic> chatObj = {
         'user1': supabase.auth.currentUser!.id,
         'user2': requestBy,
         'friends': 'Yes'
       };
-      await supabase.from('Chats').insert(chat_obj);
+      await supabase.from('Chats').insert(chatObj);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text("Done!"),
@@ -41,8 +41,7 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
       ));
 
       Navigator.pop(context);
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Oops! An Error Occurred.")));
     }
@@ -266,7 +265,6 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
           itemCount: matches.length,
           itemBuilder: (context, index) {
             var match = matches[index];
-            print(match);
             return Card(
                 color: Colors.white10,
                 shape: RoundedRectangleBorder(
@@ -325,7 +323,6 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
         itemCount: matches.length,
         itemBuilder: (context, index) {
           var match = matches[index];
-          print("Accepted $match");
           return Card(
             color: Colors.white10, // Add your color here
             shape: RoundedRectangleBorder(

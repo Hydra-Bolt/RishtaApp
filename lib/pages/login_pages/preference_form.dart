@@ -108,7 +108,6 @@ class _PreferenceFormState extends State<PreferenceForm> {
           await supabase.from("Preference").insert(formData).select();
 
       for (var religion in _selectedReligions) {
-        print(religion);
         await supabase
             .from("UserPreferredReligion")
             .insert({"pid": response[0]['pid'], "religion": religion});
@@ -120,8 +119,7 @@ class _PreferenceFormState extends State<PreferenceForm> {
         ),
       );
       Navigator.of(context).pushReplacementNamed('/home');
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to submit preferences')),
       );

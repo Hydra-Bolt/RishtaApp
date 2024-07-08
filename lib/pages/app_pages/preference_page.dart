@@ -4,6 +4,8 @@ import 'package:supabase_auth/utilities/buttons.dart';
 import 'package:supabase_auth/pages/app_pages/edit_preference_page.dart';
 
 class PreferencesTab extends StatefulWidget {
+  const PreferencesTab({super.key});
+
   @override
   _PreferencesTabState createState() => _PreferencesTabState();
 }
@@ -30,8 +32,7 @@ class _PreferencesTabState extends State<PreferencesTab> {
         preferenceInfo = response;
         isLoading = false;
       });
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       setState(() {
         isLoading = false;
       });
@@ -41,7 +42,7 @@ class _PreferencesTabState extends State<PreferencesTab> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
           child: CircularProgressIndicator(),
@@ -73,42 +74,42 @@ class _PreferencesTabState extends State<PreferencesTab> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         backgroundColor: Colors.transparent,
         body: Padding(
-          padding: EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildLabelWithValue('Education', preferenceInfo!['education']),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
               Row(
                 children: [
                   Expanded(
                       child: _buildLabelWithValue(
                           'Marital Status', preferenceInfo!['marital_status'])),
-                  SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0),
                   Expanded(
                       child: _buildLabelWithValue('Financial Strength',
                           preferenceInfo!['financial_strength'])),
                 ],
               ),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
               Row(
                 children: [
                   Expanded(
                       child: _buildLabelWithValue('Minimum Height (cm)',
                           preferenceInfo!['min_height'].toString())),
-                  SizedBox(width: 10.0),
+                  const SizedBox(width: 10.0),
                   Expanded(
                       child: _buildLabelWithValue(
                           'Smokes', preferenceInfo!['smoking'])),
                 ],
               ),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
               Row(
                 children: [
                   Expanded(
                       child: _buildLabelWithValue(
                           'Min Age', preferenceInfo!['min_age'].toString())),
-                  SizedBox(width: 10.0),
+                  const SizedBox(width: 10.0),
                   Expanded(
                       child: _buildLabelWithValue(
                           'Max Age', preferenceInfo!['max_age'].toString())),
@@ -128,22 +129,23 @@ class _PreferencesTabState extends State<PreferencesTab> {
             children: [
               Text(
                 label,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.grey[800],
                 ),
                 child: Text(
                   value,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,
                   ),

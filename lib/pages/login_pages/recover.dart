@@ -7,7 +7,7 @@ import 'package:supabase_auth/utils/colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RecoverAccount extends StatefulWidget {
-  const RecoverAccount({Key? key}) : super(key: key);
+  const RecoverAccount({super.key});
 
   @override
   State<RecoverAccount> createState() => _RecoverAccountState();
@@ -139,9 +139,7 @@ class _RecoverAccountState extends State<RecoverAccount> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          child: Image.asset('assets/images/recover.png'),
-        ),
+        Image.asset('assets/images/recover.png'),
         const Text(
           "Verified Successfully.\nEnter your new password below.",
           textAlign: TextAlign.center,
