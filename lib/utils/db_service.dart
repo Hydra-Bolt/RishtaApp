@@ -29,13 +29,17 @@ class DBService extends ChangeNotifier {
 
       // Handle the response data as needed
 
+      if (response == null) {
+        return [];
+      }
+
       return response;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<dynamic> addMessageUsingChatBoxID(int identifier, Map data) async {
+  Future<dynamic> addMessageUsingChatBoxID(Map data) async {
     try {
       final response = await _supabase.from('Message').insert(data).select();
       return response;
