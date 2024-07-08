@@ -15,7 +15,8 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: const Text(
           'Profile',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
         ),
       ),
       backgroundColor: Colors.transparent,

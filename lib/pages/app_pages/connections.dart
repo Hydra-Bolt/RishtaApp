@@ -422,7 +422,8 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
           backgroundColor: Colors.transparent,
           title: const Text(
             'Connections',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
           ),
           bottom: const TabBar(
             labelColor: MainColors.mainThemeColor,
