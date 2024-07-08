@@ -28,6 +28,7 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
     super.initState();
     channelName = "ChatChannel${widget.chatBoxDetails['chatID']}";
     _fetchMessages(widget.chatBoxDetails['chatID']);
+    // _addSupabaseMessageListener();
   }
 
   void _addSupabaseMessageListener() {
@@ -135,6 +136,7 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
             }),
           );
         });
+        print(areNewFriends);
       }
       // ignore: empty_catches
     } catch (e) {}
@@ -148,7 +150,7 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
       isSent: false,
     );
 
-    if (areNewFriends) {
+    if (areNewFriends == false) {
       final data = msg.toMap(_uid);
       final response = await _service.addMessageUsingChatBoxID(data);
       if (response != null) {
