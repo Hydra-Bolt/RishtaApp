@@ -148,7 +148,7 @@ class _UserFormState extends State<UserForm> {
       appBar: AppBar(
         title: const Text(
           "Add your basic details below",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(

@@ -328,9 +328,7 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
         const Text(
           "Any Interests?",
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+              fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
         ),
         const SizedBox(height: 10),
         Expanded(
@@ -411,7 +409,10 @@ class _LifeStyleFormState extends State<LifeStyleForm> {
         children: <Widget>[
           const Text(
             "What are your Hobbies?",
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+            style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                color: Colors.white),
           ),
           Expanded(
             child: GridView.count(

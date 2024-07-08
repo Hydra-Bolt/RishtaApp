@@ -199,7 +199,6 @@ class _MainPageState extends State<MainHomePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final double height = MediaQuery.of(context).size.height;
     dimensions = Dimensions(context);
     appBarHeight = dimensions.height(8.78);
     leadingWidth = dimensions.screenWidth();

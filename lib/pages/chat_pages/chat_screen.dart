@@ -25,7 +25,7 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
   @override
   void initState() {
     super.initState();
-    channelName = "ChatChannel" + widget.chatBoxDetails['chatID'].toString();
+    channelName = "ChatChannel${widget.chatBoxDetails['chatID']}";
     _fetchMessages(widget.chatBoxDetails['chatID']);
     _addSupabaseMessageListener();
   }
@@ -144,9 +144,7 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
       isSent: false,
     );
 
-    final data = msg.toMap(_uid);
-    final response = await _service.addMessageUsingChatBoxID(
-        widget.chatBoxDetails['chatID'], data);
+    msg.toMap(_uid);
 
     // if (response != null) {
     //   msg.isSent = true;
@@ -203,7 +201,6 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
             color: Colors.black,
           ),
           onPressed: () async {
-            final status = await supabase.removeChannel(channel);
             Navigator.pop(context);
           },
         ),
