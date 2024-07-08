@@ -21,13 +21,13 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
   final TextEditingController _messageController = TextEditingController();
   final DBService _service = DBService();
   late RealtimeChannel channel;
-  bool areNewFriends = false;
 
   @override
   void initState() {
     super.initState();
     channelName = "ChatChannel${widget.chatBoxDetails['chatID']}";
     _fetchMessages(widget.chatBoxDetails['chatID']);
+    _addSupabaseMessageListener();
   }
 
   void _addSupabaseMessageListener() {
@@ -99,43 +99,38 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
     try {
       final List<dynamic> response =
           await _service.getMessagesFromChatBoxID(chatBoxID);
-      if (response.isEmpty) {
-        setState(() {
-          areNewFriends = true;
-        });
-      } else {
-        setState(() {
-          _messages.clear();
-          _messages.addAll(
-            response.map((msg) {
-              bool? showMsgFor;
-              final bool isMe = msg['sender'] == _uid;
 
-              switch (msg['deleted_for']) {
-                case 'None':
-                  showMsgFor = true;
-                  break;
-                case 'Sender':
-                  showMsgFor = isMe ? false : true;
-                  break;
-                case 'Receiver':
-                  showMsgFor = isMe;
-                  break;
-                case 'Both':
-                  showMsgFor = false;
-                  break;
-              }
-              return Message(
-                  id: msg['id'],
-                  isMe: isMe,
-                  chatboxId: msg['chatbox_id'],
-                  message: msg['message'],
-                  messageSentTime: DateTime.parse(msg['message_sent_time']),
-                  showMessage: showMsgFor!);
-            }),
-          );
-        });
-      }
+      setState(() {
+        _messages.clear();
+        _messages.addAll(
+          response.map((msg) {
+            bool? showMsgFor;
+            final bool isMe = msg['sender'] == _uid;
+
+            switch (msg['deleted_for']) {
+              case 'None':
+                showMsgFor = true;
+                break;
+              case 'Sender':
+                showMsgFor = isMe ? false : true;
+                break;
+              case 'Receiver':
+                showMsgFor = isMe;
+                break;
+              case 'Both':
+                showMsgFor = false;
+                break;
+            }
+            return Message(
+                id: msg['id'],
+                isMe: isMe,
+                chatboxId: msg['chatbox_id'],
+                message: msg['message'],
+                messageSentTime: DateTime.parse(msg['message_sent_time']),
+                showMessage: showMsgFor!);
+          }),
+        );
+      });
       // ignore: empty_catches
     } catch (e) {}
   }
@@ -148,24 +143,16 @@ class _MyChatScreenUIState extends State<MyChatScreenUI> {
       isSent: false,
     );
 
-    if (areNewFriends) {
-      final data = msg.toMap(_uid);
-      final response = await _service.addMessageUsingChatBoxID(data);
-      if (response != null) {
-        msg.isSent = true;
-        msg.id = response[0]['id'];
-        msg.messageSentTime = DateTime.parse(response[0]['message_sent_time']);
-        setState(() {
-          _messages.insert(0, msg);
-        });
-        _addSupabaseMessageListener();
-      }
-    }
+    msg.toMap(_uid);
 
-    // Send the message to the database (implement the logic accordingly)
-    // Example:
-
-    // Uncomment this if you handle the response from the database
+    // if (response != null) {
+    //   msg.isSent = true;
+    //   msg.id = response[0]['id'];
+    //   msg.messageSentTime = DateTime.parse(response[0]['message_sent_time']);
+    //   setState(() {
+    //     _messages.insert(0, msg);
+    //   });
+    // }
 
     _messageController.clear();
   }
