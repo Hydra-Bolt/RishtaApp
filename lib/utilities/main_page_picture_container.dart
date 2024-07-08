@@ -79,9 +79,8 @@ class _TopContainerState extends State<TopContainer> {
                 children: [
                   AnotherCarousel(
                     images: const [
-                      AssetImage('assets/images/muneeb1.png'),
-                      AssetImage('assets/images/muneeb2.png'),
-                      AssetImage('assets/images/muneeb3.png')
+                      AssetImage('assets/images/cutie.jpg'),
+                      AssetImage('assets/images/not_found.png'),
                     ],
                     dotSize: 3,
                     indicatorBgPadding: 4,
