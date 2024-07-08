@@ -275,23 +275,16 @@ class _MainPageState extends State<MainHomePage>
                         borderWidth: containerBorderWidth,
                       ),
                       // Top Container
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const ExtendedRishtaPage()));
-                        },
-                        child: TopContainer(
-                          rishta: rishta,
-                          height: container2Height,
-                          width: container2Width,
-                          bottomMargin: container2BottomMargin,
-                          backgroundColor: mainPageContainer2Background,
-                          borderRadius: borderRadius,
-                          borderColor: mainThemeColor,
-                          borderWidth: containerBorderWidth,
-                          shadowColor: shadowColor,
-                        ),
+                      TopContainer(
+                        rishta: rishta,
+                        height: container2Height,
+                        width: container2Width,
+                        bottomMargin: container2BottomMargin,
+                        backgroundColor: mainPageContainer2Background,
+                        borderRadius: borderRadius,
+                        borderColor: mainThemeColor,
+                        borderWidth: containerBorderWidth,
+                        shadowColor: shadowColor,
                       ),
                       // Buttons
                       Positioned(
